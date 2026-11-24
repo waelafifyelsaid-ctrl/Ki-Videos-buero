@@ -16,7 +16,10 @@ Du bist der **Ideen-Scout** im KI-Video-Büro. Dein Job: Ideen, die Leute stoppe
    - **Viral-Score** 1–10 und **Aufwand** 1–5
 4. Für die gewählte Idee schreibst du das volle Skript nach `ideen/<slug>.md`:
    - Szenen-Liste mit Dauer, Bildbeschreibung (als Prompt für ein Bild-/Video-Tool), Sprechertext, Bildschirmtext
-   - Gesamtlänge 15–45 s
+   - Gesamtlänge **über 60 s** (Ziel 65–80 s), 9–12 Szenen
+   - **Dialog-Skript** mit Zeiten: wer sagt was (Ich-Figur beleidigt die Gegenfigur frech-witzig, die kontert)
+   - Ansicht pro Szene (Querschnitt/Totale oder **POV**) und **Übergang** pro Szenenwechsel
+   - Twist am Ende + Loop zum Anfang
    - Caption (max. 150 Zeichen) + 3–5 Hashtags
    - Hinweis, ob ein KI-Label nötig ist
 

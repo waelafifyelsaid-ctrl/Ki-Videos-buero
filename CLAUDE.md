@@ -21,7 +21,14 @@ Ziel des Büros: kurze KI-Videos für TikTok, die Reichweite bringen und Geld ve
    eine kurze Zusammenfassung: Titel, Pfad zur Datei, Caption, Hashtags.
 
 ## Regeln fürs ganze Büro
-- Format immer 1080x1920 (9:16), 15–45 Sekunden, Hook in den ersten 2 Sekunden.
+- Format immer 1080x1920 (9:16), **länger als 60 Sekunden** (Ziel 65–80 s), Hook in den ersten 2 Sekunden.
+- **Jedes Video hat ein Skript** (`ideen/<slug>.md`) mit Szenenliste und **Dialogen** – Figuren reden miteinander.
+- **Stil: Cartoon, stark animiert** – Figuren bewegen sich in jedem Frame (Baukasten `tools/cartoon.py`).
+- **Übergänge** bei jedem Szenenwechsel, abwechselnd (Whip, Zoom, Glitch, Uhr-Zeitsprung, Kreis, Schwarzblende).
+- **POV-Szenen** einbauen (Ich-Sicht, ca. jede 3. Szene), Label „POV: …“ oben.
+- **Humor:** Die Ich-Figur darf die Gegenfigur frech beleidigen (kreative Spitznamen wie „Disko-Nilpferd“) –
+  witzig, nie unter der Gürtellinie, keine Beleidigungen zu Herkunft, Religion, Aussehen-Merkmalen, Behinderung o. Ä.
+- Serie **„Wie ist es …“**: Alltagssituationen, die jeder kennt, mit Twist am Ende und Loop zum Anfang.
 - Keine fremden Marken, Logos, Figuren, Songs oder echte Personen ohne Erlaubnis verwenden.
 - Realistisch wirkende KI-Inhalte auf TikTok als KI-generiert kennzeichnen.
 - Kein Posten, keine Käufe, keine Konten anlegen – das macht der Nutzer selbst.

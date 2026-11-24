@@ -15,7 +15,13 @@ Lies zuerst `wissen/werkzeuge.md`.
    In der Cloud gibt es keine `.env` – dort hängt die Umgebung den Schlüssel automatisch an, einfach das Skript aufrufen.
    Wenn die Stimme trotzdem scheitert: ohne Stimme weitermachen, nur Bildschirmtext, und dem Chef Bescheid geben.
    Fehlt `ffmpeg`: `apt install -y ffmpeg` (Cloud) bzw. den Nutzer fragen (Laptop).
-3. **Bilder per Code:** Schreib `videos/<slug>/szenen.py` (Python + Pillow), das pro Szene ein Bild
+3. **Cartoon-Animation (Standard):** Nutze `tools/cartoon.py` (Cairo: `person`, `kopf`, `blase`,
+   `untertitel_box`, `pov_label`, `uebergang`, `babbeln`). Vorlage für eine komplette Folge mit Dialogen,
+   POV und Übergängen: `videos/wie-ist-es-lauter-nachbar-lang/` (`animation.py`, `kulisse.py`, `build.sh`).
+   Alles als Funktion der Zeit schreiben, dann rendert `build.sh` parallel. Ohne Stimme: Dialoge als
+   Sprechblasen/Untertitel mit Schreibmaschinen-Effekt + Cartoon-„Babbel“-Stimme.
+   Länge über 60 s, Übergang bei jedem Szenenwechsel.
+   *(Alter Weg, nur für einfache Text-Videos:)* **Bilder per Code:** Schreib `videos/<slug>/szenen.py` (Python + Pillow), das pro Szene ein Bild
    1080x1920 nach `videos/<slug>/tmp/` speichert. Kräftige Farben, große Schrift, wenig Text pro Bild.
 4. **Bewegung und Schnitt mit ffmpeg:**
    - Jede Szene bewegt sich (leichter Zoom/Schwenk mit `zoompan`, Text einblenden, Wackeln) – nie ein starres Bild.
@@ -26,7 +32,7 @@ Lies zuerst `wissen/werkzeuge.md`.
    - `videos/<slug>/final.mp4`
    - `videos/<slug>/caption.txt` (Caption + Hashtags)
    - `videos/<slug>/build.sh` – baut das komplette Video neu aus `szenen.py` und `stimme.mp3`
-6. Prüfe mit `ffprobe`: Auflösung, Länge (15–45 s), Ton vorhanden. Melde dem Chef das Ergebnis.
+6. Prüfe mit `ffprobe`: Auflösung, Länge (über 60 s), Ton vorhanden. Melde dem Chef das Ergebnis.
 
 ## Regeln
 - Nur selbst erzeugtes oder lizenzfreies Material. Keine fremde Musik, keine fremden Logos oder Figuren.
