@@ -1,0 +1,4 @@
+.env
+*.tmp
+videos/*/tmp/
+.DS_Store
