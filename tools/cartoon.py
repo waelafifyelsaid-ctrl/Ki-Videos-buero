@@ -96,7 +96,8 @@ def gelenk(p, winkel, laenge):
 
 
 def kopf(ctx, cx, cy, r, K):
-    """K: haut, augen, mund, haare, haar_hoch, blick, brille, kappe, zucken"""
+    """K: haut, augen, mund, haare, haar_hoch, blick, brille, kappe, zucken,
+    helm (Farbe), visier (Brille auf dem Helm), headset, bart (Farbe), zopf (Farbe), ruecken (von hinten)"""
     ctx.save()
     ctx.translate(cx, cy)
     haut = K.get("haut", "#f2c39a")
@@ -111,13 +112,21 @@ def kopf(ctx, cx, cy, r, K):
             ctx.line_to(spitze * math.cos(a + 0.12), spitze * math.sin(a + 0.12))
         ctx.close_path()
         form(ctx, K.get("haarfarbe", "#3b2a1a"))
+    if K.get("zopf"):
+        ctx.save()
+        ctx.translate(r * 0.55, r * 0.55)
+        ctx.rotate(-0.5)
+        ctx.scale(0.42, 1.0)
+        ctx.arc(0, 0, r * 0.8, 0, 2 * math.pi)
+        ctx.restore()
+        form(ctx, K["zopf"], 7)
     # Ohren + Kopf
     for sx in (-1, 1):
         ctx.arc(sx * r * 0.98, r * 0.1, r * 0.22, 0, 2 * math.pi)
         form(ctx, haut, 6)
     ctx.arc(0, 0, r, 0, 2 * math.pi)
     form(ctx, haut, 8)
-    if K.get("stoppeln"):
+    if K.get("stoppeln") and not K.get("ruecken"):
         ctx.set_source_rgba(*hexc("#6b5545", 0.55))
         rnd = random.Random(3)
         for _ in range(60):
@@ -125,6 +134,35 @@ def kopf(ctx, cx, cy, r, K):
             rr = rnd.uniform(0.55, 0.92) * r
             ctx.arc(rr * math.cos(a), rr * math.sin(a), 2.6, 0, 2 * math.pi)
             ctx.fill()
+    if K.get("bart") and not K.get("ruecken"):
+        ctx.arc(0, r * 0.05, r * 0.98, 0.12 * math.pi, 0.88 * math.pi)
+        ctx.arc_negative(0, r * 0.35, r * 0.42, 0.85 * math.pi, 0.15 * math.pi)
+        ctx.close_path()
+        form(ctx, K["bart"], 6)
+    if K.get("helm"):
+        hf = K["helm"]
+        if K.get("headset"):
+            for sx in (-1, 1):
+                rrect(ctx, sx * r * 1.02 - r * 0.2, -r * 0.05, r * 0.4, r * 0.5, r * 0.15)
+                form(ctx, "#1b1b1e", 6)
+        ctx.arc(0, -r * 0.12, r * 1.1, math.pi * 0.98, math.pi * 2.02)
+        ctx.close_path()
+        form(ctx, hf, 8)
+        rrect(ctx, -r * 1.2, -r * 0.3, r * 2.4, r * 0.26, r * 0.12)
+        form(ctx, hf, 7)
+        ctx.set_source_rgba(1, 1, 1, 0.18)
+        ctx.arc(-r * 0.35, -r * 0.72, r * 0.32, math.pi, 1.8 * math.pi)
+        ctx.set_line_width(r * 0.12)
+        ctx.stroke()
+        if K.get("visier") and not K.get("ruecken"):
+            rrect(ctx, -r * 0.85, -r * 0.82, r * 1.7, r * 0.38, r * 0.18)
+            form(ctx, "#1b1b1e", 6)
+            for sx in (-1, 1):
+                ctx.arc(sx * r * 0.38, -r * 0.63, r * 0.15, 0, 2 * math.pi)
+                form(ctx, K["visier"], 4)
+    if K.get("ruecken"):
+        ctx.restore()
+        return
     if K.get("kappe"):
         ctx.arc(0, -r * 0.15, r * 1.02, math.pi * 1.02, math.pi * 1.98)
         ctx.close_path()
@@ -267,12 +305,30 @@ def person(ctx, x, y, s, P, K):
         hand = gelenk(ell, arme[i] + arme[i + 1], 66)
         limb(ctx, [sh, ell, hand], 28, hemd)
         ctx.arc(*hand, 20, 0, 2 * math.pi)
-        form(ctx, K.get("haut", "#f2c39a"), 6)
+        form(ctx, P.get("handschuh", K.get("haut", "#f2c39a")), 6)
         return hand
 
     hand_hinten = arm(0, -1)
-    rrect(ctx, -62, -305, 124, 160, 38)
+    b = P.get("breit", 1.0)
+    rrect(ctx, -62 * b, -305, 124 * b, 160, 38)
     form(ctx, hemd, 8)
+    if P.get("weste"):
+        rrect(ctx, -54 * b, -292, 108 * b, 118, 20)
+        form(ctx, P["weste"], 6)
+        if not K.get("ruecken"):
+            for k in (-1, 0, 1):
+                rrect(ctx, k * 32 * b - 14, -205, 28, 30, 6)
+                form(ctx, P["weste"], 4)
+        if P.get("label"):
+            ctx.save()
+            ctx.translate(0, -258 if not K.get("ruecken") else -240)
+            ctx.scale(-1 if P.get("links") else 1, 1)
+            text(ctx, P["label"], 0, 0, 26 if not K.get("ruecken") else 34, fill="#ffffff", stroke=None,
+                 maxw=96 * b)
+            ctx.restore()
+        if P.get("armbinde"):
+            ctx.arc(52 * b, -262, 14, 0, 2 * math.pi)
+            form(ctx, P["armbinde"], 4)
     if P.get("aufdruck"):
         ctx.save()
         ctx.translate(0, -228)

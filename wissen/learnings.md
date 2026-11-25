@@ -18,7 +18,14 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Nutzer-Feedback (Nachbar-Video): gut, aber mehr Übergänge, POV-Ansichten, Dialog-Skript mit frechen
   Beleidigungen der Ich-Figur, immer über 1 Minute → als feste Regeln in CLAUDE.md übernommen.
 
+- Neue Serie EINHEIT FALKE (Nutzer-Wunsch nach Referenz-Video „animated story deutsch", POV, 124k Likes):
+  Explosion als Hook, Hauptquartier → Einsatz → Cliffhanger, über 1 Minute.
+
 ## Technik-Learnings (Produktion)
+- Nachts: Figuren in eigener Ebene (`ebene()`), sonst verschwinden dunkle Uniformen im Hintergrund.
+- Perspektive: Figuren sehr nah an der Kamera (dz < 2 m) landen seitlich außerhalb des Bildes – Vordergrund-Figuren
+  mit 2,5–3,5 m Abstand platzieren und die Hauptfiguren dazwischen sichtbar lassen.
+- Comic-Streifen: Figur so setzen, dass der Kopf im Streifen ist (Füße bei ca. 1,6 × Streifenhöhe).
 - Langfassung-Vorlage: `videos/wie-ist-es-lauter-nachbar-lang/` – Szenenliste `SZ` (Typ, Dauer, Übergang),
   `DIALOG`-Liste (Szene, Zeit, wer, Text) → Blasen, Untertitel, Mundbewegung und Babbel-Ton entstehen automatisch.
   `python3 animation.py skript` druckt das Dialog-Skript mit echten Zeiten.

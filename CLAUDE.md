@@ -35,6 +35,15 @@ Ziel des Büros: kurze KI-Videos für TikTok, die Reichweite bringen und Geld ve
 - Alles, was das Büro lernt, landet in `wissen/learnings.md`, damit es beim nächsten Mal besser wird.
 - Nach jeder fertigen Etappe committen, damit man am Handy und am Laptop am selben Stand ist.
 
+## Serie: EINHEIT FALKE (Spezialeinheit, POV)
+- Serienbibel: `ideen/serie-einheit-falke.md` (Team, Hauptquartier, Folgen-Plan, Aufbau jeder Folge).
+- Jede Folge startet mit einer Explosion/Action-Szene als Hook, endet mit Cliffhanger auf die nächste Folge.
+- Stil wie Referenz: Perspektiv-Straßen, kräftige Konturen, POV-Waffe, großer hellblauer Untertitel.
+- Wetter wechseln (Regen, Sommer, Schnee, Gewitter, Nebel). Fiktive Einheit, keine echten Abzeichen.
+- Niemand wird erschossen, kein Blut – Festnahmen, Tackles, Blendgranaten, Türsprengungen.
+- Technik: `tools/einsatz.py` + Vorlage `videos/falke-01-lagerhaus/`. Physik: Figuren nur über
+  `teammitglied()`/`figur()` platzieren (Bodenkontakt automatisch), Tiefe sortieren, nichts darf durch Wände/Boden.
+
 ## Befehle
 - `/neues-video [Thema]` – kompletter Ablauf von Idee bis fertiges Video
 - `/ideen [Thema]` – nur Ideen sammeln
