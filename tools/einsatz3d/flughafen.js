@@ -116,7 +116,7 @@ export function flughafen(s) {
     br.add(at(box(3, 3, 3, mat(0x8d99ae)), 14.5, 4.6, 0));
     br.add(at(cyl(.3, .3, 3.4, mat(0x6c757d), 10), 12, 1.7, 0));
     for (const sz of [-.8, .8]) br.add(at(cyl(.35, .35, .3, mat(0x111111), 10), 12, .35, sz, 0, 0, Math.PI / 2));
-    if (k > 0) verkehrsflugzeug(s, -18, z - 4, Math.PI / 2 + .02 * k, { akzent: [0x0b5394, 0x9d0208, 0x2d6a4f][k - 1] });
+    if (k > 0) verkehrsflugzeug(s, -29, z - 4, Math.PI / 2, { akzent: [0x0b5394, 0x9d0208, 0x2d6a4f][k - 1], skala: .72 });   // Heck endet bei x≈-13 – weit weg vom Rollweg
   }
   // Tower
   const tow = new THREE.Group(); tow.position.set(-75, 0, -115); s.add(tow);
@@ -165,6 +165,30 @@ export function flughafen(s) {
   // Zaun + Stadt-Silhouette weit hinten
   for (let x = -120; x < 120; x += 4) s.add(at(cyl(.05, .05, 3, mat(0x6c757d), 6), x, 1.5, -240));
   s.add(at(box(240, 2.6, .05, mat(0x6c757d, { transparent: true, opacity: .4 })), 0, 1.6, -240));
+  // Himmel: Verlauf statt einfarbig
+  const himmel = canvasTex('flughimmel', 64, 512, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, 0, h);
+    gr.addColorStop(0, '#7f93ab'); gr.addColorStop(.42, '#b8c3d0'); gr.addColorStop(.5, '#d9cfc6'); gr.addColorStop(1, '#9aa1a8');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  });
+  s.add(new THREE.Mesh(new THREE.SphereGeometry(1200, 32, 16), new THREE.MeshBasicMaterial({ map: himmel, side: THREE.BackSide, fog: false })));
+  // Grasflächen neben Vorfeld und Bahnen
+  const gras = mat(0x6b7a4a, { r: 1, map: canvasTex('gras', 256, 256, (g, w, h) => { const r = rng(4); g.fillStyle = '#6b7a4a'; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 2500; i++) { g.fillStyle = ['#5f6e40', '#788756', '#66753f', '#828f5c'][i % 4]; g.fillRect(r() * w, r() * h, 2, 3); } }, [60, 60]) });
+  for (const [x, z, w, d] of [[-260, -60, 400, 700], [260, -60, 380, 700], [0, -190, 120, 22], [0, -330, 700, 200]]) s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(w, d), gras), x, .004, z, -Math.PI / 2));
+  // Baumreihe + Hügel + Stadt-Silhouette am Horizont
+  const r = rng(17), baum = mat(0x3d4a2e, { r: 1 });
+  for (let i = 0; i < 90; i++) { const x = -330 + i * 7.5 + r() * 3, h = 6 + r() * 6; s.add(at(new THREE.Mesh(new THREE.ConeGeometry(2.2 + r(), h, 7), baum), x, h / 2, -262 - r() * 8)); }
+  for (let i = 0; i < 5; i++) { const hg = sph(80, mat(0x7d8a74, { r: 1 }), 20, 10); hg.scale.set(1.6, .35, 1); hg.position.set(-400 + i * 200, -6, -420); s.add(hg); }
+  for (let i = 0; i < 26; i++) { const h = 20 + r() * 60, w = 12 + r() * 18; s.add(at(box(w, h, w, mat(0x8d97a3, { r: .8 })), 90 + i * 16 + r() * 6, h / 2, -360 - r() * 40)); }
+  // Terminal-Dachtechnik + Schriftzug
+  for (let z = -120; z < 20; z += 18) s.add(at(box(4, 1.6, 3, mat(0xb7bec7)), -54, 13.6, z));
+  s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(26, 2.6), new THREE.MeshStandardMaterial({ map: textTex('termname', 'GATES A1 – A4', { w: 1024, h: 110, farbe: '#ffffff', grund: '#1d3557', font: 'bold 84px DejaVu Sans' }), emissive: 0xffffff, emissiveMap: textTex('termname', 'GATES A1 – A4', { w: 1024, h: 110, farbe: '#ffffff', grund: '#1d3557', font: 'bold 84px DejaVu Sans' }), emissiveIntensity: .4 })), -44.7, 11.3, -30, 0, Math.PI / 2));
+  // Bodenstromgeräte + zweiter Tankwagen + Schlepper
+  for (const [x, z] of [[9.5, 2], [10, -30], [-11, -36]]) { s.add(at(box(1.2, 1.1, 1.8, mat(0xe9ecef)), x, .55, z)); s.add(at(box(1.0, .2, .2, mat(0xffc300)), x, 1.15, z)); }
+  tankwagen(s, 18, -38, .2);
+  { const sl = new THREE.Group(); sl.add(at(box(2.6, 1.1, 5.5, mat(0xe9ecef)), 0, .8, 0)); sl.add(at(box(1.6, .9, 1.4, mat(0x223344, { r: .1, m: .5 })), 0, 1.75, -1.8));
+    for (const sx of [-1.2, 1.2]) for (const zz of [-1.8, 1.8]) sl.add(at(cyl(.5, .5, .4, mat(0x111111), 14), sx, .5, zz, 0, 0, Math.PI / 2)); sl.position.set(-16, 0, -58); sl.rotation.y = .5; s.add(sl); }
   return fa;
 }
 

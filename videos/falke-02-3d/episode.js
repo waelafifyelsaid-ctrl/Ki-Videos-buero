@@ -270,6 +270,23 @@ function jetDetails(jet) {
   for (const sx of [-.55, .55]) j.add(at(box(.36, .2, .3, mat(0x9c8662)), sx, 2.05, -11.95));
   for (const [x, z] of [[-.55, -5.0], [.55, -5.0], [-.55, -8.1], [.55, -8.1]]) { j.add(at(cyl(.03, .05, .7, chrom, 8), x, 1.85, z)); j.add(at(cyl(.06, .08, .12, mat(0xfff1d6, { e: 0xffe2b0, ei: 1 }), 10), x + (x > 0 ? .15 : -.15), 2.32, z)); }
   j.add(at(box(.04, .9, 1.4, mat(0xd8cbb5)), -.95, 2.2, -12.9));
+  // Decke: indirekte Lichtbänder, Leselampen, Luftdüsen
+  for (const sx of [1, -1]) j.add(at(box(.05, .02, 9.4, mat(0xfff1d6, { e: 0xffe2b0, ei: 2.2 })), sx * .55, 3.42, -8.2));
+  for (let z = -4.3; z > -11.5; z -= 1.45) for (const sx of [-.5, .5]) { j.add(at(cyl(.035, .035, .02, mat(0xfff6e0, { e: 0xfff1d6, ei: 1.5 }), 10), sx, 3.38, z)); j.add(at(cyl(.02, .025, .03, chrom, 8), sx * .8, 3.33, z + .2)); }
+  // Fensterrahmen
+  for (const sx of [1, -1]) for (let z = -4.3; z > -11.5; z -= .95) { const r = new THREE.Mesh(new THREE.TorusGeometry(.17, .025, 6, 18), mat(0xcbbd9f, { r: .6 })); r.scale.set(.8, 1.15, 1); r.position.set(sx * (R0 - .08), Y + .25, z); r.rotation.y = Math.PI / 2; j.add(r); }
+  // Trennwand hinten mit Bildschirm
+  j.add(at(box(1.9, 1.6, .06, mat(0xd8cbb5, { r: .7 })), 0, 2.3, -11.3));
+  j.add(at(box(.7, .42, .03, mat(0x0b0b0d, { e: 0x1d3557, ei: .6 })), 0, 2.55, -11.26));
+  j.add(at(box(.75, 1.7, .08, holz), -.55, 2.35, -11.28)); j.add(at(box(.75, 1.7, .08, holz), .55, 2.35, -11.28));
+  // Tische: Gläser, Magazin, Laptop
+  for (const [x, z] of [[-.55, -5.0], [.55, -8.1]]) { for (const dx of [-.1, .1]) { j.add(at(cyl(.025, .02, .1, mat(0xe9f5ff, { r: .05, transparent: true, opacity: .45 }), 10), x + dx, 2.3, z)); j.add(at(cyl(.022, .022, .04, mat(0xf2c14e, { transparent: true, opacity: .7 }), 10), x + dx, 2.27, z)); } }
+  j.add(at(box(.22, .01, .3, mat(0xc1121f)), .5, 2.255, -5.05, 0, .3, 0));
+  { const lp = new THREE.Group(); lp.add(at(box(.32, .015, .22, mat(0x9aa0a6, { m: .6 })), 0, 0, 0)); lp.add(at(box(.32, .2, .01, mat(0x111111, { e: 0x2a6f97, ei: .4 })), 0, .1, -.11, -.2)); lp.position.set(-.55, 2.26, -8.1); j.add(lp); }
+  // Stufe + Haltegriff am Einstieg
+  j.add(at(cyl(.015, .015, .6, chrom, 8), R0 - .1, 2.4, -2.62)); j.add(at(cyl(.015, .015, .6, chrom, 8), R0 - .1, 2.4, -3.48));
+  // außen: fiktives Logo am Leitwerk
+  { const lg = new THREE.Mesh(new THREE.CircleGeometry(.45, 24), mat(0xff9f1c, { r: .4 })); for (const sx of [1, -1]) { const m = lg.clone(); m.position.set(sx * .075, 4.9, -16.2); m.rotation.y = sx * Math.PI / 2; j.add(m); } }
   return jet;
 }
 
@@ -287,8 +304,8 @@ function bauJet(s) {
     const mi = new THREE.Mesh(geoI, innenWand); mi.rotation.x = Math.PI / 2; mi.position.copy(m.position); j.add(mi);
   };
   rumpf(-2.0, -2.6); rumpf(-2.6, -3.5, true); rumpf(-3.5, -13);
-  const nase = sph(R0, lack, 32, 20); nase.scale.set(1, 1, 1.75); nase.position.set(0, Y, -2.0); j.add(nase);
-  const nasenInnen = new THREE.Mesh(new THREE.SphereGeometry(R0 - .05, 28, 16), mat(0x3a3d42, { side: THREE.BackSide })); nasenInnen.scale.set(1, 1, 1.75); nasenInnen.position.copy(nase.position); j.add(nasenInnen);
+  const nase = new THREE.Mesh(new THREE.SphereGeometry(R0, 32, 14, 0, Math.PI * 2, 0, Math.PI / 2), lack); nase.rotation.x = Math.PI / 2; nase.scale.set(1, 1.75, 1); nase.position.set(0, Y, -2.0); nase.castShadow = true; j.add(nase);
+  const nasenInnen = new THREE.Mesh(new THREE.SphereGeometry(R0 - .05, 28, 12, 0, Math.PI * 2, 0, Math.PI / 2), mat(0x3a3d42, { side: THREE.BackSide })); nasenInnen.rotation.x = Math.PI / 2; nasenInnen.scale.set(1, 1.75, 1); nasenInnen.position.copy(nase.position); j.add(nasenInnen);
   const heck = new THREE.Mesh(new THREE.CylinderGeometry(R0, .25, 4.2, 32), lack); heck.rotation.x = -Math.PI / 2; heck.position.set(0, Y + .2, -15.1); heck.castShadow = true; j.add(heck);
   j.add(at(box(.04, .16, 13.5, streifen), R0 + .005, Y - .25, -8)); j.add(at(box(.04, .16, 13.5, streifen), -R0 - .005, Y - .25, -8));
   for (const sx of [1, -1]) {   // Fenster außen
@@ -327,12 +344,16 @@ function bauJet(s) {
   // Kabine innen
   j.add(at(box(1.95, .08, 11.0, mat(0x6b5b4e, { r: .9 })), 0, 1.46, -7.4));
   for (const [x, w] of [[-.68, .55], [.68, .55]]) j.add(at(box(w, 1.6, .06, mat(0xd8cbb5)), x, 2.3, -2.45));   // Cockpit-Trennwand
-  j.add(at(box(1.95, .45, .06, mat(0xd8cbb5)), 0, 3.15, -2.45));
+  j.add(at(box(1.95, .3, .06, mat(0xd8cbb5)), 0, 3.32, -2.45));
   const sitzM = mat(0xc9b28a, { r: .55 }), holz = mat(0x6f4e37, { r: .4, map: holzTex([1, 1]) });
   const sitze = {};
   const sessel = (x, z, blick) => {
-    const g = new THREE.Group(); g.add(at(box(.6, .14, .6, sitzM), 0, .42, 0)); g.add(at(box(.6, .7, .14, sitzM), 0, .75, -blick * .26));
-    for (const sx of [-.27, .27]) g.add(at(box(.08, .2, .55, sitzM), sx, .58, 0));
+    const g = new THREE.Group(); g.add(at(box(.56, .14, .58, sitzM), 0, .42, 0)); g.add(at(box(.56, .62, .14, sitzM), 0, .74, -blick * .26, blick * -.08));
+    g.add(at(box(.5, .02, .52, mat(0xb59a6e, { r: .6 })), 0, .5, 0));                                   // Polsternaht
+    g.add(at(box(.36, .16, .12, mat(0xe9dcc3, { r: .6 })), 0, 1.12, -blick * .25));                     // Kopfkissen
+    for (const sx of [-.29, .29]) { g.add(at(box(.08, .18, .55, sitzM), sx, .58, 0)); g.add(at(box(.09, .03, .5, holz), sx, .68, 0)); }
+    g.add(at(cyl(.2, .22, .3, mat(0x8a7a5a, { m: .5, r: .3 }), 12), 0, .2, 0));                          // Sockel
+    for (const sx of [-.12, .12]) g.add(at(box(.05, .015, .3, mat(0x4a4a4a)), sx, .5, blick * .05));       // Gurt
     g.position.set(x, 1.5, z); j.add(g); return g;
   };
   for (const [z, blick] of [[-4.3, 1], [-5.7, -1], [-7.4, 1], [-8.8, -1], [-10.4, 1]]) for (const x of [-.55, .55]) sitze[`${x}_${z}`] = sessel(x, z, blick);
@@ -342,12 +363,15 @@ function bauJet(s) {
   // Cockpit: zwei Sitze, Instrumente
   for (const x of [-.4, .4]) { const g = new THREE.Group(); g.add(at(box(.5, .12, .5, mat(0x2b2d31)), 0, .45, 0)); g.add(at(box(.5, .7, .1, mat(0x2b2d31)), 0, .8, -.25)); g.position.set(x, 1.5, -1.45); j.add(g); }
   j.add(at(box(1.6, .35, .4, mat(0x1b1d21, { e: 0x2a6f97, ei: .5 })), 0, 2.2, -.55));
+  for (const x of [-.45, -.15, .15, .45]) j.add(at(box(.25, .18, .02, mat(0x0d1b2a, { e: [0x4cc9f0, 0x80ed99, 0xffd166, 0x4cc9f0][Math.round((x + .45) / .3)], ei: .9 })), x, 2.25, -.34, -.3));
+  for (const x of [-.4, .4]) { j.add(at(cyl(.015, .015, .3, mat(0x222222), 6), x, 1.95, -.85, -.6)); j.add(at(box(.18, .05, .04, mat(0x222222)), x, 2.05, -.95)); }
+  j.add(at(box(.9, .06, .5, mat(0x1b1d21)), 0, 3.25, -.9));
   return { j, pivot, tuer, raeder, licht };
 }
 
 
 const VF = (() => {
-  const s = new THREE.Scene(); s.background = new THREE.Color(0xc4ccd6); s.fog = new THREE.Fog(0xc4ccd6, 14, 230);
+  const s = new THREE.Scene(); s.background = new THREE.Color(0xc9cdd3); s.fog = new THREE.Fog(0xc9cdd3, 18, 340);
   s.add(new THREE.HemisphereLight(0xe9eef7, 0x6a6660, 1.7));
   const fuell = new THREE.DirectionalLight(0xdfe6f2, .9); fuell.position.set(30, 10, 40); s.add(fuell);
   const sonne = new THREE.DirectionalLight(0xffd4ab, 1.6); sonne.position.set(-25, 18, 20); sonne.castShadow = true; sonne.shadow.mapSize.set(2048, 2048);
@@ -358,7 +382,7 @@ const VF = (() => {
   const jet = jetDetails(bauJet(s));
   const expl = new Explosion(s, V3(0, 0, 0), { groesse: .6, richtung: V3(1, .3, 0), seed: 9, truemmer: 16, farbe: 0xdee2e6 });
   const rauch = new Schwaden(s, V3(0, 0, 0), 8, 4);
-  const k = kamera(s, 74); const pov = new Pov(k);
+  const k = kamera(s, 74); const pov = new Pov(k); pov.tief = .07;
   const t = { 1: teamOps(s, 1), 2: teamOps(s, 2), 4: teamOps(s, 4), 7: teamOps(s, 7) };
   const schild2 = schildModell(); t[2].j.elL.add(schild2); schild2.position.set(.02, -.2, .12); schild2.rotation.set(-1.4, 0, 0);
   const pilot = new Figur({ art: 'zivil', jacke: 0xf8f9fa, hose: 0x212529, kappe: 0x1d3557, haut: 0xe8b98a, groesse: 1.78 }); s.add(pilot.root);
@@ -530,9 +554,9 @@ function s_tuer(lt, t) {
   const zugriff = L('tuer', 'ZUGRIFF').start;
   const tuerOffen = L('tuer', 'Tür ist').start;
   const plan = {
-    2: lt < 1.9 ? [[0, 1.62, -13.1]] : [[1.9, 1.62, -13.1], [2.6, 2.3, -12.2], [zugriff, 2.3, -12.2], [zugriff + .5, 2.2, -13.05], [zugriff + 1.4, 1.2, -13.05], [zugriff + 2.0, 0, -13.6], [zugriff + 2.6, 0, -14.6]],
-    1: [[0, 2.7, -11.0], [zugriff + .5, 2.7, -11.0], [zugriff + 1.0, 2.25, -13.05], [zugriff + 1.9, 1.2, -13.05], [zugriff + 2.5, -.2, -12.9]],
-    4: [[0, 2.45, -14.4], [zugriff + .9, 2.45, -14.4], [zugriff + 1.5, 2.3, -13.05]],
+    2: lt < 1.9 ? [[0, 1.62, -13.1]] : [[1.9, 1.62, -13.1], [2.6, 2.3, -12.2], [zugriff, 2.3, -12.2], [zugriff + .25, 2.2, -13.05], [zugriff + .9, 1.2, -13.05], [zugriff + 1.35, .1, -13.45], [zugriff + 2.4, -.15, -15.2]],
+    1: [[0, 2.7, -11.0], [zugriff + .6, 2.7, -11.0], [zugriff + 1.0, 2.25, -13.05], [zugriff + 1.7, 1.2, -13.05], [zugriff + 2.2, .15, -12.7]],
+    4: [[0, 2.45, -14.4], [zugriff + 1.3, 2.45, -14.4], [zugriff + 1.7, 2.25, -13.05], [zugriff + 2.4, 1.2, -13.05], [zugriff + 2.9, -.35, -13.0]],
     7: [[0, 3.15, -15.1]],
   };
   for (const nr of [1, 2, 4, 7]) {
@@ -541,6 +565,7 @@ function s_tuer(lt, t) {
     const duck = d > -.1 && d < 1.3 ? Math.sin(clamp((d + .1) / 1.4) * Math.PI) : 0;
     let P = geht ? gehPose(p.dist / .65 * Math.PI, { hocke: .2, arme: false }) : hockPose(.45);
     P.rumpf = [.25 + .5 * duck, 0, 0]; P.kopf = [.4 * duck, 0, 0];
+    if (d > 1 && p.x < TUER_X + .55 && Math.abs(p.z - TUER_Z) < .9) { P.rumpf = [.75, 0, 0]; P.kopf = [-.2, 0, 0]; P.beinL = [(P.beinL?.[0] ?? 0) + .3, (P.beinL?.[1] ?? 0) + .5]; P.beinR = [(P.beinR?.[0] ?? 0) + .3, (P.beinR?.[1] ?? 0) + .5]; }   // Ducken durch die niedrige Jet-Tür
     if (nr === 2 && lt < 1.9) P = { ...stehPose(t), kopf: [-.2, 0, 0], rumpf: [.05, 0, 0] };
     if (nr === 1 && lt > MARKEN[0] - .5 && lt < SPRENG) {
       const n = lt < MARKEN[0] ? 0 : lt < MARKEN[1] ? 3 : lt < MARKEN[2] ? 2 : 1;
@@ -562,12 +587,12 @@ function s_tuer(lt, t) {
   let pos = V3(3.6, 1.5, -11.9), ziel = V3(1.2, 1.9, TUER_Z);
   if (lt > MARKEN[0] - .7 && lt < SPRENG - .3) ziel = weltPos(tm[1].j.haL).add(V3(0, .1, 0));
   const sh = d > 0 ? .07 * Math.exp(-3 * d) : 0;
-  if (lt > zugriff + 1.8) { const p = pfad([[zugriff + 1.8, 3.6, -11.9], [zugriff + 2.6, 2.6, -13.05]], lt); pos = V3(p.x, 1.55 + rampeH(p.x) * 0, p.z); ziel = V3(1.0, 2.6, TUER_Z); }
+  if (lt > zugriff + 2.0) { const p = pfad([[zugriff + 2.0, 3.6, -11.9], [zugriff + 2.9, 2.6, -13.05]], lt); pos = V3(p.x, 1.55 + rampeH(p.x) * 0, p.z); ziel = V3(1.0, 2.6, TUER_Z); }
   pos.add(wackel(t, sh));
   schau(k, pos, ziel);
   const duckIch = d > -.1 && d < 1.2 ? Math.sin(clamp((d + .1) / 1.3) * Math.PI) : 0;
   k.rotation.x -= .08 * duckIch; k.updateMatrixWorld(true);
-  pov.setze({ modus: 'gewehr', t, lauf: lt > zugriff + 1.8 ? .8 : .1, zielen: lt > zugriff ? .5 : -.1 });
+  pov.setze({ modus: 'gewehr', t, lauf: lt > zugriff + 2.0 ? .8 : .1, zielen: lt > zugriff ? .1 : -.25 });
   return { welt: VF, uhr: '05:32', blitz: d >= 0 && d < .2 ? (1 - d / .2) * .7 : 0 };
 }
 
@@ -577,7 +602,7 @@ function s_kabine(lt, t) {
   const { k, pov, t: tm, jet, gorilla, schellen } = VF;
   stelleJet(NASE_STOP); jet.licht.forEach(l => { l.intensity = 0; }); VF.heli.g.visible = false;
   jet.pivot.rotation.z = -2.59;
-  tm[7].root.visible = false; tm[4].root.visible = false;
+  tm[7].root.visible = false;
   const zP = L('kabine', 'Nicht'), tackle = zP.ende + .1;
   pilotSitzt(lt, lt > .9, lt > .9 && lt < zP.ende + .3);
   // 2 steht im Gang mit Schild, Leibwächter stürmt an, Tackle, Handschellen
@@ -609,19 +634,19 @@ function s_kabine(lt, t) {
   // Team 2 und 1
   if (nach < 0) {
     tm[2].pose({ beinL: [.25, .3], beinR: [-.2, .3], rumpf: [.2, 0, 0], mund: redet('kabine', lt, '2') });
-    tm[2].platziere(-.1, -15.3, Math.PI, { boden: 1.5 }); tm[2].haltGewehr('anschlag');
+    tm[2].platziere(-.2, -15.3, Math.PI, { boden: 1.5 }); tm[2].haltGewehr('anschlag');
   } else {
     const kk = smooth(0, .45, nach);
     tm[2].pose({ beinL: [1.4 * kk, 2.0 * kk], beinR: [.2 + .6 * kk, 1.8 * kk], rumpf: [.45 + .4 * kk, 0, 0], kopf: [.2, 0, 0], armL: [1.3, .2], ellL: .4, armR: [1.3, .2], ellR: .4, mund: redet('kabine', lt, '2') });
-    tm[2].platziere(0, -15.55 - .3 * kk, Math.PI, { boden: 1.5 }); tm[2].ohneGewehr();
+    tm[2].platziere(lerp(-.2, 0, kk), -15.55 - .3 * kk, Math.PI, { boden: 1.5 }); tm[2].ohneGewehr();
     if (nach > .45) {
       const r = gorilla.j.chest.localToWorld(V3(0, .15, -.15));
       tm[2].greife('L', r.clone().add(V3(.15, .05, 0)), tm[2].lokal(.6, 1.4, -.2));
       tm[2].greife('R', nach > 1.6 ? weltPos(gorilla.j.haL).add(V3(-.04, .04, 0)) : r.clone().add(V3(-.15, .05, 0)), tm[2].lokal(-.6, 1.4, -.2));
     }
   }
-  tm[1].pose({ beinL: [.2, .3], beinR: [-.2, .3], rumpf: [.15, 0, 0], kopf: [0, 0, 0] }); tm[1].platziere(-.25, -12.85, .3, { boden: 1.5 }); tm[1].haltGewehr('anschlag');
-  tm[1].root.visible = lt > 1.2;
+  tm[1].pose({ beinL: [.35, .5], beinR: [-.05, .45], rumpf: [.3, 0, 0], kopf: [-.15, 0, 0] }); tm[1].platziere(-.22, -12.7, .15, { boden: 1.5 }); tm[1].haltGewehr('anschlag');
+  tm[4].pose({ beinL: [.35, .5], beinR: [-.05, .45], rumpf: [.3, 0, 0], kopf: [0, 0, 0], mund: redet('kabine', lt, '4') }); tm[4].platziere(-.4, -13.3, .35, { boden: 1.5 }); tm[4].haltGewehr('anschlag');
   // Tablet auf Sitz 1A
   const sitz1A = V3(-.55, 1.5 + .52, -14.3);
   const zT = L('kabine', 'Sitz 1A');
@@ -633,17 +658,17 @@ function s_kabine(lt, t) {
   zeichneTablet(lt < zT.start ? -1 : 0, t);
   // Kamera: Treppe hoch, rein, Blick nach hinten, kurz zum Cockpit, dann zum Tackle, dann zum Tablet
   const zT0 = L('kabine', 'Sitz 1A').start;
-  const steig = pfad([[0, 2.25, -13.05], [.9, 1.0, -13.05], [1.4, .1, -13.35], [tackle + .1, .1, -13.35], [tackle + .9, 0, -14.55], [zT0 - .9, 0, -14.55], [zT0 + .1, .05, -13.6]], lt);
+  const steig = pfad([[0, 2.25, -13.05], [.9, 1.0, -13.05], [1.5, .38, -13.75], [tackle + .1, .38, -13.75], [tackle + .5, .14, -14.35], [tackle + .9, .34, -15.0], [zT0 - .9, .34, -15.0], [zT0 - .4, .14, -14.35], [zT0 + .1, .05, -13.6]], lt);
   const boden = steig.x > TUER_X ? rampeH(steig.x) : 1.5;
   const pos = V3(steig.x, boden + 1.55 + Math.sin(steig.dist / .6 * Math.PI) * .03, steig.z);
   let ziel = V3(0, 2.9, -20);
-  if (lt < .9) ziel = V3(-1, 2.6, -13.05);
+  if (lt < .9) ziel = V3(.4, 2.75, -13.3).lerp(V3(0, 2.8, -16), smooth(.4, .9, lt));
   if (lt > zP.start - .2 && lt < zP.ende - .2) ziel = V3(.35, 2.3, -11.4);
   if (lt > tackle + .8 && lt < L('kabine', 'Wo ist').start) ziel = weltPos(gorilla.j.hips).add(V3(0, .1, 0));
   if (lt > zT.start - .3) ziel = sitz1A.clone().lerp(V3(0, 2.9, -16), hebt);
   schau(k, pos.add(wackel(t, nach > 0 && nach < .5 ? .03 : 0)), ziel);
   if (greift > 0 && hebt < 1) pov.setze({ modus: 'frei', t, zielR: k.localToWorld(V3(.25, -.4, -.35)).lerp(VF.tablet.position.clone().add(V3(.1, 0, .05)), greift), zielL: hebt > .3 ? VF.tablet.position.clone().add(V3(-.12, 0, 0)) : null });
-  else pov.setze({ modus: 'gewehr', t, lauf: lt < 1.4 ? .7 : .1, zielen: .55, lampe: 12 });
+  else pov.setze({ modus: 'gewehr', t, lauf: lt < 1.4 ? .7 : .1, zielen: .2, senken: lt > tackle ? .25 : 0, lampe: 12 });
   return { welt: VF, uhr: '05:33' };
 }
 
@@ -701,7 +726,7 @@ function s_twist(lt, t) {
   zeichneTablet(lt < .7 ? 0 : lt < L('twist', 'Wir sehen').start + .4 ? 1 : 2, t, lt);
   pov.setze({ modus: 'frei', t, zielL: VF.tablet.localToWorld(V3(-.14, -.02, 0)), zielR: VF.tablet.localToWorld(V3(.14, -.02, 0)) });
   const d = SZ('twist').d;
-  return { welt: VF, uhr: '05:34', ende: lt > d - 1.9 ? lt - (d - 1.9) : null };
+  return { welt: VF, uhr: '05:34', ende: lt > d - 3.0 ? lt - (d - 3.0) : null };
 }
 
 // ---------------------------------------------------------------- Hook
@@ -728,7 +753,10 @@ function zeigeUI(n, lt, r, t) {
   else ui.karte.style.opacity = 0;
   if (r.mitte) { ui.mitte.style.opacity = clamp(r.mitte.k * 5); ui.mitte.textContent = r.mitte.text; ui.mitte.style.transform = `scale(${.8 + .2 * easeBack(r.mitte.k / .3)})`; } else ui.mitte.style.opacity = 0;
   ui.titel.style.opacity = r.titel ? 1 : 0;
-  if (r.ende !== null && r.ende !== undefined) { ui.ende.style.opacity = clamp(r.ende * 3); ui.ende.querySelector('.berg').style.transform = `translateY(${(1 - easeOut(r.ende / .6)) * 80}px)`; }
+  if (r.ende !== null && r.ende !== undefined) { ui.ende.style.opacity = clamp(r.ende * 3); ui.ende.querySelector('.berg').style.transform = `translateY(${(1 - easeOut(r.ende / .6)) * 80}px)`;
+    const tip = (el, t0) => { const k = r.ende - t0; el.style.opacity = clamp(k * 4); el.style.transform = `scale(${k < 0 ? .5 : .8 + .2 * easeBack(k / .35) + .06 * Math.sin(r.ende * 9) * (k > .4 ? 1 : 0)})`; };
+    tip(ui.ende.querySelector('.like'), .7); tip(ui.ende.querySelector('.folgen'), 1.1);
+    ui.ende.querySelector('.like').classList.toggle('an', r.ende > 1.0); ui.ende.querySelector('.folgen').classList.toggle('an', r.ende > 1.5); }
   else ui.ende.style.opacity = 0;
 }
 const SZENEN = { hook: s_hook, hq: s_hq, dach: s_dach, flug: s_flug, abseilen: s_abseilen, tuer: s_tuer, kabine: s_kabine, twist: s_twist };
@@ -754,5 +782,5 @@ window.renderFrame = async (t) => {
   zeigeUI(s.n, lt, r, t);
   await new Promise(res => requestAnimationFrame(() => res()));
 };
-window.dauer = TL.dauer;
+window.dauer = TL.dauer; window.__VF = VF; window.__THREE = THREE;
 window.bereit = true;

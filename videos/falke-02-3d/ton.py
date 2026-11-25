@@ -210,13 +210,18 @@ M.impact(spreng, 1.0)
 M.groove(zug, st("kabine") + SZ["kabine"]["d"] - 1.5, 140, 3, [DM, BB, CD, DM], ["D", "A#", "C", "D"], cutoff_bass=700)
 k0 = st("kabine"); kd = SZ["kabine"]["d"]
 M.pad(k0 + kd - 1.5, DUNKEL, 1.9, .3, cutoff=700)
-M.pad(w0, DUNKEL, wd - 1.9, .32, cutoff=800)
+M.pad(w0, DUNKEL, wd - 3.0, .32, cutoff=800)
 M.stab(w0 + .8, DUNKEL, .6, d=.6)
 M.impact(w0 + .8, .6)
-e = w0 + wd - 1.9
-M.impact(e, .9); M.stab(e, DM, .7, d=.9); M.pad(e, DM + [("A", 4)], 1.9, .35, cutoff=1800, attack=.05)
+e = w0 + wd - 3.0
+M.impact(e, .9); M.stab(e, DM, .7, d=.9); M.pad(e, DM + [("A", 4)], 3.0, .35, cutoff=1800, attack=.05)
+M.groove(e + .2, e + 2.9, 140, 2, [DM, BB], ["D", "A#"], cutoff_bass=700)
+for s_ in TL["szenen"][1:]:
+    M.impact(s_["start"], .55)
 M.arp(e + .2, [("D", 5), ("F", 5), ("A", 5), ("D", 6)], .12, 12, .15)
-a = a / max(1e-9, np.max(np.abs(a))) * .62 + M.fertig(1.0) * .85
+for z_ in (.7, 1.1):
+    add(e + z_ + .05, .3 * np.sin(2 * np.pi * 1200 * ts(.15)) * np.exp(-18 * ts(.15)))   # Like-/Folgen-Pop
+a = a / max(1e-9, np.max(np.abs(a))) * .5 + M.fertig(1.0) * 1.25
 
 
 # ---------------------------------------------------------------- Stimmen
@@ -254,7 +259,7 @@ for z in TL["dialog"]:
     stimme[i:e2] += x[:e2 - i]
 if gef:
     huelle = lowpass(np.abs(stimme), 6) * 8
-    a = a * (1 - .45 * np.clip(huelle, 0, 1))
+    a = a * (1 - .3 * np.clip(huelle, 0, 1))
     a = a / max(1e-9, np.max(np.abs(a))) * .6 + stimme
 print(f"Stimmen gemischt: {gef}")
 a = a / max(1e-9, np.max(np.abs(a))) * .89

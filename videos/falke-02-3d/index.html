@@ -23,6 +23,10 @@ canvas{position:absolute;left:0;top:0;z-index:0}
 #ende h1{position:absolute;top:900px;width:100%;margin:0;color:#80ed99;font-size:110px}
 #ende h2{position:absolute;top:1040px;width:100%;margin:0;color:#fff;font-size:86px}
 #ende p{position:absolute;top:1190px;width:100%;margin:0;color:#ffd166;font-size:58px;font-weight:bold}
+#ende .like,#ende .folgen{position:absolute;top:1320px;width:360px;height:130px;border-radius:65px;background:rgba(255,255,255,.12);border:5px solid #fff;display:flex;align-items:center;justify-content:center;gap:18px;color:#fff;font:bold 56px 'DejaVu Sans',sans-serif;opacity:0}
+#ende .like{left:130px}#ende .folgen{left:590px}
+#ende svg{width:70px;height:70px;fill:#fff}
+#ende .like.an{background:#ff2a55;border-color:#ff2a55}#ende .folgen.an{background:#80ed99;border-color:#80ed99;color:#0b132b}#ende .folgen.an svg{fill:#0b132b}
 #zeitsprung{left:0;top:0;width:1080px;height:1920px;opacity:0}
 #zeitsprung .ziff{position:absolute;left:390px;top:640px;width:300px;height:300px;border-radius:50%;border:16px solid #fff;background:rgba(255,255,255,.08)}
 #zeitsprung .zeiger,#zeitsprung .std{position:absolute;left:146px;bottom:150px;width:10px;height:120px;background:#fff;transform-origin:50% 100%;border-radius:5px}
@@ -40,6 +44,8 @@ canvas{position:absolute;left:0;top:0;z-index:0}
 <div id="sub" class="ov"><div id="wer"></div><div id="txt"></div></div>
 <div id="zeitsprung" class="ov"><div class="ziff"><div class="std"></div><div class="zeiger"></div></div><b></b></div>
 <div id="ende" class="ov"><svg class="berg" viewBox="0 0 400 160" style="position:absolute;left:340px;top:700px;width:400px"><path d="M0 160 L120 30 L170 90 L240 10 L400 160 Z" fill="#dee2e6"/><path d="M100 52 L120 30 L140 52 L128 48 L120 58 L112 48 Z M222 30 L240 10 L258 30 Z" fill="#fff"/></svg>
-<h1>EINSATZ 03</h1><h2>DIE BERGHÜTTE</h2><p>Folgen für Teil 3!</p></div>
+<h1>EINSATZ 03</h1><h2>DIE BERGHÜTTE</h2><p>Teil 3 kommt bald!</p>
+<div class="like"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 5 6.4 5c2 0 3.4 1.1 4.1 2.3h3C14.2 6.1 15.6 5 17.6 5 21 5 23.1 8.4 21.6 11.8 19.5 16.4 12 21 12 21z"/></svg><span>LIKE</span></div>
+<div class="folgen"><svg viewBox="0 0 24 24"><path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z"/></svg><span>FOLGEN</span></div></div>
 <script type="module" src="./episode.js"></script>
 </body></html>

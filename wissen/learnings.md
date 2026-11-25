@@ -72,3 +72,8 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Zylinder liegen nach `rotation.x = π/2` entlang z – zum Plattdrücken dann `scale.z` nehmen, nicht `scale.y` (sonst wird er nur kürzer).
 - POV-Hände am Seil: Greifpunkte 0,35–0,6 m UNTER der Kamera wählen und Kamera auf die Rumpf-Seite des Seils setzen, sonst liegen Hände/Seil außerhalb des Bildes.
 - Neue Sprachzeilen ohne alte neu zu erzeugen: `stimmen/zuordnung.json` (Text → Datei); timeline.py und stimmen_erzeugen.py nutzen sie.
+- Jet-Nase als HALBkugel bauen: eine ganze, gestreckte Kugel ragt nach hinten in die Kabine und verdeckt das Cockpit (grauer Bildschirm).
+- Geparkte Flugzeuge mit Abstand zum Rollweg platzieren (Heck/Flügel nachrechnen) – sonst fährt der Jet durch sie hindurch.
+- Zugriff staffeln: jede Figur bekommt eigene Zeitfenster auf der Treppe (2 → 1 → 4 → Kamera), an der niedrigen Tür ducken.
+- Bei Dialog-Szenen in engen Räumen Kamera seitlich versetzen und Team an den Rand stellen, damit niemand Sprecher/Action verdeckt.
+- Endkarte mit LIKE + FOLGEN-Buttons (3 s) + „Teil 3 kommt bald“; Musik im Mix lauter (Musik 1,25 : Geräusche 0,5, Ducking 30 %).
