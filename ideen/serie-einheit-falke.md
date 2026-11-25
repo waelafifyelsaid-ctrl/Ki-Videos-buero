@@ -40,8 +40,8 @@ Regen + Nacht · Sommer + Hitze · Schnee · Sturm/Gewitter · Nebel. Baukasten:
 ## Folgen-Plan (Staffel 1 – „Der Fuchs")
 | # | Titel | Ort / Fahrzeug | Wetter | Kern-Action | Cliffhanger |
 |---|---|---|---|---|---|
-| 01 | Lagerhaus 7 | Hafen, Van | Regen, Nacht | Türsprengung, Blendgranate, Pier-Verfolgung | Falscher Fuchs – der echte fliegt um 6 |
-| 02 | Das Flugzeug | Flughafen-Vorfeld, Hubschrauber | Morgennebel | Flugzeug am Rollen stoppen, Kabine stürmen | Fuchs per Fallschirm weg – Ziel: Berge |
+| 01 | Lagerhaus 7 ✅ | Hafen, Van | Regen, Nacht | Türsprengung, Blendgranate, Pier-Verfolgung | Falscher Fuchs – der echte fliegt um 6 |
+| 02 | Das Flugzeug ✅ | Flughafen-Vorfeld, Hubschrauber | Morgennebel | Jet am Rollen stoppen, Tür sprengen, Kabine stürmen | Nur ein Tablet: Videobotschaft vom Fuchs – „Wir sehen uns in den Bergen“ |
 | 03 | Die Berghütte | Alpen, Hubschrauber + Abseilen | Schnee, Sturm | Geiselbefreiung in der Hütte | Geisel ist Fuchs' Partnerin |
 | 04 | Autobahn | Mobile Festnahme, 3 Fahrzeuge | Sommer, Hitze | Fahrzeug einkeilen, Festnahme aus dem Auto | Navi zeigt: Hafen im Ausland |
 | 05 | Das Schiff | Containerschiff, Schlauchboot | Gewitter | Schiff entern, Laderaum sichern | Fuchs entkommt mit Mini-U-Boot |

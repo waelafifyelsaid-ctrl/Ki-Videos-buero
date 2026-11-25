@@ -64,3 +64,5 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Piper-Ersatzstimmen (lokal, gratis) klingen zu künstlich – Nutzer lehnt sie ab. ElevenLabs-Credits sind knapp.
   Plan B: Azure Speech Free-Tier (offiziell, 500k Zeichen/Monat, ~20 deutsche Neural-Stimmen). Inoffizielle Edge-Vorlese-Zugänge nicht nutzen.
 - Hintergrundmusik selbst komponiert per Code (`tools/musik.py`, d-Moll, pro Szene eigene Stimmung, Stille nach der Sprengung, Action ab „ZUGRIFF!“). Nur Ton neu bauen: `nur_ton.sh` (kein neues Rendern nötig).
+- Einsatz 02: Kabinen in Flugzeugen sind eng – Sitzlehnen verdecken schnell die Sicht. Kamera in die Gangmitte stellen.
+- Stimmen: laute Zeilen (schreien/rufen) gleich mit eleven_multilingual_v2, Rest mit v3 „Natural“ + festem Seed → Figuren klingen konstant.
