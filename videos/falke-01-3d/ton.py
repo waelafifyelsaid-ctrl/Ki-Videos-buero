@@ -294,7 +294,7 @@ M.stab(e0, DM, .7, d=.9)
 M.pad(e0, DM + [("A", 4)], 1.9, .35, cutoff=1800, attack=.05)
 M.arp(e0 + .2, [("D", 5), ("F", 5), ("A", 5), ("D", 6)], .12, 12, .15)
 musik_spur = M.fertig(1.0)
-a = a / max(1e-9, np.max(np.abs(a))) * .75 + musik_spur * .42
+a = a / max(1e-9, np.max(np.abs(a))) * .62 + musik_spur * .85
 print("Musik gemischt")
 
 
@@ -330,7 +330,7 @@ for z in TL["dialog"]:
     stimme[i:e] += x[:e - i]
 if gefunden:
     huelle = lowpass(np.abs(stimme), 6) * 8
-    a = a * (1 - .55 * np.clip(huelle, 0, 1))          # Hintergrund leiser, solange jemand spricht
+    a = a * (1 - .45 * np.clip(huelle, 0, 1))          # Hintergrund leiser, solange jemand spricht
     a = a / max(1e-9, np.max(np.abs(a))) * .6 + stimme
 print(f"Stimmen gemischt: {gefunden}")
 a = a / max(1e-9, np.max(np.abs(a))) * .89

@@ -838,7 +838,7 @@ function zeigeUI(n, lt, r, t) {
   else ui.mitte.style.opacity = 0;
   ui.titel.style.opacity = r.titel ? 1 : 0;
   ui.tags.innerHTML = (r.tags ?? []).map(g => {
-    const x = clamp(g.p[0], 260, W - 260), y = clamp(g.p[1] - 120, 330, 1200), s = .7 + .3 * easeBack(g.k / .25);
+    const x = clamp(g.p[0], 260, W - 300), y = clamp(g.p[1] - 120, 480, 1180), s = .7 + .3 * easeBack(g.k / .25);
     return `<div class="tag" style="left:${x}px;top:${y}px;transform:translate(-50%,-50%) scale(${s});border-color:${g.f}"><b style="color:${g.f}">${g.a}</b><span>${g.b}</span></div>`;
   }).join('');
   if (r.info !== null && r.info !== undefined) { ui.info.style.opacity = clamp(r.info * 4) ; ui.info.style.transform = `scale(${.85 + .15 * easeBack(r.info / .3)})`; }

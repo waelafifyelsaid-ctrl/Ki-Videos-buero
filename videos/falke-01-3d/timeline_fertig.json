@@ -59,7 +59,7 @@
   },
   {
    "n": "hq",
-   "d": 11.113,
+   "d": 11.374,
    "tr": "uhr",
    "trd": 1.0,
    "karte": "6 STUNDEN VORHER",
@@ -68,11 +68,11 @@
   },
   {
    "n": "briefing",
-   "d": 15.087,
+   "d": 14.643,
    "tr": "whip",
    "trd": 0.45,
    "verzug": 0.0,
-   "start": 15.113
+   "start": 15.374
   },
   {
    "n": "spind",
@@ -80,7 +80,7 @@
    "tr": "zoom",
    "trd": 0.6,
    "verzug": 0.0,
-   "start": 30.2
+   "start": 30.017
   },
   {
    "n": "van",
@@ -88,19 +88,19 @@
    "tr": "schwarz",
    "trd": 0.7,
    "verzug": 0.0,
-   "start": 37.2
+   "start": 37.017
   },
   {
    "n": "anschleichen",
-   "d": 10.801,
+   "d": 10.67,
    "tr": "mix",
    "trd": 0.6,
    "verzug": 0.0,
-   "start": 54.631
+   "start": 54.448
   },
   {
    "n": "zugriff",
-   "d": 12.297,
+   "d": 12.04,
    "sync": {
     "zeile": "Auf mein Zeichen",
     "ereignis": 5.1,
@@ -112,19 +112,19 @@
      4.46
     ]
    },
-   "verzug": 2.697,
+   "verzug": 2.44,
    "marken": [
-    4.517,
-    5.647,
-    7.017
+    4.26,
+    5.39,
+    6.76
    ],
-   "start": 65.432
+   "start": 65.118
   },
   {
    "n": "innen",
-   "d": 11.177,
+   "d": 11.005,
    "verzug": 0.0,
-   "start": 77.729
+   "start": 77.158
   },
   {
    "n": "verfolgung",
@@ -132,7 +132,7 @@
    "tr": "whip",
    "trd": 0.45,
    "verzug": 0.0,
-   "start": 88.906
+   "start": 88.163
   },
   {
    "n": "twist",
@@ -140,7 +140,7 @@
    "tr": "schwarz",
    "trd": 0.7,
    "verzug": 0.0,
-   "start": 109.104
+   "start": 108.361
   }
  ],
  "dialog": [
@@ -181,7 +181,7 @@
    "id": "04_hq_1",
    "szene": "hq",
    "start": 9.0,
-   "ende": 10.763,
+   "ende": 11.024,
    "wer": "1",
    "text": "Briefing. Sofort.",
    "funk": false,
@@ -203,7 +203,7 @@
    "id": "06_briefing_Z",
    "szene": "briefing",
    "start": 4.277,
-   "ende": 8.234,
+   "ende": 7.79,
    "wer": "Z",
    "text": "Zielperson: der Fuchs. Hat immer einen Plan B.",
    "funk": false,
@@ -213,35 +213,35 @@
   {
    "id": "07_briefing_6",
    "szene": "briefing",
-   "start": 8.384,
-   "ende": 10.747,
+   "start": 7.94,
+   "ende": 10.303,
    "wer": "6",
    "text": "Und was ist UNSER Plan B?",
    "funk": false,
    "datei": "07_briefing_6.mp3",
-   "verschoben": 1.98
+   "verschoben": 1.54
   },
   {
    "id": "08_briefing_1",
    "szene": "briefing",
-   "start": 10.897,
-   "ende": 12.197,
+   "start": 10.453,
+   "ende": 11.753,
    "wer": "1",
    "text": "Zwei.",
    "funk": false,
    "datei": "08_briefing_1.mp3",
-   "verschoben": 2.6
+   "verschoben": 2.15
   },
   {
    "id": "09_briefing_2",
    "szene": "briefing",
-   "start": 12.347,
-   "ende": 14.737,
+   "start": 11.903,
+   "ende": 14.293,
    "wer": "2",
    "text": "Ich bin Plan A bis Z.",
    "funk": false,
    "datei": "09_briefing_2.mp3",
-   "verschoben": 2.65
+   "verschoben": 2.2
   },
   {
    "id": "10_spind_4",
@@ -269,7 +269,7 @@
    "id": "12_spind_1",
    "szene": "spind",
    "start": 5.2,
-   "ende": 6.571,
+   "ende": 6.5,
    "wer": "1",
    "text": "Abfahrt!",
    "funk": false,
@@ -357,7 +357,7 @@
    "id": "20_anschleichen_2",
    "szene": "anschleichen",
    "start": 8.401,
-   "ende": 10.451,
+   "ende": 10.32,
    "wer": "2",
    "text": "Ich bin IMMER leise.",
    "funk": false,
@@ -368,7 +368,7 @@
    "id": "21_zugriff_2",
    "szene": "zugriff",
    "start": 0.2,
-   "ende": 2.407,
+   "ende": 1.806,
    "wer": "2",
    "text": "Ladung gesetzt.",
    "funk": false,
@@ -378,35 +378,35 @@
   {
    "id": "22_zugriff_1",
    "szene": "zugriff",
-   "start": 2.557,
-   "ende": 7.977,
+   "start": 2.3,
+   "ende": 7.72,
    "wer": "1",
    "text": "Auf mein Zeichen. Drei … zwei … eins …",
    "funk": false,
    "datei": "22_zugriff_1.mp3",
-   "verschoben": 0.26
+   "verschoben": 0.0
   },
   {
    "id": "23_zugriff_4",
    "szene": "zugriff",
-   "start": 8.127,
-   "ende": 9.524,
+   "start": 7.87,
+   "ende": 9.319,
    "wer": "4",
    "text": "Flash raus!",
    "funk": false,
    "datei": "23_zugriff_4.mp3",
-   "verschoben": 2.63
+   "verschoben": 2.37
   },
   {
    "id": "24_zugriff_1",
    "szene": "zugriff",
-   "start": 9.674,
-   "ende": 11.332,
+   "start": 9.469,
+   "ende": 10.769,
    "wer": "1",
    "text": "ZUGRIFF!",
    "funk": false,
    "datei": "24_zugriff_1.mp3",
-   "verschoben": 2.47
+   "verschoben": 2.27
   },
   {
    "id": "25_innen_4",
@@ -423,7 +423,7 @@
    "id": "26_innen_7",
    "szene": "innen",
    "start": 3.462,
-   "ende": 6.401,
+   "ende": 6.228,
    "wer": "7",
    "text": "Orange Jacke! Hinterausgang – er ist raus!",
    "funk": true,
@@ -433,24 +433,24 @@
   {
    "id": "27_innen_2",
    "szene": "innen",
-   "start": 6.551,
-   "ende": 8.549,
+   "start": 6.378,
+   "ende": 8.35,
    "wer": "2",
    "text": "Hingefallen. Komisch.",
    "funk": false,
    "datei": "27_innen_2.mp3",
-   "verschoben": 0.45
+   "verschoben": 0.28
   },
   {
    "id": "28_innen_1",
    "szene": "innen",
-   "start": 8.699,
-   "ende": 10.827,
+   "start": 8.5,
+   "ende": 10.655,
    "wer": "1",
    "text": "Sechs – hinterher!",
    "funk": false,
    "datei": "28_innen_1.mp3",
-   "verschoben": 0.6
+   "verschoben": 0.4
   },
   {
    "id": "29_verfolgung_6",
@@ -467,7 +467,7 @@
    "id": "30_verfolgung_F",
    "szene": "verfolgung",
    "start": 3.2,
-   "ende": 6.269,
+   "ende": 5.15,
    "wer": "F",
    "text": "Fang mich doch, Anfänger!",
    "funk": false,
@@ -574,5 +574,5 @@
    "verschoben": 4.8
   }
  ],
- "dauer": 127.628
+ "dauer": 126.885
 }

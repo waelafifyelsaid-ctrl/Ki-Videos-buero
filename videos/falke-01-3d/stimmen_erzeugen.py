@@ -64,8 +64,11 @@ for z in zeilen:
         text = f"[{TAGS.get(tag, tag)}] " + text
     st, sim, sty = EINSTELLUNG[z["rolle"]]
     stimme = os.environ.get(f"ELEVENLABS_STIMME_{z['rolle']}", STANDARD[z["rolle"]])
+    if v3:   # v3: nur 0.0 / 0.5 / 1.0 – „Natural“ (0.5) hält die Stimme stabil, fester Seed pro Figur
+        st = 0.5
     daten = {"text": text, "model_id": modell, **({"language_code": "de"} if v3 else {}),
-             "voice_settings": {"stability": st, "similarity_boost": sim, "style": sty, "use_speaker_boost": True}}
+             "seed": 1000 + "61247ZF".index(z["rolle"]) * 17,
+             "voice_settings": {"stability": st, "similarity_boost": .9, "style": sty, "use_speaker_boost": True}}
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{stimme}?output_format=mp3_44100_128"
     kopf = {"Content-Type": "application/json"}
     if key:
