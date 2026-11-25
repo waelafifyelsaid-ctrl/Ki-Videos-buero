@@ -72,7 +72,7 @@ export class Post {
   fertig(einstellungen = {}) {
     const u = this.u;
     const def = { modus: 0, p: 0, blitz: 0, sat: 1, korn: 0.045, wolb: 0.09, vign: 0.55, spulen: 0, schwarz: 0, rot: 0 };
-    for (const [k, v] of Object.entries({ ...def, ...einstellungen })) if (u[k]) u[k].value = v;
+    for (const [k, v] of Object.entries({ ...def, ...einstellungen })) if (u[k] && k !== 'fokus') u[k].value = v;
     if (einstellungen.fokus) u.fokus.value.set(einstellungen.fokus[0], einstellungen.fokus[1]);
     this.r.setRenderTarget(null);
     this.r.render(this.szene, this.cam);
