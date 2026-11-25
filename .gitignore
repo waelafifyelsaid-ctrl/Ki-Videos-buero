@@ -4,3 +4,4 @@ videos/*/tmp/
 .DS_Store
 __pycache__/
 node_modules/
+tools/piper_stimmen/
