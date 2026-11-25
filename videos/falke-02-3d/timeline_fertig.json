@@ -1,0 +1,423 @@
+{
+ "titel": "EINHEIT FALKE – Einsatz 02: Das Flugzeug (3D, POV)",
+ "sprecher": {
+  "6": [
+   "6 · DU",
+   "#80ed99"
+  ],
+  "1": [
+   "1",
+   "#ffd166"
+  ],
+  "2": [
+   "2",
+   "#ef476f"
+  ],
+  "4": [
+   "4",
+   "#c77dff"
+  ],
+  "7v": [
+   "7",
+   "#4cc9f0"
+  ],
+  "1f": [
+   "1 · FUNK",
+   "#ffd166"
+  ],
+  "4f": [
+   "4 · FUNK",
+   "#c77dff"
+  ],
+  "7f": [
+   "7 · FUNK",
+   "#4cc9f0"
+  ],
+  "Z": [
+   "ZENTRALE",
+   "#e9ecef"
+  ],
+  "P": [
+   "PILOT",
+   "#ced4da"
+  ],
+  "X": [
+   "FUCHS · VIDEO",
+   "#ff9f1c"
+  ]
+ },
+ "szenen": [
+  {
+   "n": "hook",
+   "d": 4.0,
+   "verzug": 0.0,
+   "start": 0.0
+  },
+  {
+   "n": "hq",
+   "d": 13.477,
+   "tr": "uhr",
+   "trd": 1.0,
+   "karte": "2 STUNDEN VORHER",
+   "verzug": 0.0,
+   "start": 4.0
+  },
+  {
+   "n": "heli",
+   "d": 11.71,
+   "tr": "whip",
+   "trd": 0.45,
+   "verzug": 0.0,
+   "start": 17.477
+  },
+  {
+   "n": "landung",
+   "d": 7.2,
+   "tr": "glitch",
+   "trd": 0.45,
+   "verzug": 0.0,
+   "start": 29.187
+  },
+  {
+   "n": "tuer",
+   "d": 10.915,
+   "tr": "mix",
+   "trd": 0.5,
+   "sync": {
+    "zeile": "Drei",
+    "ereignis": 4.9,
+    "ab": 2.5,
+    "basis_d": 10.4,
+    "marken": [
+     0.0,
+     1.13,
+     2.25
+    ]
+   },
+   "verzug": 0.515,
+   "marken": [
+    2.5,
+    3.63,
+    4.75
+   ],
+   "start": 36.387
+  },
+  {
+   "n": "kabine",
+   "d": 16.507,
+   "verzug": 0.0,
+   "start": 47.302
+  },
+  {
+   "n": "twist",
+   "d": 11.334,
+   "tr": "zoom",
+   "trd": 0.6,
+   "verzug": 0.0,
+   "start": 63.809
+  }
+ ],
+ "dialog": [
+  {
+   "id": "01_hook_6",
+   "szene": "hook",
+   "start": 0.7,
+   "ende": 3.011,
+   "wer": "6",
+   "text": "Tja. Die Tür war mal zu.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "01_hook_6.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "02_hq_Z",
+   "szene": "hq",
+   "start": 0.4,
+   "ende": 6.813,
+   "wer": "Z",
+   "text": "Flug FX-77. Privatjet, Vorfeld Ost. Start in zwanzig Minuten.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "02_hq_Z.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "03_hq_1",
+   "szene": "hq",
+   "start": 6.963,
+   "ende": 8.913,
+   "wer": "1",
+   "text": "Dann sind wir in zehn da.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "03_hq_1.mp3",
+   "verschoben": 2.76
+  },
+  {
+   "id": "04_hq_2",
+   "szene": "hq",
+   "start": 9.063,
+   "ende": 11.397,
+   "wer": "2",
+   "text": "Gibt's im Hubschrauber Frühstück?",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "04_hq_2.mp3",
+   "verschoben": 2.96
+  },
+  {
+   "id": "05_hq_4",
+   "szene": "hq",
+   "start": 11.547,
+   "ende": 13.127,
+   "wer": "4",
+   "text": "Nein.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "05_hq_4.mp3",
+   "verschoben": 3.55
+  },
+  {
+   "id": "06_heli_7v",
+   "szene": "heli",
+   "start": 0.6,
+   "ende": 2.18,
+   "wer": "7v",
+   "text": "Ich hasse Höhe.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "06_heli_7v.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "07_heli_6",
+   "szene": "heli",
+   "start": 2.33,
+   "ende": 4.615,
+   "wer": "6",
+   "text": "Sieben, du hasst ALLES.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "07_heli_6.mp3",
+   "verschoben": 0.33
+  },
+  {
+   "id": "08_heli_7v",
+   "szene": "heli",
+   "start": 4.765,
+   "ende": 6.528,
+   "wer": "7v",
+   "text": "Dich zum Beispiel.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "08_heli_7v.mp3",
+   "verschoben": 0.97
+  },
+  {
+   "id": "09_heli_4f",
+   "szene": "heli",
+   "start": 6.678,
+   "ende": 9.068,
+   "wer": "4f",
+   "text": "Jet rollt! Er will zur Startbahn!",
+   "funk": true,
+   "lautsprecher": false,
+   "datei": "09_heli_4f.mp3",
+   "verschoben": 1.28
+  },
+  {
+   "id": "10_heli_1f",
+   "szene": "heli",
+   "start": 9.218,
+   "ende": 11.36,
+   "wer": "1f",
+   "text": "Pilot, setz uns direkt davor!",
+   "funk": true,
+   "lautsprecher": false,
+   "datei": "10_heli_1f.mp3",
+   "verschoben": 1.42
+  },
+  {
+   "id": "11_landung_1",
+   "szene": "landung",
+   "start": 4.6,
+   "ende": 6.166,
+   "wer": "1",
+   "text": "Raus! Raus! Raus!",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "11_landung_1.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "12_tuer_2",
+   "szene": "tuer",
+   "start": 0.4,
+   "ende": 1.87,
+   "wer": "2",
+   "text": "Ladung gesetzt.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "12_tuer_2.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "13_tuer_1",
+   "szene": "tuer",
+   "start": 2.5,
+   "ende": 5.595,
+   "wer": "1",
+   "text": "Drei … zwei … eins …",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "13_tuer_1.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "14_tuer_2",
+   "szene": "tuer",
+   "start": 6.6,
+   "ende": 8.022,
+   "wer": "2",
+   "text": "Tür ist offen.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "14_tuer_2.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "15_tuer_1",
+   "szene": "tuer",
+   "start": 8.172,
+   "ende": 9.472,
+   "wer": "1",
+   "text": "ZUGRIFF!",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "15_tuer_1.mp3",
+   "verschoben": 0.17
+  },
+  {
+   "id": "16_kabine_4",
+   "szene": "kabine",
+   "start": 0.6,
+   "ende": 2.441,
+   "wer": "4",
+   "text": "POLIZEI! Hände hoch!",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "16_kabine_4.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "17_kabine_P",
+   "szene": "kabine",
+   "start": 2.591,
+   "ende": 5.165,
+   "wer": "P",
+   "text": "Nicht schießen! Ich bin nur der Pilot!",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "17_kabine_P.mp3",
+   "verschoben": 0.19
+  },
+  {
+   "id": "18_kabine_6",
+   "szene": "kabine",
+   "start": 5.8,
+   "ende": 8.582,
+   "wer": "6",
+   "text": "Gute Landung, Kleiderschrank.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "18_kabine_6.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "19_kabine_2",
+   "szene": "kabine",
+   "start": 8.732,
+   "ende": 10.346,
+   "wer": "2",
+   "text": "Bitte anschnallen.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "19_kabine_2.mp3",
+   "verschoben": 1.33
+  },
+  {
+   "id": "20_kabine_6",
+   "szene": "kabine",
+   "start": 10.496,
+   "ende": 12.546,
+   "wer": "6",
+   "text": "Wo ist der Fuchs?",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "20_kabine_6.mp3",
+   "verschoben": 1.7
+  },
+  {
+   "id": "21_kabine_7f",
+   "szene": "kabine",
+   "start": 12.696,
+   "ende": 16.157,
+   "wer": "7f",
+   "text": "Sitz 1A. Da liegt nur ein Tablet.",
+   "funk": true,
+   "lautsprecher": false,
+   "datei": "21_kabine_7f.mp3",
+   "verschoben": 2.7
+  },
+  {
+   "id": "22_twist_X",
+   "szene": "twist",
+   "start": 0.8,
+   "ende": 2.458,
+   "wer": "X",
+   "text": "Zu langsam, Falke.",
+   "funk": false,
+   "lautsprecher": true,
+   "datei": "22_twist_X.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "23_twist_X",
+   "szene": "twist",
+   "start": 2.608,
+   "ende": 4.702,
+   "wer": "X",
+   "text": "Wir sehen uns in den Bergen.",
+   "funk": false,
+   "lautsprecher": true,
+   "datei": "23_twist_X.mp3",
+   "verschoben": 0.01
+  },
+  {
+   "id": "24_twist_6",
+   "szene": "twist",
+   "start": 5.2,
+   "ende": 7.224,
+   "wer": "6",
+   "text": "Ich hasse Berge.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "24_twist_6.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "25_twist_2",
+   "szene": "twist",
+   "start": 7.374,
+   "ende": 9.084,
+   "wer": "2",
+   "text": "Gibt's da Frühstück?",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "25_twist_2.mp3",
+   "verschoben": 0.57
+  }
+ ],
+ "dauer": 75.143
+}

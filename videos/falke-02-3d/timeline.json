@@ -1,0 +1,254 @@
+{
+ "titel": "EINHEIT FALKE – Einsatz 02: Das Flugzeug (3D, POV)",
+ "sprecher": {
+  "6": [
+   "6 · DU",
+   "#80ed99"
+  ],
+  "1": [
+   "1",
+   "#ffd166"
+  ],
+  "2": [
+   "2",
+   "#ef476f"
+  ],
+  "4": [
+   "4",
+   "#c77dff"
+  ],
+  "7v": [
+   "7",
+   "#4cc9f0"
+  ],
+  "1f": [
+   "1 · FUNK",
+   "#ffd166"
+  ],
+  "4f": [
+   "4 · FUNK",
+   "#c77dff"
+  ],
+  "7f": [
+   "7 · FUNK",
+   "#4cc9f0"
+  ],
+  "Z": [
+   "ZENTRALE",
+   "#e9ecef"
+  ],
+  "P": [
+   "PILOT",
+   "#ced4da"
+  ],
+  "X": [
+   "FUCHS · VIDEO",
+   "#ff9f1c"
+  ]
+ },
+ "szenen": [
+  {
+   "n": "hook",
+   "d": 4.0
+  },
+  {
+   "n": "hq",
+   "d": 9.0,
+   "tr": "uhr",
+   "trd": 1.0,
+   "karte": "2 STUNDEN VORHER"
+  },
+  {
+   "n": "heli",
+   "d": 10.0,
+   "tr": "whip",
+   "trd": 0.45
+  },
+  {
+   "n": "landung",
+   "d": 7.2,
+   "tr": "glitch",
+   "trd": 0.45
+  },
+  {
+   "n": "tuer",
+   "d": 10.4,
+   "tr": "mix",
+   "trd": 0.5,
+   "sync": {
+    "zeile": "Drei",
+    "ereignis": 4.9,
+    "ab": 2.5,
+    "basis_d": 10.4,
+    "marken": [
+     0.0,
+     1.13,
+     2.25
+    ]
+   }
+  },
+  {
+   "n": "kabine",
+   "d": 12.0
+  },
+  {
+   "n": "twist",
+   "d": 10.5,
+   "tr": "zoom",
+   "trd": 0.6
+  }
+ ],
+ "dialog": [
+  [
+   "hook",
+   0.7,
+   "6",
+   "Tja. Die Tür war mal zu."
+  ],
+  [
+   "hq",
+   0.4,
+   "Z",
+   "Flug FX-77. Privatjet, Vorfeld Ost. Start in zwanzig Minuten."
+  ],
+  [
+   "hq",
+   4.2,
+   "1",
+   "Dann sind wir in zehn da."
+  ],
+  [
+   "hq",
+   6.1,
+   "2",
+   "Gibt's im Hubschrauber Frühstück?"
+  ],
+  [
+   "hq",
+   8.0,
+   "4",
+   "Nein."
+  ],
+  [
+   "heli",
+   0.6,
+   "7v",
+   "Ich hasse Höhe."
+  ],
+  [
+   "heli",
+   2.0,
+   "6",
+   "Sieben, du hasst ALLES."
+  ],
+  [
+   "heli",
+   3.8,
+   "7v",
+   "Dich zum Beispiel."
+  ],
+  [
+   "heli",
+   5.4,
+   "4f",
+   "Jet rollt! Er will zur Startbahn!"
+  ],
+  [
+   "heli",
+   7.8,
+   "1f",
+   "Pilot, setz uns direkt davor!"
+  ],
+  [
+   "landung",
+   4.6,
+   "1",
+   "Raus! Raus! Raus!"
+  ],
+  [
+   "tuer",
+   0.4,
+   "2",
+   "Ladung gesetzt."
+  ],
+  [
+   "tuer",
+   2.5,
+   "1",
+   "Drei … zwei … eins …"
+  ],
+  [
+   "tuer",
+   6.6,
+   "2",
+   "Tür ist offen."
+  ],
+  [
+   "tuer",
+   8.0,
+   "1",
+   "ZUGRIFF!"
+  ],
+  [
+   "kabine",
+   0.6,
+   "4",
+   "POLIZEI! Hände hoch!"
+  ],
+  [
+   "kabine",
+   2.4,
+   "P",
+   "Nicht schießen! Ich bin nur der Pilot!"
+  ],
+  [
+   "kabine",
+   5.8,
+   "6",
+   "Gute Landung, Kleiderschrank."
+  ],
+  [
+   "kabine",
+   7.4,
+   "2",
+   "Bitte anschnallen."
+  ],
+  [
+   "kabine",
+   8.8,
+   "6",
+   "Wo ist der Fuchs?"
+  ],
+  [
+   "kabine",
+   10.0,
+   "7f",
+   "Sitz 1A. Da liegt nur ein Tablet."
+  ],
+  [
+   "twist",
+   0.8,
+   "X",
+   "Zu langsam, Falke."
+  ],
+  [
+   "twist",
+   2.6,
+   "X",
+   "Wir sehen uns in den Bergen."
+  ],
+  [
+   "twist",
+   5.2,
+   "6",
+   "Ich hasse Berge."
+  ],
+  [
+   "twist",
+   6.8,
+   "2",
+   "Gibt's da Frühstück?"
+  ]
+ ],
+ "ende": 1.9
+}

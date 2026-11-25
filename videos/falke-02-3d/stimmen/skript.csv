@@ -1,0 +1,26 @@
+id;rolle;funk;text_v3;text_ohne_tags;regie;zeit_im_video
+01_hook_6;6;nein;[trocken] Tja. Die Tür war mal zu.;Tja. Die Tür war mal zu.;;0:00.7
+02_hq_Z;Z;nein;[ruhig] Flug F X sieben sieben. Privatjet, Vorfeld Ost. Start in zwanzig Minuten.;Flug F X sieben sieben. Privatjet, Vorfeld Ost. Start in zwanzig Minuten.;;0:04.4
+03_hq_1;1;nein;[ruhig] Dann sind wir in zehn da.;Dann sind wir in zehn da.;;0:08.2
+04_hq_2;2;nein;[hungrig] Gibt's im Hubschrauber Frühstück?;Gibt's im Hubschrauber Frühstück?;;0:10.3
+05_hq_4;4;nein;[trocken] Nein.;Nein.;;0:12.8
+06_heli_7v;7;nein;[nervös] Ich hasse Höhe.;Ich hasse Höhe.;;0:15.1
+07_heli_6;6;nein;[spöttisch] Sieben, du hasst ALLES.;Sieben, du hasst ALLES.;;0:16.7
+08_heli_7v;7;nein;[genervt] Dich zum Beispiel.;Dich zum Beispiel.;;0:18.7
+09_heli_4f;4;ja;[aufgeregt] Jet rollt! Er will zur Startbahn!;Jet rollt! Er will zur Startbahn!;;0:20.4
+10_heli_1f;1;ja;[ruft] Pilot, setz uns direkt davor!;Pilot, setz uns direkt davor!;;0:22.9
+11_landung_1;1;nein;[schreit] Raus! Raus! Raus!;Raus! Raus! Raus!;;0:30.0
+12_tuer_2;2;nein;[flüsternd] Ladung gesetzt.;Ladung gesetzt.;;0:33.0
+13_tuer_1;1;nein;[flüsternd] Drei … zwei … eins …;Drei … zwei … eins …;;0:35.1
+14_tuer_2;2;nein;[trocken] Tür ist offen.;Tür ist offen.;;0:39.2
+15_tuer_1;1;nein;[schreit] ZUGRIFF!;ZUGRIFF!;;0:40.8
+16_kabine_4;4;nein;[schreit] POLIZEI! Hände hoch!;POLIZEI! Hände hoch!;;0:43.6
+17_kabine_P;P;nein;[panisch] Nicht schießen! Ich bin nur der Pilot!;Nicht schießen! Ich bin nur der Pilot!;;0:45.5
+18_kabine_6;6;nein;[grinsend] Gute Landung, Kleiderschrank.;Gute Landung, Kleiderschrank.;;0:48.8
+19_kabine_2;2;nein;[trocken] Bitte anschnallen.;Bitte anschnallen.;;0:51.1
+20_kabine_6;6;nein;[ernst] Wo ist der Fuchs?;Wo ist der Fuchs?;;0:52.9
+21_kabine_7f;7;ja;[nervös] Sitz eins A. Da liegt nur ein Tablet.;Sitz eins A. Da liegt nur ein Tablet.;;0:54.6
+22_twist_X;X;nein;[kalt] Zu langsam, Falke.;Zu langsam, Falke.;;0:58.1
+23_twist_X;X;nein;[kalt] Wir sehen uns in den Bergen.;Wir sehen uns in den Bergen.;;0:59.9
+24_twist_6;6;nein;[kleinlaut] Ich hasse Berge.;Ich hasse Berge.;;1:02.5
+25_twist_2;2;nein;[hungrig] Gibt's da Frühstück?;Gibt's da Frühstück?;;1:04.1
