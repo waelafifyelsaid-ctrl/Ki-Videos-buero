@@ -50,6 +50,8 @@ function zeile(n, lt) {
   for (const z of TL.dialog) if (z.szene === n && lt >= z.start && lt < z.ende) a = z;
   return a;
 }
+// Zeile über ihren Textanfang finden (Start/Ende in Szenenzeit) – Animationen hängen an echten Sprechzeiten
+const L = (n, anfang) => TL.dialog.find(z => z.szene === n && z.text.startsWith(anfang));
 const redet = (n, lt, wer) => { const z = zeile(n, lt); return z && (z.wer === wer || z.wer === wer + 'v') ? 0.35 + 0.5 * Math.abs(Math.sin(lt * 17)) : 0; };
 
 // ---------------------------------------------------------------- Figuren-Fabrik
@@ -106,14 +108,14 @@ function zeichneSchirm(modus, lt, t) {
     for (let x = 120; x < w; x += 170) { g.fillStyle = '#a8dadc'; g.fillRect(x, 560, 50, 160); }
     const p = (lt * 1.2) % 1; g.strokeStyle = `rgba(255,60,70,${1 - p})`; g.lineWidth = 12; g.beginPath(); g.arc(455, 395, 130 + 80 * p, 0, Math.PI * 2); g.stroke();
     g.fillStyle = '#fff'; g.font = 'bold 64px DejaVu Sans'; g.textAlign = 'left'; g.fillText('HAFEN NORD · LAGERHAUS 7', 60, 110);
-    if (lt > 3.4) {
-      const k = clamp((lt - 3.4) / .4); g.globalAlpha = k;
+    if (lt > L('briefing', 'Zielperson').start) {
+      const k = clamp((lt - L('briefing', 'Zielperson').start) / .4); g.globalAlpha = k;
       g.fillStyle = '#f1faee'; g.fillRect(1080, 150, 440, 560);
       g.fillStyle = '#343a40'; g.beginPath(); g.arc(1300, 330, 110, 0, Math.PI * 2); g.fill(); g.fillRect(1170, 440, 260, 180);
       g.fillStyle = '#ff9f1c'; g.font = 'bold 150px DejaVu Sans'; g.textAlign = 'center'; g.fillText('?', 1300, 385);
       g.fillStyle = '#e63946'; g.font = 'bold 56px DejaVu Sans'; g.fillText('„DER FUCHS“', 1300, 680); g.globalAlpha = 1;
     }
-    if (lt > 8.3) { g.fillStyle = 'rgba(0,0,0,.7)'; g.fillRect(0, 0, w, h); g.fillStyle = '#ef476f'; g.font = 'bold 120px DejaVu Sans'; g.textAlign = 'center';
+    if (lt > L('briefing', 'Zwei.').start) { g.fillStyle = 'rgba(0,0,0,.7)'; g.fillRect(0, 0, w, h); g.fillStyle = '#ef476f'; g.font = 'bold 120px DejaVu Sans'; g.textAlign = 'center';
       g.fillText('PLAN B:', w / 2, 360); g.font = 'bold 300px DejaVu Sans'; g.fillText('2', w / 2, 700); }
   }
   HQ.hq.schirm.tex.needsUpdate = true;
@@ -182,8 +184,9 @@ function s_briefing(lt, t) {
   chefin.pose({ ...stehPose(t), kopf: [0, .25, 0], mund: redet('briefing', lt, 'Z'), armL: [lt < 6 ? 1.2 + .2 * Math.sin(lt * 2) : .1, .5], ellL: .3 });
   chefin.platziere(-1.55, -5.25, .3);
   const plan = (nr, x, z) => {
-    const blickZu2 = lt > 8.3 && lt < 9.6 && nr !== 2;
-    const dreh2 = nr === 2 && lt > 9.7 && lt < 11.6;
+    const z2 = L('briefing', 'Zwei.'), zA = L('briefing', 'Ich bin Plan');
+    const blickZu2 = lt > z2.start && lt < zA.start && nr !== 2;
+    const dreh2 = nr === 2 && lt > zA.start && lt < zA.ende + .3;
     tm[nr].pose({ ...stehPose(t + nr), kopf: [0, dreh2 ? 2.3 : (blickZu2 ? (x < .4 ? -.7 : .7) : 0), 0], mund: redet('briefing', lt, String(nr)) || (dreh2 ? .3 : 0), blick: [0, 0] });
     tm[nr].platziere(x, z, Math.PI);
   };
@@ -440,7 +443,7 @@ function s_anschleichen(lt, t) {
     else tm[nr].haltGewehr('tief');
   }
   // 2 stößt mit dem Schild gegen die Tonne
-  const stoss = 7.05;
+  const stoss = L('anschleichen', 'Ich bin IMMER').ende - .25;
   const dt = lt - stoss;
   const rutsch = dt > 0 ? .28 * easeOut(dt / .4) : 0;
   HAFEN.tonne.position.set(TONNE.x + rutsch, 0, TONNE.z - rutsch * .3);
@@ -465,7 +468,13 @@ const WEG_Z = {
   6: [[0, -1.55, 2.4], [7.5, -1.55, 2.4], [8.5, -.2, .6], [9.0, 0, -.8], [9.6, -.3, -2.6]],
 };
 
-function s_zugriff(lt, t) {
+const ZSZ = TL.szenen.find(x => x.n === 'zugriff');
+const VERZUG = ZSZ.verzug ?? 0;
+// Szene wartet bei 2.6 s, bis der Countdown wirklich gesprochen ist (VERZUG), dann läuft alles weiter.
+const MARKEN = ZSZ.marken?.length === 3 ? ZSZ.marken : [2.8 + VERZUG, 3.5 + VERZUG, 4.2 + VERZUG];   // Drei / Zwei / Eins (Szenenzeit)
+const zugriffZeit = lt => (lt < 2.6 ? lt : Math.max(2.6, lt - VERZUG));
+function s_zugriff(ltRoh, t) {
+  const lt = zugriffZeit(ltRoh);
   hafenStandard(t, false);
   const H_ = HAFEN, { k, pov, t: tm } = H_;
   const d = lt - TUER_ZEIT;
@@ -498,8 +507,8 @@ function s_zugriff(lt, t) {
       const k4 = smooth(FLASH_WURF - .3, FLASH_WURF, lt);
       P = { ...hockPose(.35), armR: [2.5 - 1.6 * k4, .15], ellR: .9 - .7 * k4, rumpf: [.2 + .3 * k4, 0, 0] };
     }
-    if (nr === 1 && lt > 2.8 && lt < TUER_ZEIT) {
-      const n = lt < 3.5 ? 3 : lt < 4.2 ? 2 : lt < 4.9 ? 1 : 0;
+    if (nr === 1 && ltRoh > MARKEN[0] - .5 && lt < TUER_ZEIT) {
+      const n = ltRoh < MARKEN[0] ? 0 : ltRoh < MARKEN[1] ? 3 : ltRoh < MARKEN[2] ? 2 : 1;
       P = { ...hockPose(.45), armL: [2.7, .35], ellL: 1.2, fingerL: n === 3 ? 3 : n === 2 ? 2 : n === 1 ? 1 : 0, rumpf: [.25, 0, 0] };
     }
     tm[nr].pose(P);
@@ -507,7 +516,7 @@ function s_zugriff(lt, t) {
     if (nr === 2 && lt > .5 && lt < 2.0) {
       tm[2].ohneGewehr();
       tm[2].greife('R', V3(.22 + .05 * (1 - smooth(.6, 1.15, lt)), 1.05, -.08 + .2 * (1 - smooth(.6, 1.15, lt))), tm[2].lokal(-.6, .4, -.2));
-    } else if (nr === 1 && lt > 2.8 && lt < TUER_ZEIT) {
+    } else if (nr === 1 && ltRoh > MARKEN[0] - .5 && lt < TUER_ZEIT) {
       tm[1].haltGewehr('tief'); tm[1].greife('L', tm[1].lokal(.32, 1.62, .25), tm[1].lokal(.8, 1.0, -.4));
     } else if (nr === 4 && lt > FLASH_WURF - .3 && lt < FLASH_WURF + .2) {
       tm[4].haltGewehr('tief'); tm[4].pose(P); tm[4].platziere(p.x, p.z, yaw); tm[4].greife('L', weltPos(tm[4].anbau.gewehr.vorne), tm[4].lokal(.6, .6, -.2));
@@ -529,7 +538,7 @@ function s_zugriff(lt, t) {
   const r = rng(Math.floor(t * 30));
   pos.add(V3((r() - .5) * sh, (r() - .5) * sh, 0));
   let ziel = lt < 1.9 ? V3(.3, 1.0, 0) : (lt < TUER_ZEIT - .2 ? V3(-.6, 1.5, .6) : V3(0, 1.1, -3));
-  if (lt > 2.8 && lt < TUER_ZEIT - .45) ziel = V3(-.75, 1.55, .5);
+  if (ltRoh > MARKEN[0] - .7 && lt < TUER_ZEIT - .45) ziel = V3(-.75, 1.55, .5);
   if (lt >= TUER_ZEIT - .45 && lt < ZUGRIFF + .2) ziel = V3(.05, 1.15, 0);
   const wegdrehen = duck;
   schau(k, pos, ziel);
@@ -559,7 +568,7 @@ function s_innen(lt, t) {
   H_.schwaden.update(3 + lt, clamp(1 - lt / 8), k); H_.innenSchwaden.update(3 + lt, .5, k);
   tm[7].root.visible = false;
   const ZD = TL.szenen.find(x => x.n === 'zugriff').d;
-  const knall = lt + ZD - FLASH_KNALL;           // Sekunden seit der Blendgranate (schon vor der Halle)
+  const knall = lt + ZD - VERZUG - FLASH_KNALL;           // Sekunden seit der Blendgranate (schon vor der Halle)
   const geblendet = knall < 4.4;
   const q = wurf3([-.75, 1.35, .75], [.6, 1.7, -4.4], FLASH_KNALL - FLASH_WURF, { radius: .03, rest: .3, reib: .6 });
   H_.blendg.visible = true; H_.blendg.position.set(q.x, q.y, q.z); H_.blendg.rotation.set(0, .4, Math.PI / 2);
@@ -781,8 +790,8 @@ function s_twist(lt, t) {
   schellen.kette.position.copy(mitte); schellen.kette.scale.y = Math.max(.02, schellen.ringL.position.distanceTo(schellen.ringR.position) - .07);
   schellen.kette.quaternion.setFromUnitVectors(V3(0, 1, 0), schellen.ringR.position.clone().sub(schellen.ringL.position).normalize());
   const stell = (nr, x, dz, yaw, extra = {}) => { tm[nr].root.visible = true; tm[nr].pose({ ...stehPose(t + nr), mund: redet('twist', lt, String(nr)), ...extra }); tm[nr].platziere(x, fz + dz, yaw); };
-  stell(1, -.45, .55, .4, { kopf: [0, lt > 6.2 ? -.5 : 0, 0] }); tm[1].haltGewehr('tief');
-  stell(2, 1.65, .35, -.5, { kopf: [0, lt > 10.3 ? -.6 : 0, 0] }); tm[2].haltGewehr('tief');
+  stell(1, -.45, .55, .4, { kopf: [0, lt > L('twist', 'Packt').start ? -.5 : 0, 0] }); tm[1].haltGewehr('tief');
+  stell(2, 1.65, .35, -.5, { kopf: [0, lt > L('twist', 'Ich hab Hunger').start ? -.6 : 0, 0] }); tm[2].haltGewehr('tief');
   stell(4, -.85, 2.0, .9); tm[4].haltGewehr('tief');
   stell(7, 1.45, 2.3, -1.0, { kopf: [.35, 0, 0] }); tm[7].ohneGewehr();
   const tp = tm[7].lokal(0, 1.12, .36); KAI.tablet.visible = true; KAI.tablet.position.copy(tp); KAI.tablet.rotation.set(-.6, tm[7].root.rotation.y, 0, 'YXZ');
@@ -791,7 +800,7 @@ function s_twist(lt, t) {
   schau(k, pos, V3(.6, 1.0, fz + 1.0));
   pov.setze({ modus: 'gewehr', t, senken: .55, zielen: -.3 });
   const d = TL.szenen.find(x => x.n === 'twist').d;
-  return { welt: KAI, uhr: '02:38', info: lt > .6 && lt < 6.2 ? lt - .6 : null, ende: lt > d - 1.9 ? lt - (d - 1.9) : null };
+  return { welt: KAI, uhr: '02:38', info: lt > .6 && lt < L('twist', 'Der echte').ende ? lt - .6 : null, ende: lt > d - 1.9 ? lt - (d - 1.9) : null };
 }
 
 // ======================================================================= Hook (Rückblende)
@@ -800,7 +809,7 @@ function s_hook(lt, t) {
   const sp = lt > 3.2 ? (lt - 3.2) / .8 : 0;
   const zl = lt < freeze ? TUER_ZEIT - .25 + lt : (sp > 0 ? TUER_ZEIT - .25 + freeze - sp * 2.2 : TUER_ZEIT - .25 + freeze);
   const tZ = TL.szenen.find(x => x.n === 'zugriff').start + zl;
-  const r = s_zugriff(zl, tZ);
+  const r = s_zugriff(zl + (zl >= 2.6 ? VERZUG : 0), tZ + (zl >= 2.6 ? VERZUG : 0));
   return { ...r, sat: lt > freeze ? .15 : 1, mitte: lt > freeze + .15 ? { text: 'Wie wir hier gelandet sind?', k: lt - freeze - .15 } : null, spulen: sp > 0 ? 1 : 0, titel: lt < 2.0 };
 }
 

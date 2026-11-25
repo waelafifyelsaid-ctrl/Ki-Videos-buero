@@ -88,7 +88,18 @@
   },
   {
    "n": "zugriff",
-   "d": 9.6
+   "d": 9.6,
+   "sync": {
+    "zeile": "Auf mein Zeichen",
+    "ereignis": 5.1,
+    "ab": 2.6,
+    "basis_d": 9.6,
+    "marken": [
+     1.96,
+     3.09,
+     4.46
+    ]
+   }
   },
   {
    "n": "innen",
@@ -230,13 +241,13 @@
   ],
   [
    "zugriff",
-   0.4,
+   0.2,
    "2",
    "Ladung gesetzt."
   ],
   [
    "zugriff",
-   2.2,
+   2.3,
    "1",
    "Auf mein Zeichen. Drei … zwei … eins …"
   ],

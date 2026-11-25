@@ -42,6 +42,13 @@ def berechne(roh):
             zeilen.append({"id": zid, "szene": sz, "start": round(start, 3), "ende": round(ende, 3), "wer": wer,
                            "text": text, "funk": wer in FUNK, "datei": datei, "verschoben": round(start - ab, 2)})
             ende_vorher = ende
+        s["verzug"] = 0.0
+        if s.get("sync"):
+            sy = s["sync"]
+            z = next(z for z in zeilen if z["szene"] == s["n"] and z["text"].startswith(sy["zeile"]))
+            s["verzug"] = round(max(0.0, (z["ende"] - 0.3) + 0.12 - sy["ereignis"]), 3)
+            s["marken"] = [round(z["start"] + m, 3) for m in sy.get("marken", [])]
+            ende_vorher = max(ende_vorher, sy["basis_d"] + s["verzug"] - 0.35)
         extra = roh.get("ende", 0) if s is szenen[-1] else 0
         s["d"] = round(max(s["d"], ende_vorher + 0.35 + extra), 3)
     t = 0.0

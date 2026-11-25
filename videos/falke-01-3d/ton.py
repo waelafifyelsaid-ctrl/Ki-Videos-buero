@@ -14,6 +14,11 @@ sys.path.insert(0, str(HIER.parents[1] / "tools"))
 from cartoon import SR, lowpass  # noqa: E402
 
 TL = json.loads((HIER / "timeline_fertig.json").read_text())
+
+
+def zeile(szene, anfang):
+    return next(z for z in TL["dialog"] if z["szene"] == szene and z["text"].startswith(anfang))
+
 SZ = {s["n"]: s for s in TL["szenen"]}
 DAUER = TL["dauer"]
 n = int(DAUER * SR)
@@ -139,7 +144,7 @@ d_alarm = SZ["hq"]["d"] - ALARM + .6
 t = ts(d_alarm)
 add(s0 + ALARM, .22 * lowpass(np.sign(np.sin(2 * np.pi * np.where((t % .8) < .4, 960, 770) * t)), 2500))
 # Briefing: Piepser am Bildschirm
-for z in (3.4, 8.3):
+for z in (zeile("briefing", "Zielperson")["start"], zeile("briefing", "Zwei.")["start"]):
     add(st("briefing") + z, .2 * np.sin(2 * np.pi * 1320 * ts(.12)) * np.exp(-10 * ts(.12)))
 # Spind
 s0 = st("spind")
@@ -165,22 +170,23 @@ for k in range(int(8.2 / .42)):
     add(s0 + k * .42, schritt(), .22)
 add(s0, herz(SZ["anschleichen"]["d"] + 5.1, 84), .35)
 add(s0, atmen(SZ["anschleichen"]["d"] + 5.1, .45, .1))
-add(s0 + 7.05, metall(320, .8), .6)
+add(s0 + zeile("anschleichen", "Ich bin IMMER")["ende"] - .25, metall(320, .8), .6)
 add(s0 + .45, funk(), .5)
-# Zugriff
+# Zugriff (Ereignisse nach dem Countdown um den Verzug verschoben)
+VZ = SZ["zugriff"].get("verzug", 0)
 s0 = st("zugriff")
 add(s0 + 1.15, klick(1200), .5)
-for k in range(8):
+for k in range(int((3.8 + VZ) / .5)):
     add(s0 + 1.3 + k * .5, .06 * np.sin(2 * np.pi * 2600 * ts(.04)))
-add(s0 + 5.1, boom(), 1.0)
-add(s0 + 5.6, thud(.7))
-add(s0 + 5.75, metall(260, .7), .5)
-add(s0 + 5.95, .3 * band(.2, 400, 2000) * np.exp(-12 * ts(.2)))
-add(s0 + 6.35, metall(1700, .25), .35)
-add(s0 + 6.7, boom(.55), .85)
-add(s0 + 6.7, .25 * band(.25, 3000, 9000) * np.exp(-14 * ts(.25)))
+add(s0 + 5.1 + VZ, boom(), 1.0)
+add(s0 + 5.6 + VZ, thud(.7))
+add(s0 + 5.75 + VZ, metall(260, .7), .5)
+add(s0 + 5.95 + VZ, .3 * band(.2, 400, 2000) * np.exp(-12 * ts(.2)))
+add(s0 + 6.35 + VZ, metall(1700, .25), .35)
+add(s0 + 6.7 + VZ, boom(.55), .85)
+add(s0 + 6.7 + VZ, .25 * band(.25, 3000, 9000) * np.exp(-14 * ts(.25)))
 for k in range(int(2.3 / .28)):
-    add(s0 + 7.3 + k * .28, schritt(), .3)
+    add(s0 + 7.3 + VZ + k * .28, schritt(), .3)
 # Innen
 s0 = st("innen")
 add(s0 + 2.0, metall(220, .4), .5)
@@ -214,13 +220,13 @@ for k in range(int(t_an / .5)):
     add(s0 + k * .5, .25 * np.sin(2 * np.pi * np.cumsum(50 + 90 * np.exp(-30 * tt)) / SR) * np.exp(-9 * tt))
 # Twist: Stich + Endkarte
 s0, d = st("twist"), SZ["twist"]["d"]
-for t0, fs in ((s0 + 3.7, (110, 130.8, 155.6)), (s0 + d - 1.9, (98, 146.8, 196, 246.9))):
+for t0, fs in ((s0 + zeile("twist", "Der echte")["start"], (110, 130.8, 155.6)), (s0 + d - 1.9, (98, 146.8, 196, 246.9))):
     t = ts(2.2)
     add(t0, .3 * sum(np.sin(2 * np.pi * f * t) for f in fs) / len(fs) * np.exp(-1.1 * t))
 t = ts(d)
 add(s0, .05 * np.sin(2 * np.pi * np.where((t % 1.2) < .6, 700, 560) * t) * lowpass(np.ones(len(t)), 5))
 # Blendgranate (draußen vor der Tür): kurz dumpf + leises Piepen
-t0, t1 = int((st("zugriff") + 6.75) * SR), int((st("zugriff") + 8.2) * SR)
+t0, t1 = int((st("zugriff") + 6.75 + VZ) * SR), int((st("zugriff") + 8.2 + VZ) * SR)
 a[t0:t1] = lowpass(a[t0:t1], 600) * .75
 tt = np.arange(t1 - t0) / SR
 a[t0:t1] += .08 * np.sin(2 * np.pi * 3600 * tt) * np.exp(-1.5 * tt)

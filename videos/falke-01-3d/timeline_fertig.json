@@ -54,67 +54,93 @@
   {
    "n": "hook",
    "d": 4.0,
+   "verzug": 0.0,
    "start": 0.0
   },
   {
    "n": "hq",
-   "d": 11.251,
+   "d": 11.113,
    "tr": "uhr",
    "trd": 1.0,
    "karte": "6 STUNDEN VORHER",
+   "verzug": 0.0,
    "start": 4.0
   },
   {
    "n": "briefing",
-   "d": 13.491,
+   "d": 15.087,
    "tr": "whip",
    "trd": 0.45,
-   "start": 15.251
+   "verzug": 0.0,
+   "start": 15.113
   },
   {
    "n": "spind",
-   "d": 7.022,
+   "d": 7.0,
    "tr": "zoom",
    "trd": 0.6,
-   "start": 28.742
+   "verzug": 0.0,
+   "start": 30.2
   },
   {
    "n": "van",
-   "d": 16.362,
+   "d": 17.431,
    "tr": "schwarz",
    "trd": 0.7,
-   "start": 35.764
+   "verzug": 0.0,
+   "start": 37.2
   },
   {
    "n": "anschleichen",
-   "d": 9.714,
+   "d": 10.801,
    "tr": "mix",
    "trd": 0.6,
-   "start": 52.126
+   "verzug": 0.0,
+   "start": 54.631
   },
   {
    "n": "zugriff",
-   "d": 9.6,
-   "start": 61.84
+   "d": 12.297,
+   "sync": {
+    "zeile": "Auf mein Zeichen",
+    "ereignis": 5.1,
+    "ab": 2.6,
+    "basis_d": 9.6,
+    "marken": [
+     1.96,
+     3.09,
+     4.46
+    ]
+   },
+   "verzug": 2.697,
+   "marken": [
+    4.517,
+    5.647,
+    7.017
+   ],
+   "start": 65.432
   },
   {
    "n": "innen",
-   "d": 10.8,
-   "start": 71.44
+   "d": 11.177,
+   "verzug": 0.0,
+   "start": 77.729
   },
   {
    "n": "verfolgung",
-   "d": 17.077,
+   "d": 20.198,
    "tr": "whip",
    "trd": 0.45,
-   "start": 82.24
+   "verzug": 0.0,
+   "start": 88.906
   },
   {
    "n": "twist",
-   "d": 13.968,
+   "d": 18.524,
    "tr": "schwarz",
    "trd": 0.7,
-   "start": 99.317
+   "verzug": 0.0,
+   "start": 109.104
   }
  ],
  "dialog": [
@@ -122,309 +148,309 @@
    "id": "01_hook_6",
    "szene": "hook",
    "start": 0.5,
-   "ende": 2.975,
+   "ende": 3.517,
    "wer": "6",
    "text": "Okay … das war lauter als geplant.",
    "funk": false,
-   "datei": "01_hook_6.wav",
+   "datei": "01_hook_6.mp3",
    "verschoben": 0.0
   },
   {
    "id": "02_hq_6",
    "szene": "hq",
    "start": 2.0,
-   "ende": 4.526,
+   "ende": 5.513,
    "wer": "6",
    "text": "Zwei, das ist dein drittes Frühstück.",
    "funk": false,
-   "datei": "02_hq_6.wav",
+   "datei": "02_hq_6.mp3",
    "verschoben": 0.0
   },
   {
    "id": "03_hq_2",
    "szene": "hq",
-   "start": 4.7,
-   "ende": 6.0,
+   "start": 5.663,
+   "ende": 6.963,
    "wer": "2",
    "text": "Viertes.",
    "funk": false,
-   "datei": "03_hq_2.wav",
-   "verschoben": 0.0
+   "datei": "03_hq_2.mp3",
+   "verschoben": 0.96
   },
   {
    "id": "04_hq_1",
    "szene": "hq",
    "start": 9.0,
-   "ende": 10.901,
+   "ende": 10.763,
    "wer": "1",
    "text": "Briefing. Sofort.",
    "funk": false,
-   "datei": "04_hq_1.wav",
+   "datei": "04_hq_1.mp3",
    "verschoben": 0.0
   },
   {
    "id": "05_briefing_Z",
    "szene": "briefing",
    "start": 0.3,
-   "ende": 3.78,
+   "ende": 4.127,
    "wer": "Z",
    "text": "Lagerhaus 7 am Hafen. 40 Millionen in Drogen.",
    "funk": false,
-   "datei": "05_briefing_Z.wav",
+   "datei": "05_briefing_Z.mp3",
    "verschoben": 0.0
   },
   {
    "id": "06_briefing_Z",
    "szene": "briefing",
-   "start": 3.93,
-   "ende": 7.497,
+   "start": 4.277,
+   "ende": 8.234,
    "wer": "Z",
    "text": "Zielperson: der Fuchs. Hat immer einen Plan B.",
    "funk": false,
-   "datei": "06_briefing_Z.wav",
-   "verschoben": 0.53
+   "datei": "06_briefing_Z.mp3",
+   "verschoben": 0.88
   },
   {
    "id": "07_briefing_6",
    "szene": "briefing",
-   "start": 7.647,
-   "ende": 9.597,
+   "start": 8.384,
+   "ende": 10.747,
    "wer": "6",
    "text": "Und was ist UNSER Plan B?",
    "funk": false,
-   "datei": "07_briefing_6.wav",
-   "verschoben": 1.25
+   "datei": "07_briefing_6.mp3",
+   "verschoben": 1.98
   },
   {
    "id": "08_briefing_1",
    "szene": "briefing",
-   "start": 9.747,
-   "ende": 11.047,
+   "start": 10.897,
+   "ende": 12.197,
    "wer": "1",
    "text": "Zwei.",
    "funk": false,
-   "datei": "08_briefing_1.wav",
-   "verschoben": 1.45
+   "datei": "08_briefing_1.mp3",
+   "verschoben": 2.6
   },
   {
    "id": "09_briefing_2",
    "szene": "briefing",
-   "start": 11.197,
-   "ende": 13.141,
+   "start": 12.347,
+   "ende": 14.737,
    "wer": "2",
    "text": "Ich bin Plan A bis Z.",
    "funk": false,
-   "datei": "09_briefing_2.wav",
-   "verschoben": 1.5
+   "datei": "09_briefing_2.mp3",
+   "verschoben": 2.65
   },
   {
    "id": "10_spind_4",
    "szene": "spind",
    "start": 0.6,
-   "ende": 3.712,
+   "ende": 3.356,
    "wer": "4",
    "text": "Visier runter, Neuer. Heute wird's laut.",
    "funk": false,
-   "datei": "10_spind_4.wav",
+   "datei": "10_spind_4.mp3",
    "verschoben": 0.0
   },
   {
    "id": "11_spind_6",
    "szene": "spind",
-   "start": 3.862,
-   "ende": 5.222,
+   "start": 3.506,
+   "ende": 4.981,
    "wer": "6",
    "text": "Danke, Mama.",
    "funk": false,
-   "datei": "11_spind_6.wav",
-   "verschoben": 0.46
+   "datei": "11_spind_6.mp3",
+   "verschoben": 0.11
   },
   {
    "id": "12_spind_1",
    "szene": "spind",
-   "start": 5.372,
-   "ende": 6.672,
+   "start": 5.2,
+   "ende": 6.571,
    "wer": "1",
    "text": "Abfahrt!",
    "funk": false,
-   "datei": "12_spind_1.wav",
-   "verschoben": 0.17
+   "datei": "12_spind_1.mp3",
+   "verschoben": 0.0
   },
   {
    "id": "13_van_Zf",
    "szene": "van",
    "start": 0.3,
-   "ende": 4.642,
+   "ende": 4.78,
    "wer": "Zf",
    "text": "Zentrale für Falke: Zielobjekt bestätigt. Zugriff freigegeben.",
    "funk": true,
-   "datei": "13_van_Zf.wav",
+   "datei": "13_van_Zf.mp3",
    "verschoben": 0.0
   },
   {
    "id": "14_van_7v",
    "szene": "van",
-   "start": 4.792,
-   "ende": 7.742,
+   "start": 4.93,
+   "ende": 8.312,
    "wer": "7v",
    "text": "Ich hasse Regen. Und Häfen. Und Möwen.",
    "funk": false,
-   "datei": "14_van_7v.wav",
-   "verschoben": 1.19
+   "datei": "14_van_7v.mp3",
+   "verschoben": 1.33
   },
   {
    "id": "15_van_6",
    "szene": "van",
-   "start": 7.892,
-   "ende": 10.573,
+   "start": 8.462,
+   "ende": 11.348,
    "wer": "6",
    "text": "Sieben, du bist ein Angsthase mit WLAN.",
    "funk": false,
-   "datei": "15_van_6.wav",
-   "verschoben": 1.69
+   "datei": "15_van_6.mp3",
+   "verschoben": 2.26
   },
   {
    "id": "16_van_2",
    "szene": "van",
-   "start": 10.723,
-   "ende": 13.577,
+   "start": 11.498,
+   "ende": 14.254,
    "wer": "2",
    "text": "Lass ihn. Er hat heute schon geweint.",
    "funk": false,
-   "datei": "16_van_2.wav",
-   "verschoben": 1.92
+   "datei": "16_van_2.mp3",
+   "verschoben": 2.7
   },
   {
    "id": "17_van_1",
    "szene": "van",
-   "start": 13.727,
-   "ende": 16.012,
+   "start": 14.404,
+   "ende": 17.081,
    "wer": "1",
    "text": "Wir sind da. Masken auf.",
    "funk": false,
-   "datei": "17_van_1.wav",
-   "verschoben": 2.33
+   "datei": "17_van_1.mp3",
+   "verschoben": 3.0
   },
   {
    "id": "18_anschleichen_4f",
    "szene": "anschleichen",
    "start": 0.5,
-   "ende": 3.991,
+   "ende": 4.562,
    "wer": "4f",
    "text": "Vier an alle: Drohne oben. Drei Personen im Gebäude.",
    "funk": true,
-   "datei": "18_anschleichen_4f.wav",
+   "datei": "18_anschleichen_4f.mp3",
    "verschoben": 0.0
   },
   {
    "id": "19_anschleichen_1f",
    "szene": "anschleichen",
-   "start": 4.141,
-   "ende": 7.504,
+   "start": 4.712,
+   "ende": 8.251,
    "wer": "1f",
    "text": "Verstanden. Leise rein, wie besprochen.",
    "funk": true,
-   "datei": "19_anschleichen_1f.wav",
-   "verschoben": 0.24
+   "datei": "19_anschleichen_1f.mp3",
+   "verschoben": 0.81
   },
   {
    "id": "20_anschleichen_2",
    "szene": "anschleichen",
-   "start": 7.654,
-   "ende": 9.364,
+   "start": 8.401,
+   "ende": 10.451,
    "wer": "2",
    "text": "Ich bin IMMER leise.",
    "funk": false,
-   "datei": "20_anschleichen_2.wav",
-   "verschoben": 1.25
+   "datei": "20_anschleichen_2.mp3",
+   "verschoben": 2.0
   },
   {
    "id": "21_zugriff_2",
    "szene": "zugriff",
-   "start": 0.4,
-   "ende": 1.913,
+   "start": 0.2,
+   "ende": 2.407,
    "wer": "2",
    "text": "Ladung gesetzt.",
    "funk": false,
-   "datei": "21_zugriff_2.wav",
+   "datei": "21_zugriff_2.mp3",
    "verschoben": 0.0
   },
   {
    "id": "22_zugriff_1",
    "szene": "zugriff",
-   "start": 2.2,
-   "ende": 5.539,
+   "start": 2.557,
+   "ende": 7.977,
    "wer": "1",
    "text": "Auf mein Zeichen. Drei … zwei … eins …",
    "funk": false,
-   "datei": "22_zugriff_1.wav",
-   "verschoben": 0.0
+   "datei": "22_zugriff_1.mp3",
+   "verschoben": 0.26
   },
   {
    "id": "23_zugriff_4",
    "szene": "zugriff",
-   "start": 5.689,
-   "ende": 7.057,
+   "start": 8.127,
+   "ende": 9.524,
    "wer": "4",
    "text": "Flash raus!",
    "funk": false,
-   "datei": "23_zugriff_4.wav",
-   "verschoben": 0.19
+   "datei": "23_zugriff_4.mp3",
+   "verschoben": 2.63
   },
   {
    "id": "24_zugriff_1",
    "szene": "zugriff",
-   "start": 7.207,
-   "ende": 8.507,
+   "start": 9.674,
+   "ende": 11.332,
    "wer": "1",
    "text": "ZUGRIFF!",
    "funk": false,
-   "datei": "24_zugriff_1.wav",
-   "verschoben": 0.01
+   "datei": "24_zugriff_1.mp3",
+   "verschoben": 2.47
   },
   {
    "id": "25_innen_4",
    "szene": "innen",
    "start": 0.4,
-   "ende": 3.587,
+   "ende": 3.312,
    "wer": "4",
    "text": "POLIZEI! Hände hoch! Auf den Boden!",
    "funk": false,
-   "datei": "25_innen_4.wav",
+   "datei": "25_innen_4.mp3",
    "verschoben": 0.0
   },
   {
    "id": "26_innen_7",
    "szene": "innen",
-   "start": 3.737,
-   "ende": 6.503,
+   "start": 3.462,
+   "ende": 6.401,
    "wer": "7",
    "text": "Orange Jacke! Hinterausgang – er ist raus!",
    "funk": true,
-   "datei": "26_innen_7.wav",
-   "verschoben": 0.74
+   "datei": "26_innen_7.mp3",
+   "verschoben": 0.46
   },
   {
    "id": "27_innen_2",
    "szene": "innen",
-   "start": 6.653,
-   "ende": 8.583,
+   "start": 6.551,
+   "ende": 8.549,
    "wer": "2",
    "text": "Hingefallen. Komisch.",
    "funk": false,
-   "datei": "27_innen_2.wav",
-   "verschoben": 0.55
+   "datei": "27_innen_2.mp3",
+   "verschoben": 0.45
   },
   {
    "id": "28_innen_1",
    "szene": "innen",
-   "start": 8.733,
-   "ende": 10.361,
+   "start": 8.699,
+   "ende": 10.827,
    "wer": "1",
    "text": "Sechs – hinterher!",
    "funk": false,
-   "datei": "28_innen_1.wav",
-   "verschoben": 0.63
+   "datei": "28_innen_1.mp3",
+   "verschoben": 0.6
   },
   {
    "id": "29_verfolgung_6",
@@ -434,18 +460,18 @@
    "wer": "6",
    "text": "Stehen bleiben, du Billig-Fuchs!",
    "funk": false,
-   "datei": "29_verfolgung_6.wav",
+   "datei": "29_verfolgung_6.mp3",
    "verschoben": 0.0
   },
   {
    "id": "30_verfolgung_F",
    "szene": "verfolgung",
    "start": 3.2,
-   "ende": 5.15,
+   "ende": 6.269,
    "wer": "F",
    "text": "Fang mich doch, Anfänger!",
    "funk": false,
-   "datei": "30_verfolgung_F.wav",
+   "datei": "30_verfolgung_F.mp3",
    "verschoben": 0.0
   },
   {
@@ -456,97 +482,97 @@
    "wer": "6",
    "text": "Hände auf den Rücken!",
    "funk": false,
-   "datei": "31_verfolgung_6.wav",
+   "datei": "31_verfolgung_6.mp3",
    "verschoben": 0.0
   },
   {
    "id": "32_verfolgung_6",
    "szene": "verfolgung",
    "start": 8.8,
-   "ende": 10.942,
+   "ende": 11.764,
    "wer": "6",
    "text": "Plan B war wohl: ausrutschen.",
    "funk": false,
-   "datei": "32_verfolgung_6.wav",
+   "datei": "32_verfolgung_6.mp3",
    "verschoben": 0.0
   },
   {
    "id": "33_verfolgung_F",
    "szene": "verfolgung",
-   "start": 11.092,
-   "ende": 13.57,
+   "start": 11.914,
+   "ende": 14.957,
    "wer": "F",
    "text": "Ihr habt keine Ahnung, wer ich bin …",
    "funk": false,
-   "datei": "33_verfolgung_F.wav",
-   "verschoben": 0.09
+   "datei": "33_verfolgung_F.mp3",
+   "verschoben": 0.91
   },
   {
    "id": "34_verfolgung_6f",
    "szene": "verfolgung",
-   "start": 13.72,
-   "ende": 16.727,
+   "start": 15.107,
+   "ende": 19.848,
    "wer": "6f",
    "text": "Sechs an alle: Person gesichert. Kai Nord.",
    "funk": true,
-   "datei": "34_verfolgung_6f.wav",
-   "verschoben": 0.12
+   "datei": "34_verfolgung_6f.mp3",
+   "verschoben": 1.51
   },
   {
    "id": "35_twist_7v",
    "szene": "twist",
    "start": 0.4,
-   "ende": 3.502,
+   "ende": 5.141,
    "wer": "7v",
    "text": "Leute … das ist nicht der Fuchs. Nur sein Fahrer.",
    "funk": false,
-   "datei": "35_twist_7v.wav",
+   "datei": "35_twist_7v.mp3",
    "verschoben": 0.0
   },
   {
    "id": "36_twist_F",
    "szene": "twist",
-   "start": 3.7,
-   "ende": 5.986,
+   "start": 5.291,
+   "ende": 10.345,
    "wer": "F",
    "text": "Der echte Fuchs fliegt um sechs.",
    "funk": false,
-   "datei": "36_twist_F.wav",
-   "verschoben": 0.0
+   "datei": "36_twist_F.mp3",
+   "verschoben": 1.59
   },
   {
    "id": "37_twist_1",
    "szene": "twist",
-   "start": 6.2,
-   "ende": 8.634,
+   "start": 10.495,
+   "ende": 12.807,
    "wer": "1",
    "text": "Packt eure Sachen. Wir fliegen.",
    "funk": false,
-   "datei": "37_twist_1.wav",
-   "verschoben": 0.0
+   "datei": "37_twist_1.mp3",
+   "verschoben": 4.3
   },
   {
    "id": "38_twist_6",
    "szene": "twist",
-   "start": 8.784,
-   "ende": 10.398,
+   "start": 12.957,
+   "ende": 14.954,
    "wer": "6",
    "text": "Ich hab Flugangst.",
    "funk": false,
-   "datei": "38_twist_6.wav",
-   "verschoben": 0.18
+   "datei": "38_twist_6.mp3",
+   "verschoben": 4.36
   },
   {
    "id": "39_twist_2",
    "szene": "twist",
-   "start": 10.548,
-   "ende": 12.018,
+   "start": 15.104,
+   "ende": 16.574,
    "wer": "2",
    "text": "Ich hab Hunger.",
    "funk": false,
-   "datei": "39_twist_2.wav",
-   "verschoben": 0.25
+   "datei": "39_twist_2.mp3",
+   "verschoben": 4.8
   }
  ],
- "dauer": 113.285
+ "dauer": 127.628
 }
