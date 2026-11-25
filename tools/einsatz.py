@@ -31,6 +31,7 @@ class Kamera:
         return dx, dy, dz
 
     def p_cam(self, dx, dy, dz):
+        dz = dz if abs(dz) > 1e-4 else 1e-4
         return W / 2 + self.f * dx / dz, self.horizont - self.f * dy / dz
 
     def p(self, X, Y, Z):
@@ -336,6 +337,8 @@ def fassade(ctx, cam, x, z0, z1, hoehe, seite, farbe="#b5651d", stockwerk=3.2, r
 
 
 def laterne(ctx, cam, X, Z, an=True, hoehe=5.0):
+    if cam.cam(X, 0, Z)[2] < cam.nah:
+        return (-5000, -5000, 1.0)       # hinter der Kamera: nichts zeichnen
     linie3d(ctx, cam, (X, 0, Z), (X, hoehe, Z), "#212529", max(3, cam.skala(X, Z) * 0.12))
     px, py = cam.p(X, hoehe, Z)
     s = cam.skala(X, Z)

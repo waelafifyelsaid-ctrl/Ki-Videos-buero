@@ -21,7 +21,13 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Neue Serie EINHEIT FALKE (Nutzer-Wunsch nach Referenz-Video „animated story deutsch", POV, 124k Likes):
   Explosion als Hook, Hauptquartier → Einsatz → Cliffhanger, über 1 Minute.
 
+- Nutzer-Feedback Einsatz 01: Richtung „sehr gut“, aber: keine Babbel-Töne zum Text, NUR POV, etwas realistischer.
+  → Serie EINHEIT FALKE ab jetzt: komplett Ich-Sicht, Bodycam-Look, Dialog nur als Untertitel, keine Comic-Wörter.
+
 ## Technik-Learnings (Produktion)
+- Bodycam-Look: `bodycam()` in `videos/falke-01-lagerhaus-pov/animation.py` (Weitwinkel-Wölbung, Vignette, Korn, REC-Anzeige).
+- Realistischer Ton statt Stimmen: Schritte, Atmen, Herzschlag, Spind/Türen/Durchladen (Funktionen in `ton()`).
+- Objekte, an denen die Kamera vorbeiläuft (Laternen), müssen hinter der Kamera übersprungen werden (sonst Division durch 0).
 - Nachts: Figuren in eigener Ebene (`ebene()`), sonst verschwinden dunkle Uniformen im Hintergrund.
 - Perspektive: Figuren sehr nah an der Kamera (dz < 2 m) landen seitlich außerhalb des Bildes – Vordergrund-Figuren
   mit 2,5–3,5 m Abstand platzieren und die Hauptfiguren dazwischen sichtbar lassen.
@@ -38,3 +44,5 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Pillow-Text: max. ~190 px Schriftgröße für 6–7 Buchstaben, sonst läuft er beim Zoom über den Rand. Immer `max_breite≈900` nutzen.
 - Mehrzeilige Texte fließend setzen (y aus der vorherigen Zeile), nie feste y-Werte – sonst Überlappungen.
 - Grafiken müssen die Botschaft zeigen: „Wissen bleibt“ = Kurve muss am Ende oben sein.
+- Filmkorn, das sich jedes Frame ändert, bläht die Datei auf (530 MB!). Korn schwach halten und beim Zusammenfügen
+  mit Bitrate-Deckel kodieren (`-crf 23 -maxrate 4M`) → ca. 40 MB. GitHub erlaubt max. 100 MB pro Datei.

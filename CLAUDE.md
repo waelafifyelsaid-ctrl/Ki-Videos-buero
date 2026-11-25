@@ -39,6 +39,8 @@ Ziel des Büros: kurze KI-Videos für TikTok, die Reichweite bringen und Geld ve
 - Serienbibel: `ideen/serie-einheit-falke.md` (Team, Hauptquartier, Folgen-Plan, Aufbau jeder Folge).
 - Jede Folge startet mit einer Explosion/Action-Szene als Hook, endet mit Cliffhanger auf die nächste Folge.
 - Stil wie Referenz: Perspektiv-Straßen, kräftige Konturen, POV-Waffe, großer hellblauer Untertitel.
+- **Nur POV** (Ich-Sicht in jeder Szene), Bodycam-Look, **keine Babbel-Stimmen** (Dialog nur als Untertitel),
+  keine Comic-Wörter. Vorlage: `videos/falke-01-lagerhaus-pov/`.
 - Wetter wechseln (Regen, Sommer, Schnee, Gewitter, Nebel). Fiktive Einheit, keine echten Abzeichen.
 - Niemand wird erschossen, kein Blut – Festnahmen, Tackles, Blendgranaten, Türsprengungen.
 - Technik: `tools/einsatz.py` + Vorlage `videos/falke-01-lagerhaus/`. Physik: Figuren nur über
