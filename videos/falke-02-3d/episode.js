@@ -597,6 +597,12 @@ function s_tuer(lt, t) {
 }
 
 // ---------------------------------------------------------------- Kabine
+// Handschelle wirklich ums Handgelenk: Ring senkrecht zum Unterarm, knapp über der Hand
+function ringAnsGelenk(ring, f, n) {
+  const e = weltPos(f.j['el' + n]), h = weltPos(f.j['ha' + n]); const dir = h.clone().sub(e).normalize();
+  ring.position.copy(h).addScaledVector(dir, .015);
+  ring.quaternion.setFromUnitVectors(V3(0, 0, 1), dir);
+}
 function s_kabine(lt, t) {
   vfStandard(t);
   const { k, pov, t: tm, jet, gorilla, schellen } = VF;
@@ -625,8 +631,10 @@ function s_kabine(lt, t) {
     const zu = 2.2;
     schellen.visible = nach > zu - .3;
     const wl = weltPos(gorilla.j.haL), wr = weltPos(gorilla.j.haR);
-    schellen.ringL.position.copy(nach > zu ? wl : weltPos(tm[2].j.haR)); schellen.ringR.position.copy(nach > zu + .3 ? wr : weltPos(tm[2].j.haR).add(V3(.05, 0, 0)));
+    schellen.ringL.position.copy(weltPos(tm[2].j.haR)); schellen.ringR.position.copy(weltPos(tm[2].j.haR).add(V3(.05, 0, 0)));
     for (const ring of [schellen.ringL, schellen.ringR]) { ring.lookAt(k.position); }
+    if (nach > zu) ringAnsGelenk(schellen.ringL, gorilla, 'L');
+    if (nach > zu + .3) ringAnsGelenk(schellen.ringR, gorilla, 'R');
     const m = schellen.ringL.position.clone().add(schellen.ringR.position).multiplyScalar(.5);
     schellen.kette.position.copy(m); schellen.kette.scale.y = Math.max(.02, schellen.ringL.position.distanceTo(schellen.ringR.position) - .07);
     schellen.kette.quaternion.setFromUnitVectors(V3(0, 1, 0), schellen.ringR.position.clone().sub(schellen.ringL.position).normalize());
@@ -658,7 +666,7 @@ function s_kabine(lt, t) {
   zeichneTablet(lt < zT.start ? -1 : 0, t);
   // Kamera: Treppe hoch, rein, Blick nach hinten, kurz zum Cockpit, dann zum Tackle, dann zum Tablet
   const zT0 = L('kabine', 'Sitz 1A').start;
-  const steig = pfad([[0, 2.25, -13.05], [.9, 1.0, -13.05], [1.5, .38, -13.75], [tackle + .1, .38, -13.75], [tackle + .5, .14, -14.35], [tackle + .9, .34, -15.0], [zT0 - .9, .34, -15.0], [zT0 - .4, .14, -14.35], [zT0 + .1, .05, -13.6]], lt);
+  const steig = pfad([[0, 2.25, -13.05], [.9, 1.0, -13.05], [1.5, .38, -13.75], [tackle + .1, .38, -13.75], [tackle + .5, .14, -14.35], [tackle + 1.0, .42, -15.0], [tackle + 1.5, .44, -16.75], [zT0 - 1.4, .44, -16.75], [zT0 - .7, .42, -15.0], [zT0 - .3, .14, -14.35], [zT0 + .1, .05, -13.6]], lt);
   const boden = steig.x > TUER_X ? rampeH(steig.x) : 1.5;
   const pos = V3(steig.x, boden + 1.55 + Math.sin(steig.dist / .6 * Math.PI) * .03, steig.z);
   let ziel = V3(0, 2.9, -20);
@@ -710,7 +718,7 @@ function s_twist(lt, t) {
   gorilla.platziere(0, -16.5, Math.PI, { kipp: [Math.PI / 2, 0], boden: 1.5 });
   const hl = gorilla.j.hips.localToWorld(V3(.06, .02, -.17)), hr = gorilla.j.hips.localToWorld(V3(-.06, .02, -.17)), pol = gorilla.j.chest.localToWorld(V3(0, .1, -.8));
   gorilla.greife('L', hl, pol); gorilla.greife('R', hr, pol);
-  schellen.visible = true; schellen.ringL.position.copy(weltPos(gorilla.j.haL)); schellen.ringR.position.copy(weltPos(gorilla.j.haR));
+  schellen.visible = true; ringAnsGelenk(schellen.ringL, gorilla, 'L'); ringAnsGelenk(schellen.ringR, gorilla, 'R');
   const m = schellen.ringL.position.clone().add(schellen.ringR.position).multiplyScalar(.5);
   schellen.kette.position.copy(m); schellen.kette.scale.y = Math.max(.02, schellen.ringL.position.distanceTo(schellen.ringR.position) - .07);
   schellen.kette.quaternion.setFromUnitVectors(V3(0, 1, 0), schellen.ringR.position.clone().sub(schellen.ringL.position).normalize());

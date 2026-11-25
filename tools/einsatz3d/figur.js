@@ -68,9 +68,9 @@ export function schildModell() {
 export function handschellenModell() {
   const g = new THREE.Group();
   const m = mat(0xc9ced6, { r: 0.25, m: 0.9 });
-  g.ringL = new THREE.Mesh(new THREE.TorusGeometry(0.038, 0.007, 8, 20), m);
-  g.ringR = new THREE.Mesh(new THREE.TorusGeometry(0.038, 0.007, 8, 20), m);
-  g.kette = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 1, 6), m);
+  g.ringL = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.01, 8, 20), m);
+  g.ringR = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.01, 8, 20), m);
+  g.kette = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 1, 6), m);
   g.add(g.ringL, g.ringR, g.kette);
   return g;
 }
