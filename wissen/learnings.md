@@ -63,3 +63,4 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Sprachaufnahmen bestimmen das Timing: timeline.py liest die Länge jeder Datei in stimmen/ und verlängert die Zeile.
 - Piper-Ersatzstimmen (lokal, gratis) klingen zu künstlich – Nutzer lehnt sie ab. ElevenLabs-Credits sind knapp.
   Plan B: Azure Speech Free-Tier (offiziell, 500k Zeichen/Monat, ~20 deutsche Neural-Stimmen). Inoffizielle Edge-Vorlese-Zugänge nicht nutzen.
+- Hintergrundmusik selbst komponiert per Code (`tools/musik.py`, d-Moll, pro Szene eigene Stimmung, Stille nach der Sprengung, Action ab „ZUGRIFF!“). Nur Ton neu bauen: `nur_ton.sh` (kein neues Rendern nötig).

@@ -232,6 +232,72 @@ tt = np.arange(t1 - t0) / SR
 a[t0:t1] += .08 * np.sin(2 * np.pi * 3600 * tt) * np.exp(-1.5 * tt)
 
 
+# ---------------------------------------------------------------- Hintergrundmusik (eigene Komposition, d-Moll)
+from musik import Musik  # noqa: E402
+
+DM, BB, FD, CD = [("D", 3), ("F", 3), ("A", 3)], [("A#", 2), ("D", 3), ("F", 3)], [("F", 3), ("A", 3), ("C", 4)], [("C", 3), ("E", 3), ("G", 3)]
+GM, DUNKEL = [("G", 2), ("A#", 2), ("D", 3)], [("D", 3), ("F", 3), ("G#", 3)]
+M = Musik(DAUER)
+# Hook: tiefer Teppich + Einschlag, beim Standbild bricht alles ab
+M.pad(st("hook"), DM, 2.35, .35, cutoff=600, attack=.05)
+M.impact(st("hook") + .25, .9)
+# Hauptquartier: lockerer Groove bis zum Alarm, dann Puls
+h0 = st("hq")
+M.groove(h0 + .2, h0 + ALARM, 92, 1, [DM, BB, FD, CD], ["D", "A#", "F", "C"])
+for k in range(int((SZ["hq"]["d"] - ALARM) / .25)):
+    M.bass(h0 + ALARM + k * .25, "D", .22, .55, 450)
+M.impact(h0 + ALARM, .5)
+# Briefing: gespannter Teppich + langsamer Puls
+b0, bd = st("briefing"), SZ["briefing"]["d"]
+for k, ak in enumerate([DM, BB, GM, DM]):
+    M.pad(b0 + k * bd / 4, ak, bd / 4 + .5, .3, cutoff=900)
+for k in range(int(bd / .66)):
+    M.bass(b0 + k * .66, "D", .5, .35, 300)
+# Spind: Aufbau mit Trommeln + Riser
+s0_, sd = st("spind"), SZ["spind"]["d"]
+M.pad(s0_, DM, sd, .25, cutoff=1100)
+for k in range(int(sd / .5)):
+    M.tom(s0_ + k * .5, 70 + 4 * k, .25 + .5 * k / (sd / .5))
+M.riser(s0_ + sd - 2.2, 2.2, .5)
+# Van: treibender Beat bis zum Bremsen
+v0, vd = st("van"), SZ["van"]["d"]
+M.groove(v0, v0 + vd - 2.2, 110, 2, [DM, BB, GM, DM], ["D", "A#", "G", "D"], cutoff_bass=450)
+M.pad(v0 + vd - 2.2, DUNKEL, 2.6, .3, cutoff=700)
+# Anschleichen: leise Spannung
+a0, ad = st("anschleichen"), SZ["anschleichen"]["d"]
+M.pad(a0, [("D", 2), ("A", 2), ("D#", 3)], ad, .3, cutoff=500, attack=1.5)
+M.arp(a0 + .5, [("D", 4), ("A", 4), ("F", 4), ("A", 4)], .75, int((ad - .5) / .75), .12)
+# Zugriff: Riser bis zur Sprengung, Stille, Action ab „ZUGRIFF!"
+z0 = st("zugriff")
+knall = z0 + 5.1 + VZ
+zug = z0 + 7.2 + VZ
+M.pad(z0, [("D", 2), ("A", 2), ("D#", 3)], knall - z0, .3, cutoff=600)
+M.riser(knall - 3.2, 3.2, .7)
+M.impact(knall, 1.0)
+action_ende = st("innen") + SZ["innen"]["d"]
+M.groove(zug, action_ende, 140, 3, [DM, BB, CD, DM], ["D", "A#", "C", "D"], cutoff_bass=700)
+# Verfolgung: Jagd, nach den Handschellen runter
+v0 = st("verfolgung")
+jagd_ende = v0 + t_an + 2.8
+M.groove(v0, jagd_ende, 150, 3, [DM, FD, CD, BB], ["D", "F", "C", "A#"], cutoff_bass=800)
+M.pad(jagd_ende, DM, SZ["verfolgung"]["d"] - (jagd_ende - v0) + .5, .28, cutoff=800)
+# Twist: dunkel, Stich bei der Enthüllung, Schlussthema zur Endkarte
+w0, wd = st("twist"), SZ["twist"]["d"]
+enth = w0 + zeile("twist", "Der echte")["start"]
+M.pad(w0, DUNKEL, enth - w0 + .5, .28, cutoff=700)
+M.stab(enth, DUNKEL, .6, d=.6)
+M.impact(enth, .6)
+M.pad(enth, [("D", 2), ("A", 2), ("D", 3), ("F", 3)], w0 + wd - 1.9 - enth, .3, cutoff=900)
+e0 = w0 + wd - 1.9
+M.impact(e0, .9)
+M.stab(e0, DM, .7, d=.9)
+M.pad(e0, DM + [("A", 4)], 1.9, .35, cutoff=1800, attack=.05)
+M.arp(e0 + .2, [("D", 5), ("F", 5), ("A", 5), ("D", 6)], .12, 12, .15)
+musik_spur = M.fertig(1.0)
+a = a / max(1e-9, np.max(np.abs(a))) * .75 + musik_spur * .42
+print("Musik gemischt")
+
+
 # ---------------------------------------------------------------- Stimmen (ElevenLabs-Aufnahmen aus stimmen/)
 def lade(datei):
     roh = subprocess.run(["ffmpeg", "-v", "error", "-i", str(datei), "-f", "s16le", "-ac", "1", "-ar", str(SR), "-"],
