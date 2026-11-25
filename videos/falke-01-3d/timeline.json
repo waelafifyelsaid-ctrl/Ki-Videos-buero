@@ -1,58 +1,347 @@
 {
-  "titel": "EINHEIT FALKE – Einsatz 01: Lagerhaus 7 (3D, POV)",
-  "sprecher": {
-    "6": ["6 · DU", "#80ed99"], "1": ["1", "#ffd166"], "2": ["2", "#ef476f"], "4": ["4", "#c77dff"],
-    "7": ["7 · FUNK", "#4cc9f0"], "7v": ["7", "#4cc9f0"], "Z": ["ZENTRALE", "#e9ecef"], "F": ["ORANGE JACKE", "#ff9f1c"]
+ "titel": "EINHEIT FALKE – Einsatz 01: Lagerhaus 7 (3D, POV)",
+ "sprecher": {
+  "6": [
+   "6 · DU",
+   "#80ed99"
+  ],
+  "1": [
+   "1",
+   "#ffd166"
+  ],
+  "2": [
+   "2",
+   "#ef476f"
+  ],
+  "4": [
+   "4",
+   "#c77dff"
+  ],
+  "7": [
+   "7 · FUNK",
+   "#4cc9f0"
+  ],
+  "7v": [
+   "7",
+   "#4cc9f0"
+  ],
+  "Z": [
+   "ZENTRALE",
+   "#e9ecef"
+  ],
+  "F": [
+   "ORANGE JACKE",
+   "#ff9f1c"
+  ],
+  "1f": [
+   "1 · FUNK",
+   "#ffd166"
+  ],
+  "4f": [
+   "4 · FUNK",
+   "#c77dff"
+  ],
+  "6f": [
+   "6 · DU · FUNK",
+   "#80ed99"
+  ],
+  "Zf": [
+   "ZENTRALE · FUNK",
+   "#e9ecef"
+  ]
+ },
+ "szenen": [
+  {
+   "n": "hook",
+   "d": 4.0
   },
-  "szenen": [
-    {"n": "hook", "d": 4.0},
-    {"n": "hq", "d": 9.0, "tr": "uhr", "trd": 1.0, "karte": "6 STUNDEN VORHER"},
-    {"n": "briefing", "d": 9.0, "tr": "whip", "trd": 0.45},
-    {"n": "spind", "d": 7.0, "tr": "zoom", "trd": 0.6},
-    {"n": "van", "d": 10.0, "tr": "schwarz", "trd": 0.7},
-    {"n": "anschleichen", "d": 8.6, "tr": "mix", "trd": 0.6},
-    {"n": "zugriff", "d": 8.0},
-    {"n": "innen", "d": 12.6},
-    {"n": "verfolgung", "d": 12.0, "tr": "whip", "trd": 0.45},
-    {"n": "twist", "d": 12.0, "tr": "schwarz", "trd": 0.7}
+  {
+   "n": "hq",
+   "d": 10.5,
+   "tr": "uhr",
+   "trd": 1.0,
+   "karte": "6 STUNDEN VORHER"
+  },
+  {
+   "n": "briefing",
+   "d": 9.0,
+   "tr": "whip",
+   "trd": 0.45
+  },
+  {
+   "n": "spind",
+   "d": 7.0,
+   "tr": "zoom",
+   "trd": 0.6
+  },
+  {
+   "n": "van",
+   "d": 10.0,
+   "tr": "schwarz",
+   "trd": 0.7
+  },
+  {
+   "n": "anschleichen",
+   "d": 8.6,
+   "tr": "mix",
+   "trd": 0.6
+  },
+  {
+   "n": "zugriff",
+   "d": 9.6
+  },
+  {
+   "n": "innen",
+   "d": 10.8
+  },
+  {
+   "n": "verfolgung",
+   "d": 12.0,
+   "tr": "whip",
+   "trd": 0.45
+  },
+  {
+   "n": "twist",
+   "d": 12.0,
+   "tr": "schwarz",
+   "trd": 0.7
+  }
+ ],
+ "dialog": [
+  [
+   "hook",
+   0.5,
+   "6",
+   "Okay … das war lauter als geplant."
   ],
-  "dialog": [
-    ["hook", 0.5, "6", "Okay … das war lauter als geplant."],
-    ["hq", 3.0, "6", "Zwei, das ist dein drittes Frühstück."],
-    ["hq", 5.8, "2", "Viertes."],
-    ["hq", 7.3, "1", "Briefing. Sofort."],
-    ["briefing", 0.3, "Z", "Lagerhaus 7 am Hafen. 40 Millionen in Drogen."],
-    ["briefing", 3.4, "Z", "Zielperson: der Fuchs. Hat immer einen Plan B."],
-    ["briefing", 6.4, "6", "Und was ist UNSER Plan B?"],
-    ["briefing", 8.3, "1", "Zwei."],
-    ["briefing", 9.7, "2", "Ich bin Plan A bis Z."],
-    ["spind", 0.6, "4", "Visier runter, Neuer. Heute wird's laut."],
-    ["spind", 3.4, "6", "Danke, Mama."],
-    ["spind", 5.2, "1", "Abfahrt!"],
-    ["van", 0.4, "7v", "Ich hasse Regen. Und Häfen. Und Möwen."],
-    ["van", 3.0, "6", "Sieben, du bist ein Angsthase mit WLAN."],
-    ["van", 5.7, "2", "Lass ihn. Er hat heute schon geweint."],
-    ["van", 8.3, "1", "Wir sind da."],
-    ["anschleichen", 0.6, "4", "Drohne oben. Drei Personen im Gebäude."],
-    ["anschleichen", 3.4, "1", "Leise. Wie besprochen."],
-    ["anschleichen", 5.6, "2", "Ich bin IMMER leise."],
-    ["zugriff", 0.4, "2", "Ladung gesetzt."],
-    ["zugriff", 2.2, "1", "Auf mein Zeichen. Drei … zwei … eins …"],
-    ["zugriff", 5.6, "1", "ZUGRIFF!"],
-    ["innen", 2.2, "4", "POLIZEI! Hände hoch! Auf den Boden!"],
-    ["innen", 5.0, "7", "Orange Jacke! Hinterausgang – er ist raus!"],
-    ["innen", 8.0, "2", "Hingefallen. Komisch."],
-    ["innen", 10.1, "1", "Sechs – hinterher!"],
-    ["verfolgung", 0.6, "6", "Stehen bleiben, du Billig-Fuchs!"],
-    ["verfolgung", 3.2, "F", "Fang mich doch, Anfänger!"],
-    ["verfolgung", 6.6, "6", "Hände auf den Rücken!"],
-    ["verfolgung", 8.8, "6", "Plan B war wohl: ausrutschen."],
-    ["verfolgung", 11.0, "F", "Ihr habt keine Ahnung, wer ich bin …"],
-    ["twist", 0.4, "7v", "Leute … das ist nicht der Fuchs. Nur sein Fahrer."],
-    ["twist", 3.7, "F", "Der echte Fuchs fliegt um sechs."],
-    ["twist", 6.2, "1", "Packt eure Sachen. Wir fliegen."],
-    ["twist", 8.6, "6", "Ich hab Flugangst."],
-    ["twist", 10.3, "2", "Ich hab Hunger."]
+  [
+   "hq",
+   2.0,
+   "6",
+   "Zwei, das ist dein drittes Frühstück."
   ],
-  "ende": 1.6
+  [
+   "hq",
+   4.7,
+   "2",
+   "Viertes."
+  ],
+  [
+   "hq",
+   9.0,
+   "1",
+   "Briefing. Sofort."
+  ],
+  [
+   "briefing",
+   0.3,
+   "Z",
+   "Lagerhaus 7 am Hafen. 40 Millionen in Drogen."
+  ],
+  [
+   "briefing",
+   3.4,
+   "Z",
+   "Zielperson: der Fuchs. Hat immer einen Plan B."
+  ],
+  [
+   "briefing",
+   6.4,
+   "6",
+   "Und was ist UNSER Plan B?"
+  ],
+  [
+   "briefing",
+   8.3,
+   "1",
+   "Zwei."
+  ],
+  [
+   "briefing",
+   9.7,
+   "2",
+   "Ich bin Plan A bis Z."
+  ],
+  [
+   "spind",
+   0.6,
+   "4",
+   "Visier runter, Neuer. Heute wird's laut."
+  ],
+  [
+   "spind",
+   3.4,
+   "6",
+   "Danke, Mama."
+  ],
+  [
+   "spind",
+   5.2,
+   "1",
+   "Abfahrt!"
+  ],
+  [
+   "van",
+   0.3,
+   "Zf",
+   "Zentrale für Falke: Zielobjekt bestätigt. Zugriff freigegeben."
+  ],
+  [
+   "van",
+   3.6,
+   "7v",
+   "Ich hasse Regen. Und Häfen. Und Möwen."
+  ],
+  [
+   "van",
+   6.2,
+   "6",
+   "Sieben, du bist ein Angsthase mit WLAN."
+  ],
+  [
+   "van",
+   8.8,
+   "2",
+   "Lass ihn. Er hat heute schon geweint."
+  ],
+  [
+   "van",
+   11.4,
+   "1",
+   "Wir sind da. Masken auf."
+  ],
+  [
+   "anschleichen",
+   0.5,
+   "4f",
+   "Vier an alle: Drohne oben. Drei Personen im Gebäude."
+  ],
+  [
+   "anschleichen",
+   3.9,
+   "1f",
+   "Verstanden. Leise rein, wie besprochen."
+  ],
+  [
+   "anschleichen",
+   6.4,
+   "2",
+   "Ich bin IMMER leise."
+  ],
+  [
+   "zugriff",
+   0.4,
+   "2",
+   "Ladung gesetzt."
+  ],
+  [
+   "zugriff",
+   2.2,
+   "1",
+   "Auf mein Zeichen. Drei … zwei … eins …"
+  ],
+  [
+   "zugriff",
+   5.5,
+   "4",
+   "Flash raus!"
+  ],
+  [
+   "zugriff",
+   7.2,
+   "1",
+   "ZUGRIFF!"
+  ],
+  [
+   "innen",
+   0.4,
+   "4",
+   "POLIZEI! Hände hoch! Auf den Boden!"
+  ],
+  [
+   "innen",
+   3.0,
+   "7",
+   "Orange Jacke! Hinterausgang – er ist raus!"
+  ],
+  [
+   "innen",
+   6.1,
+   "2",
+   "Hingefallen. Komisch."
+  ],
+  [
+   "innen",
+   8.1,
+   "1",
+   "Sechs – hinterher!"
+  ],
+  [
+   "verfolgung",
+   0.6,
+   "6",
+   "Stehen bleiben, du Billig-Fuchs!"
+  ],
+  [
+   "verfolgung",
+   3.2,
+   "F",
+   "Fang mich doch, Anfänger!"
+  ],
+  [
+   "verfolgung",
+   6.6,
+   "6",
+   "Hände auf den Rücken!"
+  ],
+  [
+   "verfolgung",
+   8.8,
+   "6",
+   "Plan B war wohl: ausrutschen."
+  ],
+  [
+   "verfolgung",
+   11.0,
+   "F",
+   "Ihr habt keine Ahnung, wer ich bin …"
+  ],
+  [
+   "verfolgung",
+   13.6,
+   "6f",
+   "Sechs an alle: Person gesichert. Kai Nord."
+  ],
+  [
+   "twist",
+   0.4,
+   "7v",
+   "Leute … das ist nicht der Fuchs. Nur sein Fahrer."
+  ],
+  [
+   "twist",
+   3.7,
+   "F",
+   "Der echte Fuchs fliegt um sechs."
+  ],
+  [
+   "twist",
+   6.2,
+   "1",
+   "Packt eure Sachen. Wir fliegen."
+  ],
+  [
+   "twist",
+   8.6,
+   "6",
+   "Ich hab Flugangst."
+  ],
+  [
+   "twist",
+   10.3,
+   "2",
+   "Ich hab Hunger."
+  ]
+ ],
+ "ende": 1.6
 }

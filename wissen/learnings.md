@@ -28,6 +28,9 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
   mehr Details (auch im Van), Untertitel nicht mittig + nie abgeschnitten, Fake-Fuchs sichtbar fliehen lassen,
   Handschellen wirklich anlegen.
 
+- Nutzer-Feedback 3D-Fassung: „sehr sehr gut“. Personen-Vorstellung war zu schnell (jetzt 1,6 s pro Person),
+  Blendgranate kam zu spät (jetzt direkt nach der Sprengung, VOR dem Eindringen). Wunsch: echte Stimmen per ElevenLabs.
+
 ## Technik-Learnings (Produktion)
 - 3D-Pipeline: Three.js + Headless-Chromium (SwiftShader) rendert ~0,2–0,5 s/Bild; 4 Browser parallel.
 - Hochkant-Kamera ist horizontal sehr eng (≈45° bei 74° vertikal): Figuren nah an die Bildachse stellen.
@@ -56,3 +59,5 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Grafiken müssen die Botschaft zeigen: „Wissen bleibt“ = Kurve muss am Ende oben sein.
 - Filmkorn, das sich jedes Frame ändert, bläht die Datei auf (530 MB!). Korn schwach halten und beim Zusammenfügen
   mit Bitrate-Deckel kodieren (`-crf 23 -maxrate 4M`) → ca. 40 MB. GitHub erlaubt max. 100 MB pro Datei.
+- Ablauf Zugriff realistisch: Sprengung → „Flash raus!“ + Blendgranate durchs Loch → Knall → „ZUGRIFF!“ → Eindringen.
+- Sprachaufnahmen bestimmen das Timing: timeline.py liest die Länge jeder Datei in stimmen/ und verlängert die Zeile.

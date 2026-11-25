@@ -137,12 +137,13 @@ function hqGemeinsam(t, alarm) {
   for (const sp of Object.values(HQ.hq.spinde)) sp.rotation.y = 0;
 }
 
+const ALARM = 8.6;
 function s_hq(lt, t) {
-  const alarm = lt >= 6.9;
+  const alarm = lt >= ALARM;
   zeichneSchirm(alarm ? 'alarm' : 'logo', lt, t);
   hqGemeinsam(t, alarm);
   const { k, pov, t: tm } = HQ;
-  const hin = smooth(6.9, 7.5, lt);
+  const hin = smooth(ALARM, ALARM + .6, lt);
   schau(k, V3(0.1 + .01 * Math.sin(t * .7), 1.22 + .005 * Math.sin(t * 1.6), 0.05), V3(lerp(0.05, 0, hin), lerp(1.05, 1.6, hin), -3.6));
   // 2 sitzt gegenüber und isst
   const biss = alarm ? 0 : Math.max(0, Math.sin(lt * 2.3));
@@ -167,8 +168,8 @@ function s_hq(lt, t) {
   // Namensschilder (Projektion der Köpfe)
   const tags = [];
   const nt = [[1, '1 · TEAMFÜHRER', 'Hatte nie Urlaub.'], [2, '2 · TÜRÖFFNER', 'Isst immer.'], [4, '4 · PRÄZISION & DROHNE', 'Sarkasmus inklusive.'], [7, '7 · TECHNIK', 'Angst vor Möwen.']];
-  nt.forEach(([nr, a, b], i) => { const s0 = 0.3 + i * 0.9; if (lt >= s0 && lt < s0 + 0.9) tags.push({ p: projiziere(weltPos(tm[nr].j.head).add(V3(0, .3, 0)), k), a, b, f: TL.sprecher[String(nr)][1], k: lt - s0 }); });
-  if (lt >= 3.9 && lt < 5.4) tags.push({ p: projiziere(weltPos(pov.tasse), k), a: '6 · DU', b: 'Der Neue. Große Klappe.', f: '#80ed99', k: lt - 3.9 });
+  nt.forEach(([nr, a, b], i) => { const s0 = 0.3 + i * 1.6; if (lt >= s0 && lt < s0 + 1.6) tags.push({ p: projiziere(weltPos(tm[nr].j.head).add(V3(0, .3, 0)), k), a, b, f: TL.sprecher[String(nr)][1], k: lt - s0 }); });
+  if (lt >= 6.7 && lt < 8.4) tags.push({ p: projiziere(weltPos(pov.tasse), k), a: '6 · DU', b: 'Der Neue. Große Klappe.', f: '#80ed99', k: lt - 6.7 });
   return { welt: HQ, tags, rot: alarm ? .25 + .25 * Math.sin(t * 9) : 0, uhr: '20:14' };
 }
 
@@ -455,12 +456,13 @@ function s_anschleichen(lt, t) {
 }
 
 // Zugriff: Ladung, Countdown, Sprengung (Tür nach INNEN), Eindringen
+const ZUGRIFF = 7.2, FLASH_WURF = 5.95, FLASH_KNALL = 6.7;
 const WEG_Z = {
-  2: [[0, .95, .9], [.8, .5, .45], [1.9, .5, .45], [2.6, 1.05, .95], [5.6, 1.05, .95], [6.1, .25, .3], [6.6, 0, -1.2], [8.0, .8, -4.2]],
-  1: [[0, -.95, .8], [5.6, -.95, .8], [6.2, -.2, .3], [6.75, 0, -1.2], [8.0, -1.6, -4.6]],
-  4: [[0, -2.25, 1.6], [5.6, -2.25, 1.6], [6.6, -.1, .4], [7.1, 0, -1.2], [8.0, 1.2, -3.6]],
+  2: [[0, .95, .9], [.8, .5, .45], [1.9, .5, .45], [2.6, 1.05, .95], [7.2, 1.05, .95], [7.7, .25, .3], [8.2, 0, -1.2], [9.6, .8, -4.2]],
+  1: [[0, -.95, .8], [7.2, -.95, .8], [7.8, -.2, .3], [8.35, 0, -1.2], [9.6, -1.6, -4.6]],
+  4: [[0, -2.25, 1.6], [5.3, -2.25, 1.6], [5.75, -1.05, 1.0], [7.25, -1.05, 1.0], [8.2, -.1, .4], [8.7, 0, -1.2], [9.6, 1.2, -3.6]],
   7: [[0, 1.8, 1.6]],
-  6: [[0, -1.55, 2.4], [5.9, -1.55, 2.4], [6.9, -.2, .6], [7.4, 0, -.8], [8.0, -.3, -2.6]],
+  6: [[0, -1.55, 2.4], [7.5, -1.55, 2.4], [8.5, -.2, .6], [9.0, 0, -.8], [9.6, -.3, -2.6]],
 };
 
 function s_zugriff(lt, t) {
@@ -487,11 +489,15 @@ function s_zugriff(lt, t) {
     const p = pfad(WEG_Z[nr], lt);
     const geht = p.s > .05;
     let yaw = richtung(p.vx, p.vz, Math.PI);
-    if (!geht && lt < 5.6) yaw = nr === 7 ? Math.PI - .5 : (nr === 4 ? Math.PI + .25 : Math.PI);
+    if (!geht && lt < ZUGRIFF) yaw = nr === 7 ? Math.PI - .5 : (nr === 4 ? (lt > 5.7 ? Math.PI + .55 : Math.PI + .25) : Math.PI);
     let P = geht ? gehPose(p.dist / .7 * Math.PI, { hocke: .25, arme: false }) : { ...hockPose(.5) };
     P.rumpf = [.3 + .5 * duck, 0, 0];
     P.kopf = [.4 * duck, 0, 0];
     if (nr === 2 && lt > .5 && lt < 2.0) P = { ...hockPose(.9), rumpf: [.2, 0, 0], kopf: [-.1, 0, 0] };
+    if (nr === 4 && lt > FLASH_WURF - .3 && lt < FLASH_WURF + .2) {
+      const k4 = smooth(FLASH_WURF - .3, FLASH_WURF, lt);
+      P = { ...hockPose(.35), armR: [2.5 - 1.6 * k4, .15], ellR: .9 - .7 * k4, rumpf: [.2 + .3 * k4, 0, 0] };
+    }
     if (nr === 1 && lt > 2.8 && lt < TUER_ZEIT) {
       const n = lt < 3.5 ? 3 : lt < 4.2 ? 2 : lt < 4.9 ? 1 : 0;
       P = { ...hockPose(.45), armL: [2.7, .35], ellL: 1.2, fingerL: n === 3 ? 3 : n === 2 ? 2 : n === 1 ? 1 : 0, rumpf: [.25, 0, 0] };
@@ -503,7 +509,16 @@ function s_zugriff(lt, t) {
       tm[2].greife('R', V3(.22 + .05 * (1 - smooth(.6, 1.15, lt)), 1.05, -.08 + .2 * (1 - smooth(.6, 1.15, lt))), tm[2].lokal(-.6, .4, -.2));
     } else if (nr === 1 && lt > 2.8 && lt < TUER_ZEIT) {
       tm[1].haltGewehr('tief'); tm[1].greife('L', tm[1].lokal(.32, 1.62, .25), tm[1].lokal(.8, 1.0, -.4));
-    } else tm[nr].haltGewehr(geht && lt > 5.6 ? 'anschlag' : 'tief');
+    } else if (nr === 4 && lt > FLASH_WURF - .3 && lt < FLASH_WURF + .2) {
+      tm[4].haltGewehr('tief'); tm[4].pose(P); tm[4].platziere(p.x, p.z, yaw); tm[4].greife('L', weltPos(tm[4].anbau.gewehr.vorne), tm[4].lokal(.6, .6, -.2));
+    } else tm[nr].haltGewehr(geht && lt > ZUGRIFF ? 'anschlag' : 'tief');
+  }
+  // Blendgranate: 4 wirft sie durch das Loch, sie prallt drinnen auf und knallt
+  const fk = lt - FLASH_KNALL;
+  if (lt >= FLASH_WURF) {
+    const q = wurf3([-.75, 1.35, .75], [.6, 1.7, -4.4], Math.min(lt, FLASH_KNALL) - FLASH_WURF, { radius: .03, rest: .3, reib: .6 });
+    H_.blendg.visible = true; H_.blendg.position.set(q.x, q.y, q.z); H_.blendg.rotation.set(lt * 9, 0, q.liegt ? Math.PI / 2 : lt * 7);
+    H_.blendLicht.position.set(q.x, q.y + .3, q.z); H_.blendLicht.intensity = fk > 0 && fk < .45 ? 1600 * (1 - fk / .45) : 0;
   }
   // Ich (Kamera)
   const p6 = pfad(WEG_Z[6], lt);
@@ -515,24 +530,26 @@ function s_zugriff(lt, t) {
   pos.add(V3((r() - .5) * sh, (r() - .5) * sh, 0));
   let ziel = lt < 1.9 ? V3(.3, 1.0, 0) : (lt < TUER_ZEIT - .2 ? V3(-.6, 1.5, .6) : V3(0, 1.1, -3));
   if (lt > 2.8 && lt < TUER_ZEIT - .45) ziel = V3(-.75, 1.55, .5);
-  if (lt >= TUER_ZEIT - .45 && lt < TUER_ZEIT + 1.0) ziel = V3(.05, 1.15, 0);
+  if (lt >= TUER_ZEIT - .45 && lt < ZUGRIFF + .2) ziel = V3(.05, 1.15, 0);
   const wegdrehen = duck;
   schau(k, pos, ziel);
   k.rotation.y += .12 * wegdrehen; k.rotation.x -= .06 * wegdrehen; k.updateMatrixWorld(true);
-  pov.setze({ modus: 'gewehr', t, lauf: geht6 ? .9 : .1, zielen: lt > 5.6 ? .55 : -.1, lampe: lt > 6.3 ? 25 : 0 });
-  return { welt: HAFEN, uhr: '02:32', blitz: d >= 0 && d < .25 ? (1 - d / .25) * .9 : 0, wackel: sh };
+  pov.setze({ modus: 'gewehr', t, lauf: geht6 ? .9 : .1, zielen: lt > ZUGRIFF ? .55 : -.1, lampe: lt > ZUGRIFF + .7 ? 25 : 0 });
+  const blitzE = d >= 0 && d < .25 ? (1 - d / .25) * .9 : 0;
+  const blitzF = fk > 0 && fk < .9 ? (fk < .12 ? .7 : .7 * (1 - (fk - .12) / .78)) : 0;
+  return { welt: HAFEN, uhr: '02:32', blitz: Math.max(blitzE, blitzF), wackel: sh };
 }
 
 // Halle innen
 const WEG_I = {
-  2: [[0, .8, -4.2], [3.9, .8, -4.2], [5.55, 3.85, -8.0]],
+  2: [[0, .8, -4.2], [3.4, .8, -4.2], [5.05, 3.85, -8.0]],
   1: [[0, -1.6, -4.6], [1.8, -1.9, -6.2]],
   4: [[0, 1.2, -3.6], [1.0, 2.2, -5.6]],
-  6: [[0, -.3, -2.6], [.9, -.45, -4.7], [10.8, -.45, -4.7], [12.6, 2.4, -10.5]],
-  fuchs: [[0, 3.6, -13.9], [1.85, 3.6, -13.9], [3.6, 5.0, -22.7], [4.1, 5.0, -25.5]],
-  g2: [[0, 1.7, -8.0], [3.9, 1.7, -8.0], [5.5, 4.0, -8.4]],
+  6: [[0, -.3, -2.6], [.9, -.45, -4.7], [9.0, -.45, -4.7], [10.8, 2.4, -10.5]],
+  fuchs: [[0, 3.6, -13.9], [.35, 3.6, -13.9], [2.15, 5.0, -22.7], [2.65, 5.0, -25.5]],
+  g2: [[0, 1.7, -8.0], [3.4, 1.7, -8.0], [5.0, 4.0, -8.4]],
 };
-const BLEND_WURF = 0.7, BLEND_KNALL = 1.55, TACKLE = 5.5;
+const TACKLE = 5.0;
 
 function s_innen(lt, t) {
   hafenStandard(t, true);
@@ -541,23 +558,19 @@ function s_innen(lt, t) {
   const pt = tuerPhysik(9); H_.tuer.position.set(.05, pt.y, pt.z); H_.tuer.rotation.set(pt.w, .1, 0); H_.klinke.visible = false;
   H_.schwaden.update(3 + lt, clamp(1 - lt / 8), k); H_.innenSchwaden.update(3 + lt, .5, k);
   tm[7].root.visible = false;
-  const knall = lt - BLEND_KNALL;
-  const geblendet = knall > 0 && knall < 2.6;
-  // Blendgranate: Wurf von 4, Abprall, Rollen
-  if (lt >= BLEND_WURF && lt < BLEND_KNALL + .05) {
-    const q = wurf3([2.1, 1.5, -5.7], [-1.0, 2.6, -2.2], lt - BLEND_WURF, { radius: .03, rest: .3, reib: .6 });
-    H_.blendg.visible = true; H_.blendg.position.set(q.x, q.y, q.z); H_.blendg.rotation.set(lt * 9, 0, q.liegt ? Math.PI / 2 : lt * 7);
-  } else H_.blendg.visible = false;
-  H_.blendLicht.position.copy(H_.blendg.position); H_.blendLicht.intensity = knall > 0 && knall < .5 ? 900 * (1 - knall / .5) : 0;
+  const ZD = TL.szenen.find(x => x.n === 'zugriff').d;
+  const knall = lt + ZD - FLASH_KNALL;           // Sekunden seit der Blendgranate (schon vor der Halle)
+  const geblendet = knall < 4.4;
+  const q = wurf3([-.75, 1.35, .75], [.6, 1.7, -4.4], FLASH_KNALL - FLASH_WURF, { radius: .03, rest: .3, reib: .6 });
+  H_.blendg.visible = true; H_.blendg.position.set(q.x, q.y, q.z); H_.blendg.rotation.set(0, .4, Math.PI / 2);
+  H_.blendLicht.intensity = 0;
   // Team
   for (const nr of [1, 4]) {
     const p = pfad(WEG_I[nr], lt); const geht = p.s > .05;
     let P = geht ? gehPose(p.dist / .7 * Math.PI, { hocke: .25, arme: false }) : { beinL: [.25, .3], beinR: [-.15, .25], rumpf: [.15, 0, 0] };
-    if (nr === 4 && lt > BLEND_WURF - .35 && lt < BLEND_WURF + .15) P = { ...P, armR: [2.4 - 2 * smooth(BLEND_WURF - .35, BLEND_WURF, lt), .2], ellR: .3 };
     P.kopf = [0, 0, 0];
     tm[nr].pose(P); tm[nr].platziere(p.x, p.z, richtung(p.vx, p.vz, nr === 4 ? Math.PI - .3 : Math.PI + .2));
-    if (nr === 4 && lt > BLEND_WURF - .35 && lt < BLEND_WURF + .15) { tm[4].haltGewehr('tief'); tm[4].pose(P); tm[4].platziere(p.x, p.z, Math.PI - .3); tm[4].greife('L', weltPos(tm[4].anbau.gewehr.vorne), tm[4].lokal(.6, .6, -.2)); }
-    else tm[nr].haltGewehr('anschlag');
+    tm[nr].haltGewehr('anschlag');
   }
   // 2 rennt los und tackelt g2
   {
@@ -581,8 +594,8 @@ function s_innen(lt, t) {
   {
     let P = { ...stehPose(t), kopf: [.1, 0, 0] };
     if (geblendet) P = { ...P, armL: [2.2, -.3], ellL: 2.2, armR: [2.2, -.3], ellR: 2.2, rumpf: [.3, .2 * Math.sin(t * 5), 0], kopf: [.4, 0, 0] };
-    if (lt > 3.4) P = { ...P, armL: [3.0, .35], ellL: .4, armR: [3.0, .35], ellR: .4, mund: .5, kopf: [0, 0, 0], rumpf: [0, 0, 0] };
-    if (lt > 4.6) { const kk = smooth(4.6, 5.3, lt); P.beinL = [1.5 * kk, 1.6 * kk]; P.beinR = [-.2 * kk, 1.75 * kk]; }
+    if (lt > 1.6) P = { ...P, armL: [3.0, .35], ellL: .4, armR: [3.0, .35], ellR: .4, mund: .5, kopf: [0, 0, 0], rumpf: [0, 0, 0] };
+    if (lt > 2.8) { const kk = smooth(2.8, 3.5, lt); P.beinL = [1.5 * kk, 1.6 * kk]; P.beinR = [-.2 * kk, 1.75 * kk]; }
     g1.pose(P); g1.platziere(-1.0, -9.95, 0);
   }
   // g2: geblendet -> flieht -> wird getackelt und liegt bäuchlings
@@ -604,27 +617,26 @@ function s_innen(lt, t) {
   {
     const p = pfad(WEG_I.fuchs, lt);
     const geht = p.s > .05;
-    fuchs.root.visible = lt < 4.15;
-    fuchs.pose(geht ? rennPose(p.dist / 1.0 * Math.PI, { neig: .35 }) : { ...stehPose(t), kopf: [lt > 1.6 ? 0 : .3, lt > 1.6 ? 1.0 : 0, 0], armR: [.8, .1], ellR: 1.2 });
-    fuchs.platziere(p.x, p.z, geht ? richtung(p.vx, p.vz, 0) : (lt > 1.6 ? .8 : 0));
-    const auf = smooth(3.35, 3.6, lt) * (1 - smooth(4.4, 5.0, lt));
+    fuchs.root.visible = lt < 2.7;
+    fuchs.pose(geht ? rennPose(p.dist / 1.0 * Math.PI, { neig: .35 }) : { ...stehPose(t), kopf: [0, .9, 0], armR: [.8, .1], ellR: 1.2 });
+    fuchs.platziere(p.x, p.z, geht ? richtung(p.vx, p.vz, 0) : .8);
+    const auf = smooth(1.9, 2.15, lt) * (1 - smooth(3.0, 3.6, lt));
     H_.hinterTuer.rotation.y = -1.7 * auf;
   }
   // Ich
   const p6 = pfad(WEG_I[6], lt); const geht6 = p6.s > .05;
-  const rennt = lt > 10.8;
+  const rennt = lt > 9.0;
   const pos = V3(p6.x, 1.6 + (geht6 ? Math.sin(p6.dist / .7 * Math.PI) * (rennt ? .05 : .03) : 0), p6.z);
   const wackel = knall > 0 && knall < .7 ? .03 * (1 - knall / .7) : 0;
   const r = rng(Math.floor(t * 30)); pos.add(V3((r() - .5) * wackel, (r() - .5) * wackel, 0));
   let ziel = V3(.3, 1.2, -10);
-  if (lt > 1.8 && lt < 4.2) ziel = V3(3.0, 1.2, -14).lerp(V3(5.0, 1.3, -22), smooth(1.9, 3.8, lt));
-  if (lt > 4.2 && lt < 7) ziel = V3(2.5, .9, -8.5);
-  if (lt > 7 && lt < 10.2) ziel = V3(-.5, 1.0, -9.5);
-  if (lt >= 10.2) ziel = V3(5.0, 1.4, -23);
-  if (knall > 0 && knall < .6) ziel.add(V3(-3, -2, 0).multiplyScalar(.5));
+  if (lt > .2 && lt < 2.7) ziel = V3(3.0, 1.2, -14).lerp(V3(5.0, 1.3, -22), smooth(.4, 2.4, lt));
+  if (lt >= 2.7 && lt < 6.3) ziel = V3(2.5, .9, -8.5);
+  if (lt >= 6.3 && lt < 8.6) ziel = V3(-.5, 1.0, -9.5);
+  if (lt >= 8.6) ziel = V3(5.0, 1.4, -23);
   schau(k, pos, ziel);
   pov.setze({ modus: 'gewehr', t, lauf: rennt ? 1 : (geht6 ? .5 : .1), zielen: rennt ? .1 : .6, lampe: 30 });
-  return { welt: HAFEN, uhr: '02:33', blitz: knall > 0 ? (knall < .35 ? 1 : clamp(1 - (knall - .35) / 1.6) * .85) : 0 };
+  return { welt: HAFEN, uhr: '02:33', blitz: clamp(.25 - lt * .3) };
 }
 
 // ======================================================================= WELT 4: Kai (Verfolgung + Twist)

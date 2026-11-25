@@ -41,7 +41,11 @@ Ziel des Büros: kurze KI-Videos für TikTok, die Reichweite bringen und Geld ve
 - Stil wie Referenz: Perspektiv-Straßen, kräftige Konturen, POV-Waffe, großer hellblauer Untertitel.
 - **3D** (Three.js im Headless-Browser): Baukasten `tools/einsatz3d/` + Renderer `tools/render3d.js`.
   Vorlage einer kompletten Folge: `videos/falke-01-3d/` (timeline.json → timeline.py → episode.js + ton.py, build.sh).
-- **Nur POV** (Ich-Sicht in jeder Szene), Bodycam-Look, **keine Stimmen-Töne** (Dialog nur als Untertitel), keine Comic-Wörter.
+- **Nur POV** (Ich-Sicht in jeder Szene), Bodycam-Look, keine Babbel-/Piep-Töne, keine Comic-Wörter.
+- **Stimmen nur echt (ElevenLabs):** `sprecher.py` schreibt das Sprecher-Skript (Besetzung, Regie, Dateinamen = Zeilen-ID),
+  Aufnahmen kommen nach `videos/<folge>/stimmen/<id>.mp3` (oder `stimmen_erzeugen.py`). Funksprüche trocken aufnehmen –
+  Funkfilter, Knacken und Ducking macht `ton.py`. Ohne Aufnahmen: nur Untertitel.
+- **Funksprüche** im Format „Vier an alle: …“ / „Zentrale für Falke: …“, beim Anschleichen geflüstert.
 - **Keine Namen:** Team nur mit Nummern (1 Teamführer, 2 Türöffner, 4 Präzision/Drohne, 7 Technik, **6 = Ich, der Neue**),
   Leitstelle = „Zentrale“. Nummern stehen auf Westen/Rücken.
 - **Untertitel unten** (nicht mittig), ganzer Satz auf einmal; Dauer aus der Textlänge (timeline.py) – nie abgeschnitten.

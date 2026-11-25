@@ -1,0 +1,40 @@
+id;rolle;funk;text_v3;text_ohne_tags;regie;zeit_im_video
+01_hook_6;6;nein;[außer Atem] Okay … das war lauter als geplant.;Okay … das war lauter als geplant.;nach der Explosion, Ohren klingeln, halb lachend;0:00.5
+02_hq_6;6;nein;[grinsend] Zwei, das ist dein drittes Frühstück.;Zwei, das ist dein drittes Frühstück.;lässig, stichelnd über den Tisch;0:06.0
+03_hq_2;2;nein;[mit vollem Mund] Viertes.;Viertes.;todernst, kauend, keine Pause;0:08.7
+04_hq_1;1;nein;Briefing. Sofort.;Briefing. Sofort.;ruhig, aber keine Widerrede – Alarm läuft;0:13.0
+05_briefing_Z;Z;nein;Lagerhaus Sieben am Hafen. Vierzig Millionen in Drogen.;Lagerhaus Sieben am Hafen. Vierzig Millionen in Drogen.;sachlich, Fakten vorlesen;0:15.2
+06_briefing_Z;Z;nein;Zielperson: der Fuchs. Hat immer einen Plan B.;Zielperson: der Fuchs. Hat immer einen Plan B.;leicht warnend bei „Plan B“;0:18.3
+07_briefing_6;6;nein;[frech] Und was ist UNSER Plan B?;Und was ist UNSER Plan B?;Betonung auf UNSER;0:21.4
+08_briefing_1;1;nein;Zwei.;Zwei.;ein Wort, trocken, ohne hinzusehen;0:23.5
+09_briefing_2;2;nein;[stolz, ruhig] Ich bin Plan A bis Z.;Ich bin Plan A bis Z.;langsam, zufrieden;0:25.0
+10_spind_4;4;nein;[trocken] Visier runter, Neuer. Heute wird's laut.;Visier runter, Neuer. Heute wird's laut.;beiläufig beim Helm-Aufsetzen;0:27.7
+11_spind_6;6;nein;[sarkastisch] Danke, Mama.;Danke, Mama.;kurz, augenrollend;0:30.5
+12_spind_1;1;nein;[laut] Abfahrt!;Abfahrt!;aus dem Gang gerufen;0:32.3
+13_van_Zf;Z;ja;Zentrale für Falke: Zielobjekt bestätigt. Zugriff freigegeben.;Zentrale für Falke: Zielobjekt bestätigt. Zugriff freigegeben.;FUNK – sachlich, deutlich, ohne Eile;0:34.4
+14_van_7v;7;nein;[nervös] Ich hasse Regen. Und Häfen. Und Möwen.;Ich hasse Regen. Und Häfen. Und Möwen.;aufgezählt, wird bei jedem Punkt jammernder;0:38.3
+15_van_6;6;nein;[grinsend] Sieben, du bist ein Angsthase mit Weh-Lan.;Sieben, du bist ein Angsthase mit Weh-Lan.;"stichelnd; „WLAN“ deutsch ausgesprochen";0:41.0
+16_van_2;2;nein;[ruhig] Lass ihn. Er hat heute schon geweint.;Lass ihn. Er hat heute schon geweint.;gutmütig, todernst;0:43.8
+17_van_1;1;nein;Wir sind da. Masken auf.;Wir sind da. Masken auf.;leise, konzentriert – ab jetzt Einsatz;0:46.4
+18_anschleichen_4f;4;ja;[flüsternd] Vier an alle: Drohne oben. Drei Personen im Gebäude.;Vier an alle: Drohne oben. Drei Personen im Gebäude.;FUNK – gedämpft, schnell, präzise;0:49.2
+19_anschleichen_1f;1;ja;[flüsternd] Verstanden. Leise rein, wie besprochen.;Verstanden. Leise rein, wie besprochen.;FUNK – sehr ruhig;0:52.6
+20_anschleichen_2;2;nein;[flüsternd] Ich bin IMMER leise.;Ich bin IMMER leise.;geflüstert, beleidigt – direkt danach rempelt er die Tonne an;0:55.4
+21_zugriff_2;2;nein;[flüsternd] Ladung gesetzt.;Ladung gesetzt.;knapp, konzentriert;0:57.8
+22_zugriff_1;1;nein;[flüsternd] Auf mein Zeichen. Drei … zwei … eins …;Auf mein Zeichen. Drei … zwei … eins …;langsam, gleichmäßig – je eine Sekunde zwischen den Zahlen;0:59.6
+23_zugriff_4;4;nein;[ruft] Flash raus!;Flash raus!;kurz und scharf, während sie wirft;1:02.9
+24_zugriff_1;1;nein;[schreit] ZUGRIFF!;ZUGRIFF!;voller Kommandoton;1:04.6
+25_innen_4;4;nein;[schreit] POLIZEI! Hände hoch! Auf den Boden!;POLIZEI! Hände hoch! Auf den Boden!;sehr laut, abgehackt, jedes Kommando einzeln;1:07.4
+26_innen_7;7;ja;[aufgeregt] Orange Jacke! Hinterausgang – er ist raus!;Orange Jacke! Hinterausgang – er ist raus!;FUNK – hektisch, überschlägt sich fast;1:10.0
+27_innen_2;2;nein;[trocken] Hingefallen. Komisch.;Hingefallen. Komisch.;auf dem Ganoven kniend, null Stress;1:13.1
+28_innen_1;1;nein;[laut] Sechs – hinterher!;Sechs – hinterher!;Befehl, scharf;1:15.1
+29_verfolgung_6;6;nein;[rennend, außer Atem] Stehen bleiben, du Billig-Fuchs!;Stehen bleiben, du Billig-Fuchs!;beim Sprinten gerufen, keuchend;1:18.4
+30_verfolgung_F;F;nein;[lachend, rennend] Fang mich doch, Anfänger!;Fang mich doch, Anfänger!;über die Schulter, großspurig;1:21.0
+31_verfolgung_6;6;nein;[außer Atem, bestimmt] Hände auf den Rücken!;Hände auf den Rücken!;kniend, keuchend, aber Kommandoton;1:24.4
+32_verfolgung_6;6;nein;[grinsend, schnaufend] Plan B war wohl: ausrutschen.;Plan B war wohl: ausrutschen.;zufrieden, noch außer Atem;1:26.6
+33_verfolgung_F;F;nein;[gepresst, frech] Ihr habt keine Ahnung, wer ich bin …;Ihr habt keine Ahnung, wer ich bin …;Gesicht am Boden, trotzdem großspurig;1:28.9
+34_verfolgung_6f;6;ja;[außer Atem] Sechs an alle: Person gesichert. Kai Nord.;Sechs an alle: Person gesichert. Kai Nord.;FUNK – stolz, schnaufend;1:31.5
+35_twist_7v;7;nein;[zögernd] Leute … das ist nicht der Fuchs. Nur sein Fahrer.;Leute … das ist nicht der Fuchs. Nur sein Fahrer.;liest vom Tablet ab, Stimmung kippt;1:35.1
+36_twist_F;F;nein;[grinsend] Der echte Fuchs fliegt um sechs.;Der echte Fuchs fliegt um sechs.;genüsslich, langsam;1:38.4
+37_twist_1;1;nein;Packt eure Sachen. Wir fliegen.;Packt eure Sachen. Wir fliegen.;ruhig, entschlossen;1:40.9
+38_twist_6;6;nein;[kleinlaut] Ich hab Flugangst.;Ich hab Flugangst.;plötzlich gar nicht mehr frech;1:43.2
+39_twist_2;2;nein;[ernst] Ich hab Hunger.;Ich hab Hunger.;todernst – Pointe;1:45.0

@@ -2,6 +2,7 @@
 """Tonspur für EINHEIT FALKE 01 (3D): nur Geräusche + Musik, keine Stimmen."""
 import json
 import math
+import subprocess
 import sys
 import wave
 from pathlib import Path
@@ -128,14 +129,15 @@ t = ts(.8)
 add(st("hook") + 3.2, .12 * np.sign(np.sin(2 * np.pi * np.cumsum(500 + 2500 * (t * 10 % 1)) / SR)))
 # HQ
 s0 = st("hq")
-for k in range(int(6.9 / .11)):
+ALARM = 8.6
+for k in range(int(ALARM / .11)):
     if rng.random() < .7:
         add(s0 + k * .11, klick(rng.uniform(2500, 4000)), .06)
 for k in range(5):
-    add(s0 + .3 + k * .9, .2 * np.sin(2 * np.pi * np.cumsum(600 + 1800 * ts(.1) / .1) / SR) * np.exp(-14 * ts(.1)))
-d_alarm = SZ["hq"]["d"] - 6.9 + .6
+    add(s0 + .3 + k * 1.6, .2 * np.sin(2 * np.pi * np.cumsum(600 + 1800 * ts(.1) / .1) / SR) * np.exp(-14 * ts(.1)))
+d_alarm = SZ["hq"]["d"] - ALARM + .6
 t = ts(d_alarm)
-add(s0 + 6.9, .22 * lowpass(np.sign(np.sin(2 * np.pi * np.where((t % .8) < .4, 960, 770) * t)), 2500))
+add(s0 + ALARM, .22 * lowpass(np.sign(np.sin(2 * np.pi * np.where((t % .8) < .4, 960, 770) * t)), 2500))
 # Briefing: Piepser am Bildschirm
 for z in (3.4, 8.3):
     add(st("briefing") + z, .2 * np.sin(2 * np.pi * 1320 * ts(.12)) * np.exp(-10 * ts(.12)))
@@ -173,23 +175,24 @@ for k in range(8):
 add(s0 + 5.1, boom(), 1.0)
 add(s0 + 5.6, thud(.7))
 add(s0 + 5.75, metall(260, .7), .5)
-for k in range(int(2.4 / .28)):
-    add(s0 + 5.7 + k * .28, schritt(), .3)
+add(s0 + 5.95, .3 * band(.2, 400, 2000) * np.exp(-12 * ts(.2)))
+add(s0 + 6.35, metall(1700, .25), .35)
+add(s0 + 6.7, boom(.55), .85)
+add(s0 + 6.7, .25 * band(.25, 3000, 9000) * np.exp(-14 * ts(.25)))
+for k in range(int(2.3 / .28)):
+    add(s0 + 7.3 + k * .28, schritt(), .3)
 # Innen
 s0 = st("innen")
-add(s0 + .7, klick(800), .4)
-add(s0 + 1.0, metall(1800, .2), .3)
-add(s0 + 1.55, boom(.7), .9)
-add(s0 + 3.6, metall(220, .4), .5)
-add(s0 + 4.9, thud(.6))
-add(s0 + 4.9, metall(180, .6), .5)
-add(s0 + 5.5, thud(1.0), .9)
-add(s0 + 5.75, thud(.6), .6)
-for z in TL["dialog"]:
-    if z["wer"] == "7":
-        add(st(z["szene"]) + z["start"] - .15, funk(), .6)
+add(s0 + 2.0, metall(220, .4), .5)
+add(s0 + 3.4, thud(.6))
+add(s0 + 3.4, metall(180, .6), .5)
+add(s0 + 5.0, thud(1.0), .9)
+add(s0 + 5.25, thud(.6), .6)
 for k in range(int(1.8 / .27)):
-    add(s0 + 10.8 + k * .27, schritt(False), .35)
+    add(s0 + 9.0 + k * .27, schritt(False), .35)
+for z in TL["dialog"]:
+    if z["funk"]:
+        add(st(z["szene"]) + z["start"] - .15, funk(), .6)
 # Verfolgung
 s0 = st("verfolgung")
 F_START, F_V, PF_Z, KAM_V = -9, 5.7, -41.5, 6.2
@@ -216,11 +219,48 @@ for t0, fs in ((s0 + 3.7, (110, 130.8, 155.6)), (s0 + d - 1.9, (98, 146.8, 196, 
     add(t0, .3 * sum(np.sin(2 * np.pi * f * t) for f in fs) / len(fs) * np.exp(-1.1 * t))
 t = ts(d)
 add(s0, .05 * np.sin(2 * np.pi * np.where((t % 1.2) < .6, 700, 560) * t) * lowpass(np.ones(len(t)), 5))
-# Blendgranate: alles dumpf + Piepen
-t0, t1 = int((st("innen") + 1.55) * SR), int((st("innen") + 4.2) * SR)
-a[t0:t1] = lowpass(a[t0:t1], 350) * .6
+# Blendgranate (draußen vor der Tür): kurz dumpf + leises Piepen
+t0, t1 = int((st("zugriff") + 6.75) * SR), int((st("zugriff") + 8.2) * SR)
+a[t0:t1] = lowpass(a[t0:t1], 600) * .75
 tt = np.arange(t1 - t0) / SR
-a[t0:t1] += .16 * np.sin(2 * np.pi * 3600 * tt) * np.exp(-.9 * tt)
+a[t0:t1] += .08 * np.sin(2 * np.pi * 3600 * tt) * np.exp(-1.5 * tt)
+
+
+# ---------------------------------------------------------------- Stimmen (ElevenLabs-Aufnahmen aus stimmen/)
+def lade(datei):
+    roh = subprocess.run(["ffmpeg", "-v", "error", "-i", str(datei), "-f", "s16le", "-ac", "1", "-ar", str(SR), "-"],
+                         capture_output=True).stdout
+    return np.frombuffer(roh, dtype=np.int16).astype(np.float64) / 32768
+
+
+def funkfilter(x):
+    x = lowpass(x, 3200) - lowpass(x, 320)            # Bandpass wie ein Funkgerät
+    x = np.tanh(x * 3.0) / np.tanh(3.0)               # leichte Verzerrung
+    x += .015 * rng.uniform(-1, 1, len(x)) * (np.abs(x) > .01)
+    return x
+
+
+stimme = np.zeros(n)
+gefunden = 0
+for z in TL["dialog"]:
+    if not z.get("datei"):
+        continue
+    x = lade(HIER / "stimmen" / z["datei"])
+    if len(x) == 0:
+        continue
+    gefunden += 1
+    x = x / max(1e-9, np.max(np.abs(x))) * .8
+    if z["funk"]:
+        x = funkfilter(x) * .9
+        x = np.concatenate([x, .4 * funk()[:int(.12 * SR)]])
+    i = int((st(z["szene"]) + z["start"]) * SR)
+    e = min(n, i + len(x))
+    stimme[i:e] += x[:e - i]
+if gefunden:
+    huelle = lowpass(np.abs(stimme), 6) * 8
+    a = a * (1 - .55 * np.clip(huelle, 0, 1))          # Hintergrund leiser, solange jemand spricht
+    a = a / max(1e-9, np.max(np.abs(a))) * .6 + stimme
+print(f"Stimmen gemischt: {gefunden}")
 a = a / max(1e-9, np.max(np.abs(a))) * .89
 with wave.open(sys.argv[1], "wb") as w:
     w.setnchannels(1)
