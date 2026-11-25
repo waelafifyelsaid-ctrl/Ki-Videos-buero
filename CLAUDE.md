@@ -42,7 +42,9 @@ Ziel des Büros: kurze KI-Videos für TikTok, die Reichweite bringen und Geld ve
 - **3D** (Three.js im Headless-Browser): Baukasten `tools/einsatz3d/` + Renderer `tools/render3d.js`.
   Vorlage einer kompletten Folge: `videos/falke-01-3d/` (timeline.json → timeline.py → episode.js + ton.py, build.sh).
 - **Nur POV** (Ich-Sicht in jeder Szene), Bodycam-Look, keine Babbel-/Piep-Töne, keine Comic-Wörter.
-- **Stimmen nur echt (ElevenLabs):** `sprecher.py` schreibt das Sprecher-Skript (Besetzung, Regie, Dateinamen = Zeilen-ID),
+- **Stimmen nur echt** – Plan A ElevenLabs (`stimmen_erzeugen.py`), Plan B Azure Speech Free-Tier (`stimmen_azure.py`),
+  Plan C echte Menschen (Handy-Aufnahmen). Piper-Ersatzstimmen gefallen dem Nutzer NICHT.
+  Details: `sprecher.py` schreibt das Sprecher-Skript (Besetzung, Regie, Dateinamen = Zeilen-ID),
   Aufnahmen kommen nach `videos/<folge>/stimmen/<id>.mp3` (oder `stimmen_erzeugen.py`). Funksprüche trocken aufnehmen –
   Funkfilter, Knacken und Ducking macht `ton.py`. Ohne Aufnahmen: nur Untertitel.
 - **Funksprüche** im Format „Vier an alle: …“ / „Zentrale für Falke: …“, beim Anschleichen geflüstert.

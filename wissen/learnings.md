@@ -61,3 +61,5 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
   mit Bitrate-Deckel kodieren (`-crf 23 -maxrate 4M`) → ca. 40 MB. GitHub erlaubt max. 100 MB pro Datei.
 - Ablauf Zugriff realistisch: Sprengung → „Flash raus!“ + Blendgranate durchs Loch → Knall → „ZUGRIFF!“ → Eindringen.
 - Sprachaufnahmen bestimmen das Timing: timeline.py liest die Länge jeder Datei in stimmen/ und verlängert die Zeile.
+- Piper-Ersatzstimmen (lokal, gratis) klingen zu künstlich – Nutzer lehnt sie ab. ElevenLabs-Credits sind knapp.
+  Plan B: Azure Speech Free-Tier (offiziell, 500k Zeichen/Monat, ~20 deutsche Neural-Stimmen). Inoffizielle Edge-Vorlese-Zugänge nicht nutzen.
