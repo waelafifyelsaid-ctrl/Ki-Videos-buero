@@ -25,10 +25,13 @@ LAUT = ("schreit", "ruft", "laut", "aufgeregt", "panisch")
 key = os.environ.get("ELEVENLABS_API_KEY", "")
 zeilen = list(csv.DictReader(open(HIER / "stimmen" / "skript.csv", encoding="utf-8"), delimiter=";"))
 nur = set(sys.argv[1:])
+_zu = HIER / "stimmen" / "zuordnung.json"
+ZU = json.loads(_zu.read_text()) if _zu.exists() else {}
 zeichen = 0
+TEST = os.environ.get("TROCKEN") == "1"
 for z in zeilen:
     ziel = HIER / "stimmen" / f"{z['id']}.mp3"
-    if ziel.exists() or (nur and z["rolle"] not in nur):
+    if ziel.exists() or (nur and z["rolle"] not in nur) or any(t == z["text_ohne_tags"] or t.replace("1A", "eins A").replace("FX-77", "F X sieben sieben") == z["text_ohne_tags"] for t in ZU if (HIER / "stimmen" / ZU[t]).exists()):
         continue
     tag = z["text_v3"][1:z["text_v3"].index("]")].lower() if z["text_v3"].startswith("[") else ""
     laut = tag in LAUT
@@ -49,4 +52,5 @@ for z in zeilen:
         sys.exit(f"{z['id']}: ElevenLabs-Fehler {e.code}: {e.read().decode('utf-8', 'replace')[:300]}")
     zeichen += len(text)
     print(f"✓ {ziel.name}  ({modell}, {len(text)} Zeichen)")
+    if TEST: break
 print(f"Fertig. Verbrauchte Zeichen: {zeichen}")

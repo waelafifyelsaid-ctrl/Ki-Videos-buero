@@ -16,7 +16,13 @@ def lesedauer(text):
     return max(1.3, 0.75 + 0.048 * len(text))
 
 
-def aufnahme(zid):
+ZUORDNUNG = HIER / "stimmen" / "zuordnung.json"
+ZU = json.loads(ZUORDNUNG.read_text()) if ZUORDNUNG.exists() else {}
+
+
+def aufnahme(zid, text=None):
+    if text in ZU and (HIER / "stimmen" / ZU[text]).exists():
+        zid = ZU[text].rsplit(".", 1)[0]
     for endung in ("mp3", "wav"):
         f = HIER / "stimmen" / f"{zid}.{endung}"
         if f.exists():
@@ -37,7 +43,7 @@ def berechne(roh):
                 continue
             nr += 1
             zid = f"{nr:02d}_{sz}_{wer}"
-            datei, laenge = aufnahme(zid)
+            datei, laenge = aufnahme(zid, text)
             start = max(ab, ende_vorher + 0.15)
             ende = start + max(lesedauer(text), laenge + 0.3)
             zeilen.append({"id": zid, "szene": sz, "start": round(start, 3), "ende": round(ende, 3), "wer": wer,

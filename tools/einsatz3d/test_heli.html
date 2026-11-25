@@ -1,0 +1,26 @@
+<!doctype html><html><head><style>html,body{margin:0;background:#000}</style></head><body>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js"}}</script>
+<script type="module">
+import { THREE, mat, bodenPlatte, betonTex } from './kern.js';
+import { renderer } from './welt.js';
+import { heliModell, heliUpdate, Abwind } from './heli.js';
+import { flughafen, flughafenUpdate } from './flughafen.js';
+const r = renderer();
+const s = new THREE.Scene(); s.background = new THREE.Color(0xbfc8d3); s.fog = new THREE.Fog(0xbfc8d3, 25, 260);
+s.add(bodenPlatte(600, 600, mat(0x8e9298, { r: .6, map: betonTex('#8e9298', [60, 60], 'vorfeld') }), 0, -40));
+s.add(new THREE.HemisphereLight(0xe9eef7, 0x6a6660, 1.7));
+const sun = new THREE.DirectionalLight(0xffd4ab, 1.6); sun.position.set(-25, 18, 20); sun.castShadow = true; s.add(sun);
+const fa = flughafen(s);
+const h = heliModell(); s.add(h.g); h.g.position.set(0, 0, 0); h.g.rotation.y = .6;
+const aw = new Abwind(s);
+const cam = new THREE.PerspectiveCamera(60, 1080 / 1920, 0.05, 800);
+const params = new URLSearchParams(location.search); const modus = params.get('m') ?? 'aussen';
+window.renderFrame = async (t) => {
+  heliUpdate(h, t); flughafenUpdate(fa, t); aw.update(t, 1, h.g.position, 0, cam);
+  if (modus === 'aussen') { h.g.rotation.y = 0; cam.fov = 50; cam.updateProjectionMatrix(); cam.position.set(-12, 2.2, -6); cam.lookAt(0, 1.4, 0); }
+  else if (modus === 'innen') { cam.position.copy(h.g.localToWorld(new THREE.Vector3(-.6, 1.75, 1.35))); cam.lookAt(h.g.localToWorld(new THREE.Vector3(.2, 1.3, -2.5))); }
+  else { cam.position.set(4, 12, 25); cam.lookAt(-10, 0, -60); }
+  r.render(s, cam);
+};
+window.bereit = true;
+</script></body></html>

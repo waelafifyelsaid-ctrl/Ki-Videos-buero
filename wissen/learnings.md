@@ -66,3 +66,9 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Hintergrundmusik selbst komponiert per Code (`tools/musik.py`, d-Moll, pro Szene eigene Stimmung, Stille nach der Sprengung, Action ab „ZUGRIFF!“). Nur Ton neu bauen: `nur_ton.sh` (kein neues Rendern nötig).
 - Einsatz 02: Kabinen in Flugzeugen sind eng – Sitzlehnen verdecken schnell die Sicht. Kamera in die Gangmitte stellen.
 - Stimmen: laute Zeilen (schreien/rufen) gleich mit eleven_multilingual_v2, Rest mit v3 „Natural“ + festem Seed → Figuren klingen konstant.
+- Einsatz 02 (Fassung 2): Module `tools/einsatz3d/heli.js` (Hubschrauber außen+innen, Piloten, Rotor, Abseilseil, Abwind),
+  `flughafen.js` (Terminal, Tower, Hangars, Fahrzeuge, Markierungen) und `dach.js` (Landeplatz, Skyline) sind wiederverwendbar.
+- Hubschrauber-Innenraum: Kamera muss innerhalb der Türöffnung sitzen, sonst verdeckt die Seitenwand/Schiebetür den Blick nach draußen.
+- Zylinder liegen nach `rotation.x = π/2` entlang z – zum Plattdrücken dann `scale.z` nehmen, nicht `scale.y` (sonst wird er nur kürzer).
+- POV-Hände am Seil: Greifpunkte 0,35–0,6 m UNTER der Kamera wählen und Kamera auf die Rumpf-Seite des Seils setzen, sonst liegen Hände/Seil außerhalb des Bildes.
+- Neue Sprachzeilen ohne alte neu zu erzeugen: `stimmen/zuordnung.json` (Text → Datei); timeline.py und stimmen_erzeugen.py nutzen sie.

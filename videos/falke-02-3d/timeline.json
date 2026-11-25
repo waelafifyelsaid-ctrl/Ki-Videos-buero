@@ -53,20 +53,26 @@
   },
   {
    "n": "hq",
-   "d": 9.0,
+   "d": 8.0,
    "tr": "uhr",
    "trd": 1.0,
    "karte": "2 STUNDEN VORHER"
   },
   {
-   "n": "heli",
-   "d": 10.0,
+   "n": "dach",
+   "d": 9.0,
    "tr": "whip",
    "trd": 0.45
   },
   {
-   "n": "landung",
-   "d": 7.2,
+   "n": "flug",
+   "d": 9.5,
+   "tr": "mix",
+   "trd": 0.5
+  },
+  {
+   "n": "abseilen",
+   "d": 9.0,
    "tr": "glitch",
    "trd": 0.45
   },
@@ -118,52 +124,58 @@
    "Dann sind wir in zehn da."
   ],
   [
-   "hq",
-   6.1,
+   "dach",
+   1.0,
+   "1",
+   "Einsteigen! Los!"
+  ],
+  [
+   "dach",
+   5.0,
    "2",
    "Gibt's im Hubschrauber Frühstück?"
   ],
   [
-   "hq",
-   8.0,
+   "dach",
+   7.2,
    "4",
    "Nein."
   ],
   [
-   "heli",
+   "flug",
    0.6,
    "7v",
    "Ich hasse Höhe."
   ],
   [
-   "heli",
+   "flug",
    2.0,
    "6",
    "Sieben, du hasst ALLES."
   ],
   [
-   "heli",
+   "flug",
    3.8,
    "7v",
    "Dich zum Beispiel."
   ],
   [
-   "heli",
+   "flug",
    5.4,
    "4f",
    "Jet rollt! Er will zur Startbahn!"
   ],
   [
-   "heli",
-   7.8,
+   "flug",
+   7.3,
    "1f",
-   "Pilot, setz uns direkt davor!"
+   "Kein Platz zum Landen. Wir seilen ab!"
   ],
   [
-   "landung",
-   4.6,
+   "abseilen",
+   0.4,
    "1",
-   "Raus! Raus! Raus!"
+   "Seil frei!"
   ],
   [
    "tuer",

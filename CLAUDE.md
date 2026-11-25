@@ -41,6 +41,7 @@ Ziel des Büros: kurze KI-Videos für TikTok, die Reichweite bringen und Geld ve
 - Stil wie Referenz: Perspektiv-Straßen, kräftige Konturen, POV-Waffe, großer hellblauer Untertitel.
 - **3D** (Three.js im Headless-Browser): Baukasten `tools/einsatz3d/` + Renderer `tools/render3d.js`.
   Vorlage einer kompletten Folge: `videos/falke-01-3d/` (timeline.json → timeline.py → episode.js + ton.py, build.sh).
+  Weitere Bausteine: `heli.js` (Hubschrauber innen/außen, Abseilen, Abwind), `flughafen.js`, `dach.js` (Landeplatz + Skyline), `hqDetails()` in `welt.js`.
 - **Nur POV** (Ich-Sicht in jeder Szene), Bodycam-Look, keine Babbel-/Piep-Töne, keine Comic-Wörter.
 - **Stimmen nur echt** – Plan A ElevenLabs (`stimmen_erzeugen.py`), Plan B Azure Speech Free-Tier (`stimmen_azure.py`),
   Plan C echte Menschen (Handy-Aufnahmen). Piper-Ersatzstimmen gefallen dem Nutzer NICHT.

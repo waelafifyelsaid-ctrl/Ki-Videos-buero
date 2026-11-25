@@ -104,17 +104,34 @@ def turbine(d, f0, f1, laut=1.0):
 # ---- Atmosphäre je Szene
 add(st("hq"), .03 * rauschen(SZ["hq"]["d"], 1200))
 add(st("hq") + 1.0, .15 * band(1.2, 400, 3000) * np.exp(-1.5 * ts(1.2)))           # Kaffeemaschine
-add(st("heli"), rotor(SZ["heli"]["d"], laut=.55))
-add(st("heli"), .22 * band(SZ["heli"]["d"], 200, 2500))                               # Wind an der offenen Tür
-l0, ld = st("landung"), SZ["landung"]["d"]
-add(l0, rotor(4.9, laut=.6) * np.linspace(1, .8, int(4.9 * SR)))
-add(l0 + 4.9, rotor(ld - 4.9 + SZ["tuer"]["d"], f=4.0, laut=.25) * np.linspace(1, .2, int((ld - 4.9 + SZ["tuer"]["d"]) * SR)))
-add(l0, turbine(ld + 3.0, 900, 300, .35) * np.concatenate([np.linspace(.2, 1, int(3.7 * SR)), np.linspace(1, .3, int((ld - .7) * SR))])[:int((ld + 3.0) * SR)])
-add(l0 + 3.7, .25 * band(1.4, 2500, 7000) * np.exp(-1.2 * ts(1.4)))                  # Bremsen
-add(l0 + 3.6, thud(.9))                                                               # Aufsetzen
-add(l0 + 4.9, thud(.5))                                                               # Sprung raus
-for k in range(int(2.2 / .3)):
-    add(l0 + 5.1 + k * .3, schritt(), .35)
+# Dach: Tür knallt auf, Sprint, Rotor läuft hoch, Abheben
+d0, dd = st("dach"), SZ["dach"]["d"]
+add(d0 + .15, metall(300, .6), .5); add(d0 + .2, thud(.6))
+hoch = np.clip(np.linspace(.55, 1.15, int(dd * SR)), 0, 1.2)
+add(d0, rotor(dd, f=4.2, laut=.75) * hoch)
+add(d0, .3 * band(dd, 150, 2200) * np.linspace(.6, 1, int(dd * SR)))                    # Abwind
+for k in range(int(3.2 / .28)):
+    add(d0 + .45 + k * .28, schritt(), .4)
+add(d0 + 3.9, schritt(True), .5); add(d0 + 4.3, thud(.4))
+add(d0 + 4.9, turbine(dd - 4.9, 500, 900, .25))
+# Flug: Rotor + Wind an der offenen Tür
+f0, fd = st("flug"), SZ["flug"]["d"]
+add(f0, rotor(fd, laut=.55))
+add(f0, .22 * band(fd, 200, 2500))
+# Abseilen: Rotor laut, Seil fällt, Rutschen, Landung, Jet rollt heran und bremst, Sprint
+a0, ad = st("abseilen"), SZ["abseilen"]["d"]
+add(a0, rotor(ad + 2, f=4.4, laut=.8) * np.concatenate([np.ones(int((ad - 2) * SR)), np.linspace(1, .3, int(4 * SR))]))
+add(a0, .3 * band(ad, 150, 2000))
+add(a0 + .3, whoosh(.6), .5); add(a0 + 1.0, thud(.3))
+add(a0 + 1.1, .35 * band(1.4, 1500, 6000) * np.linspace(.3, 1, int(1.4 * SR)))     # 2 rutscht
+add(a0 + 2.5, thud(.7))
+add(a0 + 3.5, .5 * band(2.05, 1200, 6500) * np.linspace(.4, 1, int(2.05 * SR)) ** 2)   # wir rutschen
+add(a0 + 5.55, thud(1.0), .9); add(a0 + 5.6, schritt(), .5)
+add(a0, turbine(ad + 3.0, 300, 900, .4) * np.concatenate([np.linspace(.1, 1, int(5.0 * SR)), np.linspace(1, .5, int((ad - 2.0) * SR))])[:int((ad + 3.0) * SR)])
+add(a0 + 5.0, .3 * band(2.2, 2500, 7500) * np.exp(-.8 * ts(2.2)))                  # Bremsen quietschen
+for k in range(int((ad - 6.0) / .3)):
+    add(a0 + 6.0 + k * .3, schritt(), .4)
+add(st("tuer"), rotor(SZ["tuer"]["d"], f=4.0, laut=.2) * np.linspace(.8, .3, int(SZ["tuer"]["d"] * SR)))
 # ---- Tür
 t0 = st("tuer")
 VZ = SZ["tuer"].get("verzug", 0)
@@ -148,6 +165,8 @@ add(w0 + .3, .2 * np.sin(2 * np.pi * 1320 * ts(.12)) * np.exp(-10 * ts(.12)))
 # ---- Übergänge + Hook
 for s in TL["szenen"]:
     tr = s.get("tr")
+    if s["n"] == "hq":
+        add(s["start"] + s["d"] - 1.6, .25 * np.sign(np.sin(2 * np.pi * 700 * ts(1.6))) * (np.sin(2 * np.pi * 4 * ts(1.6)) > 0))   # Alarm
     if tr in ("whip", "zoom", "mix", "glitch"):
         add(s["start"], whoosh(.45), .3)
     elif tr == "uhr":
@@ -173,13 +192,16 @@ M.pad(h0, DM, hd / 2, .28, cutoff=900); M.pad(h0 + hd / 2, BB, hd / 2 + .4, .28,
 for k in range(int(hd / .5)):
     M.bass(h0 + k * .5, "D" if k % 8 < 4 else "A#", .4, .4, 380)
 M.riser(h0 + hd - 2.0, 2.0, .45)
-e0, ed = st("heli"), SZ["heli"]["d"]
-M.groove(e0, e0 + ed, 118, 2, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=500)
-l0 = st("landung")
-M.pad(l0, [("D", 2), ("A", 2), ("D#", 3)], 3.6, .3, cutoff=700)
-M.riser(l0 + .6, 3.0, .6)
-M.impact(l0 + 3.6, 1.0)
-M.groove(l0 + 4.9, l0 + SZ["landung"]["d"], 132, 2, [DM, CD], ["D", "C"], cutoff_bass=600)
+M.groove(d0 + .2, d0 + dd, 124, 2, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=550)
+M.impact(d0 + .2, .7)
+M.riser(d0 + 3.0, 1.8, .45); M.impact(d0 + 4.9, .7)
+M.groove(f0, f0 + fd - 1.6, 118, 2, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=500)
+M.riser(f0 + fd - 2.6, 2.6, .65)
+M.impact(a0, 1.0)
+M.pad(a0, [("D", 2), ("A", 2), ("D#", 3)], 3.4, .32, cutoff=700)
+M.arp(a0 + .2, [("D", 4), ("A", 4), ("D#", 5), ("A", 4)], .2, int(3.2 / .2), .12)
+M.groove(a0 + 3.5, a0 + ad, 136, 3, [DM, CD, BB, CD], ["D", "C", "A#", "C"], cutoff_bass=650)
+M.impact(a0 + 5.55, .8)
 t0, td = st("tuer"), SZ["tuer"]["d"]
 M.pad(t0, [("D", 2), ("A", 2), ("D#", 3)], spreng - t0, .32, cutoff=600)
 M.arp(t0 + .3, [("D", 4), ("A", 4), ("D#", 5), ("A", 4)], .25, int((spreng - t0 - .6) / .25), .12)

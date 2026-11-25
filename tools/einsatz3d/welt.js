@@ -2,7 +2,7 @@
 // wiederkehrende Orte (Hauptquartier, Van) und Kleinkram.
 import {
   THREE, W, H, mat, box, cyl, sph, caps, plane, at, bodenPlatte, rng, clamp, easeOut, lerp,
-  ziegelTex, betonTex, rolltorTex, radialTex, rauchTex, textTex, liveTex, holzTex,
+  ziegelTex, betonTex, rolltorTex, radialTex, rauchTex, textTex, liveTex, holzTex, canvasTex,
 } from './kern.js';
 
 // ---------------------------------------------------------------- Renderer + Nachbearbeitung
@@ -436,4 +436,58 @@ export function zeichneStrasse(st, t, { blau = false } = {}) {
   for (let k = 0; k < 120; k++) { const x = r() * w, y = (r() * h + t * 400 * (r() + .5)) % h; g.fillRect(x, y, 3, 3); }
   if (blau) { g.fillStyle = 'rgba(60,120,255,0.18)'; g.fillRect(0, 0, w, h); }
   st.tex.needsUpdate = true;
+}
+
+// Zusätzliche Büro-Details (Arbeitsplätze, Monitore, Lagekarte, Funkgeräte, Kabeltrassen, Uhr, Waffenschrank)
+export function hqDetails(szene) {
+  const d = {};
+  const schwarz = mat(0x15171a, { r: .5 }), grau = mat(0x495057, { r: .6, m: .3 });
+  const monTex = (key, draw) => canvasTex('mon' + key, 512, 320, draw);
+  const kamera = monTex('kam', (g, w, h) => { g.fillStyle = '#10161d'; g.fillRect(0, 0, w, h); for (let k = 0; k < 4; k++) { const x = (k % 2) * 256, y = Math.floor(k / 2) * 160;
+    g.fillStyle = ['#3a4450', '#2f3b33', '#463c33', '#30384a'][k]; g.fillRect(x + 4, y + 4, 248, 152); g.fillStyle = '#e9ecef'; g.font = 'bold 18px DejaVu Sans'; g.fillText('CAM ' + (k + 1), x + 12, y + 26);
+    g.fillStyle = 'rgba(255,255,255,.25)'; g.fillRect(x + 40, y + 70, 160, 50); g.fillStyle = '#ff2a3d'; g.beginPath(); g.arc(x + 236, y + 20, 6, 0, 7); g.fill(); } });
+  const graph = monTex('graph', (g, w, h) => { g.fillStyle = '#0d1b2a'; g.fillRect(0, 0, w, h); g.strokeStyle = '#4cc9f0'; g.lineWidth = 4; g.beginPath();
+    for (let x = 0; x < w; x += 8) g.lineTo(x, 200 - 60 * Math.sin(x / 40) - 30 * Math.sin(x / 13)); g.stroke(); g.fillStyle = '#80ed99'; g.font = 'bold 26px DejaVu Sans'; g.fillText('FUNKVERKEHR', 20, 40);
+    for (let k = 0; k < 6; k++) { g.fillStyle = '#1b263b'; g.fillRect(20, 240 + k * 0, 0, 0); } });
+  const karte = monTex('karte', (g, w, h) => { g.fillStyle = '#e9e4d8'; g.fillRect(0, 0, w, h); g.strokeStyle = '#adb5bd'; g.lineWidth = 10; for (let k = 0; k < 6; k++) { g.beginPath(); g.moveTo(0, k * 60 + 20); g.lineTo(w, k * 50 + 40); g.stroke(); g.beginPath(); g.moveTo(k * 90 + 30, 0); g.lineTo(k * 80 + 60, h); g.stroke(); }
+    g.fillStyle = '#9cc5a1'; g.fillRect(300, 40, 140, 90); g.fillStyle = '#a9c6e8'; g.fillRect(40, 200, 200, 70); g.fillStyle = '#e63946'; g.beginPath(); g.arc(380, 230, 12, 0, 7); g.fill(); g.strokeStyle = '#e63946'; g.lineWidth = 4; g.beginPath(); g.arc(380, 230, 30, 0, 7); g.stroke(); });
+  const monitor = (x, y, z, ry, tex, w = .55, h = .34) => {
+    const m = new THREE.Group(); m.add(at(box(w + .03, h + .03, .03, schwarz), 0, 0, 0));
+    m.add(at(new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: .8 })), 0, 0, .017));
+    m.add(at(box(.04, .2, .04, schwarz), 0, -h / 2 - .08, -.03)); m.add(at(box(.2, .015, .14, schwarz), 0, -h / 2 - .18, -.03));
+    m.position.set(x, y, z); m.rotation.y = ry; szene.add(m); return m;
+  };
+  // Arbeitsplätze links hinten (Blick zur Kamera)
+  for (const x of [-3.9, -2.75]) {
+    szene.add(at(box(1.1, .05, .7, mat(0xced4da, { r: .5 })), x, .74, -5.2));
+    for (const sx of [-.5, .5]) szene.add(at(box(.04, .72, .64, grau), x + sx, .37, -5.2));
+    monitor(x - .28, 1.06, -5.4, 0, kamera); monitor(x + .28, 1.06, -5.4, 0, x < -3 ? graph : karte);
+    szene.add(at(box(.4, .02, .14, schwarz), x, .775, -5.0));
+    const st = new THREE.Group(); st.add(at(box(.5, .08, .48, mat(0x22252a)), 0, .5, 0)); st.add(at(box(.5, .6, .07, mat(0x22252a)), 0, .85, .25));
+    st.add(at(cyl(.03, .03, .45, mat(0x111111), 8), 0, .25, 0)); for (let k = 0; k < 5; k++) st.add(at(box(.3, .03, .04, mat(0x111111), 0), Math.cos(k * 1.26) * .15, .04, Math.sin(k * 1.26) * .15, 0, -k * 1.26, 0));
+    st.position.set(x, 0, -4.55); szene.add(st);
+  }
+  // Rechts: Statusmonitore + Funkstation an der Rückwand
+  monitor(2.35, 2.55, -5.95, 0, graph, .8, .48); monitor(-2.35, 2.55, -5.95, 0, kamera, .8, .48);
+  // Uhr
+  const uhrT = textTex('hquhr', '05:12', { w: 512, h: 160, farbe: '#ff2a3d', grund: '#0b0b0d', font: 'bold 120px DejaVu Sans Mono, DejaVu Sans' });
+  szene.add(at(new THREE.Mesh(new THREE.PlaneGeometry(.9, .28), new THREE.MeshStandardMaterial({ map: uhrT, emissive: 0xffffff, emissiveMap: uhrT, emissiveIntensity: .9 })), 0, 3.05, -5.97));
+  // Tisch: Lagekarte, Funkgeräte, Tablet, Becher, Akten, Helm
+  szene.add(at(new THREE.Mesh(new THREE.PlaneGeometry(1.1, .7), new THREE.MeshStandardMaterial({ map: karte, roughness: .9 })), -.4, .792, -1.35, -Math.PI / 2, 0, .1));
+  for (const [x, z, ry] of [[.9, -1.0, .3], [1.05, -1.1, .1]]) { const f = new THREE.Group(); f.add(at(box(.07, .2, .04, schwarz), 0, .1, 0)); f.add(at(cyl(.008, .008, .14, schwarz, 6), .02, .27, 0)); f.add(at(box(.05, .03, .005, mat(0x80ed99, { e: 0x80ed99, ei: 1 })), 0, .16, .022)); f.position.set(x, .79, z); f.rotation.y = ry; szene.add(f); }
+  for (const [x, z] of [[-1.1, -.9], [.3, -2.0], [1.15, -1.7]]) { szene.add(at(cyl(.04, .035, .1, mat(0xf1f3f5, { r: .4 }), 14), x, .84, z)); szene.add(at(cyl(.036, .036, .005, mat(0x3b2416), 14), x, .888, z)); }
+  for (let k = 0; k < 4; k++) szene.add(at(box(.24, .012, .32, mat([0xf8f9fa, 0xffd166, 0xf8f9fa, 0xa9c6e8][k])), -1.0 + k * .03, .795 + k * .012, -1.85 + k * .02, 0, k * .15, 0));
+  { const h = new THREE.Mesh(new THREE.SphereGeometry(.14, 18, 10, 0, Math.PI * 2, 0, Math.PI * .52), mat(0x2c3036, { r: .6 })); h.position.set(.95, .79, -2.0); szene.add(h); }
+  // Waffenschrank/Ausrüstungsregal rechts vorne
+  szene.add(at(box(.5, 2.1, 1.6, mat(0x343a40, { r: .5, m: .4 })), 4.65, 1.05, -.6));
+  for (let k = 0; k < 4; k++) { szene.add(at(box(.07, .7, .05, schwarz), 4.38, 1.4, -1.2 + k * .38)); szene.add(at(box(.05, .1, .2, schwarz), 4.38, 1.15, -1.2 + k * .38 + .06)); }
+  for (let k = 0; k < 3; k++) szene.add(at(new THREE.Mesh(new THREE.SphereGeometry(.13, 14, 8, 0, Math.PI * 2, 0, Math.PI * .52), mat(0x2c3036)), 4.5, 1.92, -1.1 + k * .5));
+  // Decke: Kabeltrasse, Lüftungsrohr, Rauchmelder
+  szene.add(at(box(.4, .08, 11, mat(0x868e96, { m: .6, r: .4 })), -2.6, 3.15, -1));
+  for (let z = -6; z < 4; z += .6) szene.add(at(box(.42, .1, .03, mat(0x6c757d)), -2.6, 3.15, z));
+  { const rohr = cyl(.22, .22, 11, mat(0xadb5bd, { m: .7, r: .35 }), 16); rohr.rotation.x = Math.PI / 2; rohr.position.set(2.8, 3.05, -1); szene.add(rohr); }
+  for (const z of [-4, -1, 2]) szene.add(at(cyl(.06, .06, .03, mat(0xf8f9fa), 12), 1.2, 3.33, z));
+  // Teppich-Laufzone + Bodenkabelkanal
+  szene.add(at(box(3.4, .01, 2.6, mat(0x3a4150, { r: 1 })), 0, .005, -1.4));
+  return d;
 }

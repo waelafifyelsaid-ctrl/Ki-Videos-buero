@@ -89,18 +89,25 @@ export class Figur {
     const root = this.root = new THREE.Group();
     const add = (p, name, x, y, z) => { const n = new THREE.Group(); n.name = name; n.position.set(x, y, z); p.add(n); j[name] = n; return n; };
     const hips = add(root, 'hips', 0, 0.98, 0);
-    hips.add(at(box(0.3, 0.17, 0.2, unten), 0, 0, 0));
+    { const b = sph(1, unten, 22, 14); b.scale.set(0.165, 0.11, 0.115); hips.add(at(b, 0, -0.01, 0)); }
     const spine = add(hips, 'spine', 0, 0.06, 0);
-    { const bauch = caps(0.12, 0.1, oben); bauch.scale.set(1.05, 1, 0.8); spine.add(at(bauch, 0, 0.1, 0)); }
+    { const bauch = cyl(0.14, 0.15, 0.24, oben, 22); bauch.scale.z = 0.66; spine.add(at(bauch, 0, 0.08, 0)); }
     const chest = add(spine, 'chest', 0, 0.2, 0);
-    { const brust = sph(1, oben, 22, 16); brust.scale.set(0.2, 0.19, 0.12); chest.add(at(brust, 0, 0.1, 0)); }
+    { const brust = cyl(0.185, 0.145, 0.26, oben, 24); brust.scale.z = 0.64; chest.add(at(brust, 0, 0.07, 0));
+      const pec = sph(1, oben, 20, 12); pec.scale.set(0.17, 0.09, 0.115); chest.add(at(pec, 0, 0.13, 0.005));
+      const schulter = caps(0.07, 0.3, oben); schulter.rotation.z = Math.PI / 2; schulter.scale.z = 0.95; chest.add(at(schulter, 0, 0.2, -0.01)); }
     if (o.rueckenNr) { const rn = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.16), new THREE.MeshStandardMaterial({ map: nummerTex(o.nummer ?? '?', '#e9ecef', '#2e3440'), roughness: 0.9 })); rn.position.set(0, 0.12, -0.122); rn.rotation.y = Math.PI; chest.add(rn); }
     if (team) {
       const weste = mat(o.weste ?? 0x3b3f35, { r: 0.9, map: molleTex('#3b3f35') });
-      chest.add(at(box(0.4, 0.34, 0.27, weste), 0, 0.08, 0));
+      chest.add(at(box(0.31, 0.32, 0.05, weste), 0, 0.08, 0.115));                 // Frontplatte
+      chest.add(at(box(0.31, 0.34, 0.05, weste), 0, 0.09, -0.115));                // Rückenplatte
+      { const k = cyl(0.205, 0.205, 0.13, weste, 24, true); k.scale.z = 0.66; chest.add(at(k, 0, -0.02, 0)); }   // Kummerbund
+      for (const x of [-0.11, 0.11]) chest.add(at(box(0.05, 0.05, 0.25, weste), x, 0.27, 0));   // Schultergurte
       const tasche = mat(0x34382f, { r: 0.9 });
-      for (const x of [-0.11, 0, 0.11]) chest.add(at(box(0.085, 0.12, 0.05, tasche), x, -0.02, 0.15));
+      for (const x of [-0.1, 0, 0.1]) { chest.add(at(box(0.085, 0.13, 0.05, tasche), x, -0.01, 0.16)); chest.add(at(box(0.085, 0.025, 0.055, mat(0x2b2e26)), x, 0.06, 0.162)); }
       chest.add(at(box(0.07, 0.12, 0.05, tasche), 0.15, 0.13, 0.15));       // Funk
+      chest.add(at(box(0.1, 0.09, 0.06, mat(0x6b2b2b, { r: .9 })), -0.17, -0.02, 0.1));   // Sanitätstasche
+      chest.add(at(cyl(0.012, 0.012, 0.25, mat(0x111111), 8), -0.05, 0.25, 0.14, 0.4));   // Kabel zum Headset
       chest.add(at(cyl(0.006, 0.006, 0.18, mat(0x111111), 6), 0.17, 0.27, 0.12));  // Antenne
       const nr = new THREE.MeshStandardMaterial({ map: nummerTex(o.nummer ?? '?'), roughness: 0.8 });
       const vorn = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.12), nr); vorn.position.set(-0.1, 0.16, 0.141); chest.add(vorn);
@@ -110,36 +117,43 @@ export class Figur {
       chest.add(at(new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.05, 8, 16, Math.PI), oben), 0, 0.28, -0.07, -0.4, 0, 0));
     }
     if (o.art === 'chefin') chest.add(at(box(0.08, 0.26, 0.012, mat(0xe9ecef)), 0, 0.12, 0.106));
-    const neck = add(chest, 'neck', 0, 0.27, 0);
+    const neck = add(chest, 'neck', 0, 0.245, 0);
     neck.add(at(cyl(0.05, 0.055, 0.09, team && o.maske ? mat(0x1b1c1f) : haut, 12), 0, 0.03, 0));
     const head = add(neck, 'head', 0, 0.07, 0);
     this.baueKopf(head, haut, o);
     for (const [s, name] of [[1, 'L'], [-1, 'R']]) {
       const sh = add(chest, 'sh' + name, s * 0.2, 0.21, 0);
-      sh.add(at(caps(0.052, 0.2, oben), 0, -0.15, 0));
-      sh.add(sph(0.062, oben, 14, 10));
+      sh.add(at(cyl(0.058, 0.046, 0.28, oben, 16), 0, -0.15, 0));
+      sh.add(sph(0.066, oben, 16, 12));
       if (team) sh.add(at(box(0.11, 0.07, 0.12, mat(0x3b3f35)), s * 0.01, -0.02, 0));
       const el = add(sh, 'el' + name, 0, -0.3, 0);
-      el.add(at(caps(0.045, 0.18, oben), 0, -0.13, 0));
-      el.add(sph(0.05, oben, 12, 8));
+      el.add(at(cyl(0.047, 0.036, 0.25, oben, 14), 0, -0.13, 0));
+      el.add(sph(0.049, oben, 14, 10));
+      el.add(at(cyl(0.039, 0.039, 0.045, team ? mat(0x1b1c1f) : (o.jacke ? oben : hand), 14), 0, -0.25, 0));   // Ärmelbund
       const ha = add(el, 'ha' + name, 0, -0.27, 0);
-      ha.add(at(box(0.075, 0.1, 0.045, hand), 0, -0.05, 0.005));
+      { const hf = sph(1, hand, 14, 10); hf.scale.set(0.04, 0.055, 0.021); ha.add(at(hf, 0, -0.05, 0.005)); }
       ha.add(at(box(0.03, 0.06, 0.03, hand), s * 0.04, -0.03, 0.025, 0, 0, s * 0.4));
       // Finger (für Handzeichen)
       this['finger' + name] = [];
       for (let k = 0; k < 4; k++) {
-        const f = new THREE.Group(); f.position.set(-0.027 + k * 0.018, -0.1, 0.005);
+        const f = new THREE.Group(); f.position.set(-0.027 + k * 0.018, -0.088, 0.005);
         f.add(at(caps(0.008, 0.045, hand, false), 0, -0.03, 0)); ha.add(f); this['finger' + name].push(f);
       }
       const hip = add(hips, 'hip' + name, s * 0.1, -0.04, 0);
-      hip.add(at(caps(0.075, 0.3, unten), 0, -0.22, 0));
+      hip.add(at(cyl(0.088, 0.062, 0.42, unten, 18), 0, -0.22, 0));
+      hip.add(sph(0.09, unten, 16, 12));
+      hip.add(at(box(0.06, 0.13, 0.1, mat(new THREE.Color(o.hose ?? (team ? 0x262a31 : 0x343a40)).multiplyScalar(0.85), { r: .9 })), s * 0.075, -0.2, 0.0));   // Beintasche
       if (team && s < 0) hip.add(at(box(0.07, 0.17, 0.1, mat(0x1d1f22)), -0.075, -0.18, 0.02));  // Holster
       const kn = add(hip, 'kn' + name, 0, -0.44, 0);
-      kn.add(at(caps(0.06, 0.32, unten), 0, -0.21, 0));
-      kn.add(sph(0.068, unten, 12, 8));
+      kn.add(at(cyl(0.06, 0.043, 0.4, unten, 16), 0, -0.21, 0));
+      kn.add(sph(0.064, unten, 14, 10));
+      { const wade = sph(1, unten, 12, 10); wade.scale.set(0.05, 0.11, 0.05); kn.add(at(wade, 0, -0.13, -0.018)); }
       if (team) kn.add(at(box(0.1, 0.1, 0.05, mat(0x1d1f22)), 0, -0.03, 0.06));   // Knieschoner
       const an = add(kn, 'an' + name, 0, -0.42, 0);
-      an.add(at(box(0.11, 0.1, 0.27, schuh), 0, -0.045, 0.05));
+      an.add(at(box(0.1, 0.11, 0.2, schuh), 0, -0.045, 0.01));
+      { const kappe = sph(1, schuh, 14, 10); kappe.scale.set(0.05, 0.05, 0.075); an.add(at(kappe, 0, -0.06, 0.11)); }
+      an.add(at(box(0.11, 0.025, 0.28, mat(0x0d0d0f, { r: .9 })), 0, -0.095, 0.05));        // Sohle
+      if (team) an.add(at(cyl(0.05, 0.048, 0.08, schuh, 14), 0, 0.03, 0));                  // Stiefelschaft
     }
     // Marker für Bodenkontakt
     const mk = (p, x, y, z, hand = false) => { const m = new THREE.Object3D(); m.position.set(x, y, z); m.istHand = hand; p.add(m); return m; };
@@ -159,22 +173,27 @@ export class Figur {
     const team = o.art === 'team';
     const maske = team && o.maske;
     const kopfMat = maske ? mat(0x1b1c1f, { r: 0.95 }) : haut;
-    const k = sph(0.115, kopfMat, 22, 16); k.scale.set(0.95, 1.08, 1.0); k.position.y = 0.12; head.add(k);
+    const k = sph(0.108, kopfMat, 28, 20); k.scale.set(0.93, 1.12, 1.02); k.position.y = 0.125; head.add(k);
+    { const kiefer = sph(0.08, kopfMat, 20, 14); kiefer.scale.set(1.0, 0.8, 0.95); kiefer.position.set(0, 0.06, 0.025); head.add(kiefer); }
     if (!maske) { for (const s of [1, -1]) head.add(at(sph(0.025, haut, 10, 8), s * 0.112, 0.12, 0)); }
     const gesicht = new THREE.Group(); gesicht.position.set(0, 0.12, 0); head.add(gesicht);
     if (maske) gesicht.add(at(box(0.16, 0.052, 0.03, haut), 0, 0.022, 0.1));
-    const weiss = mat(0xf8f9fa, { r: 0.3 }), dunkel = mat(0x15161a, { r: 0.3 });
+    const weiss = mat(0xf1ede6, { r: 0.25 }), iris = mat(o.augenfarbe ?? 0x3d2b1f, { r: 0.2 });
     this.augen = [];
     for (const s of [1, -1]) {
-      const a = sph(0.019, weiss, 12, 10); a.position.set(s * 0.04, 0.022, 0.1); a.scale.z = 0.6; gesicht.add(a);
-      const p = sph(0.01, dunkel, 10, 8); p.position.set(s * 0.04, 0.022, 0.113); gesicht.add(p); this.augen.push(p);
+      const a = sph(0.0145, weiss, 14, 10); a.position.set(s * 0.036, 0.022, 0.093); a.scale.z = 0.7; gesicht.add(a);
+      const p = sph(0.0075, iris, 12, 8); p.position.set(s * 0.036, 0.022, 0.103); gesicht.add(p); this.augen.push(p);
+      if (!maske) { const lid = sph(0.0155, haut, 12, 8, false); lid.scale.set(1.05, 0.55, 0.75); lid.position.set(s * 0.036, 0.031, 0.094); gesicht.add(lid); }
       const b = box(0.042, 0.009, 0.012, maske ? kopfMat : mat(o.haarfarbe ?? 0x2b2118)); b.position.set(s * 0.04, 0.05, 0.103); b.rotation.z = s * -0.08; gesicht.add(b);
       this['braue' + (s > 0 ? 'L' : 'R')] = b;
     }
     if (!maske) {
-      gesicht.add(at(sph(0.02, haut, 10, 8), 0, -0.005, 0.115));
-      this.mundMesh = sph(0.024, mat(0x4a1c1c, { r: 0.5 }), 12, 8); this.mundMesh.scale.set(1.3, 0.25, 0.5);
-      this.mundMesh.position.set(0, -0.05, 0.1); gesicht.add(this.mundMesh);
+      { const nase = new THREE.Mesh(new THREE.ConeGeometry(0.017, 0.05, 10), haut); nase.rotation.x = Math.PI / 2 - 0.35; nase.position.set(0, -0.005, 0.118); gesicht.add(nase);
+        gesicht.add(at(sph(0.012, haut, 10, 8), 0, -0.02, 0.122)); }
+      { const lippe = mat(o.lippen ?? 0xb5686b, { r: .5 }); const ol = sph(1, lippe, 12, 8); ol.scale.set(0.026, 0.006, 0.01); gesicht.add(at(ol, 0, -0.04, 0.106));
+        const ul = sph(1, lippe, 12, 8); ul.scale.set(0.022, 0.007, 0.01); gesicht.add(at(ul, 0, -0.06, 0.104)); }
+      this.mundMesh = sph(0.02, mat(0x2a0f10, { r: 0.5 }), 12, 8); this.mundMesh.scale.set(1.1, 0.25, 0.5);
+      this.mundMesh.position.set(0, -0.05, 0.102); gesicht.add(this.mundMesh);
       if (o.bart) { const bt = sph(0.1, mat(o.bart, { r: 0.95 }), 16, 10, true); bt.scale.set(0.95, 0.6, 0.85); bt.position.set(0, -0.06, 0.03); gesicht.add(bt); }
       if (o.brille) for (const s of [1, -1]) {
         const r = new THREE.Mesh(new THREE.TorusGeometry(0.026, 0.004, 6, 16), mat(0x111111)); r.position.set(s * 0.04, 0.022, 0.118); gesicht.add(r);
@@ -235,7 +254,7 @@ export class Figur {
 
   mund(k) {
     if (!this.mundMesh) return;
-    this.mundMesh.scale.y = 0.25 + 0.9 * clamp(k);
+    this.mundMesh.scale.y = 0.15 + 0.8 * clamp(k);
   }
 
   // Root setzen, dann so verschieben, dass der tiefste Körperpunkt genau auf boden liegt.

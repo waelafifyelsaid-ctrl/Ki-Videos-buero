@@ -1,11 +1,14 @@
 // EINHEIT FALKE – Einsatz 02: Das Flugzeug (3D, nur POV, Morgennebel).
 import {
-  THREE, W, H, mat, box, cyl, sph, caps, at, bodenPlatte, clamp, lerp, easeOut, easeInOut, easeBack, smooth,
-  betonTex, holzTex, liveTex, weltPos, rng, radialTex,
+  THREE, W, H, mat, box, cyl, sph, caps, at, bodenPlatte, clamp, lerp, easeOut, easeIn, easeInOut, easeBack, smooth,
+  betonTex, holzTex, liveTex, weltPos, rng, radialTex, rauchTex,
 } from '/tools/einsatz3d/kern.js';
 import { Figur, gehPose, rennPose, hockPose, stehPose, schildModell, handschellenModell } from '/tools/einsatz3d/figur.js';
-import { renderer, Post, UEBERGANG, Explosion, Schwaden, schild, hauptquartier } from '/tools/einsatz3d/welt.js';
+import { renderer, Post, UEBERGANG, Explosion, Schwaden, schild, hauptquartier, hqDetails } from '/tools/einsatz3d/welt.js';
 import { Pov } from '/tools/einsatz3d/pov.js';
+import { heliModell, heliUpdate, setzeSeil, Abwind, HELI_BODEN } from '/tools/einsatz3d/heli.js';
+import { flughafen, flughafenUpdate } from '/tools/einsatz3d/flughafen.js';
+import { dachWelt, dachUpdate } from '/tools/einsatz3d/dach.js';
 
 const TL = await (await fetch('./timeline_fertig.json')).json();
 const R = renderer();
@@ -16,7 +19,7 @@ const L = (n, anfang) => TL.dialog.find(z => z.szene === n && z.text.startsWith(
 function zeile(n, lt) { let a = null; for (const z of TL.dialog) if (z.szene === n && lt >= z.start && lt < z.ende) a = z; return a; }
 const redet = (n, lt, wer) => { const z = zeile(n, lt); return z && (z.wer === wer || z.wer === wer + 'v') ? 0.35 + 0.5 * Math.abs(Math.sin(lt * 17)) : 0; };
 
-function kamera(szene, fov = 74) { const k = new THREE.PerspectiveCamera(fov, W / H, 0.03, 600); k.rotation.order = 'YXZ'; szene.add(k); return k; }
+function kamera(szene, fov = 74) { const k = new THREE.PerspectiveCamera(fov, W / H, 0.03, 1500); k.rotation.order = 'YXZ'; szene.add(k); return k; }
 function schau(k, pos, ziel, roll = 0) {
   k.position.copy(pos); const d = ziel.clone().sub(pos);
   k.rotation.set(Math.atan2(d.y, Math.hypot(d.x, d.z)), Math.atan2(-d.x, -d.z), roll); k.updateMatrixWorld(true);
@@ -38,17 +41,30 @@ const OPS = { 1: { headset: true, groesse: 1.86 }, 2: { groesse: 1.98, visier: t
 const teamOps = (s, nr) => { const f = new Figur({ art: 'team', nummer: nr, maske: true, helm: true, ...OPS[nr] }); s.add(f.root); return f; };
 const ZIVIL = {
   1: { haut: 0xe0ac69, haare: true, haarfarbe: 0x9a9a9a, bart: 0xa5a5a5, groesse: 1.86 }, 2: { haut: 0x7a4a2a, groesse: 1.98 },
-  4: { haut: 0xf1c27d, haare: true, haarfarbe: 0x6f1d1b, dutt: true, groesse: 1.72 }, 7: { haut: 0xffdbac, haare: true, haarfarbe: 0x5b3a29, brille: true, groesse: 1.76 },
+  4: { haut: 0xf1c27d, haare: true, haarfarbe: 0x6f1d1b, dutt: true, groesse: 1.72, lippen: 0xc0505a }, 7: { haut: 0xffdbac, haare: true, haarfarbe: 0x5b3a29, brille: true, groesse: 1.76 },
 };
 const teamHq = (s, nr) => { const f = new Figur({ art: 'zivil', jacke: 0x2e3440, hose: 0x262a31, schuh: 0x16181b, rueckenNr: true, nummer: nr, ...ZIVIL[nr] }); s.add(f.root); return f; };
 function sitz(f, x, z, yaw, hoehe, extra = {}) {
   f.pose({ beinL: [1.5, 1.55], beinR: [1.42, 1.5], rumpf: [.08, 0, 0], ...extra });
   f.platziere(x, z, yaw, { hoehe: hoehe - .98 * f.root.scale.x + .04 });
 }
+const SITZ_H = HELI_BODEN + .48;
+// Sitzplätze im Hubschrauber (lokal): 6 hinten links an der Tür, 1+4 hinten rechts, 2+7 gegenüber (Blick zu uns)
+const PLATZ = { 6: [-.72, 1.42, Math.PI], 1: [.24, 1.42, Math.PI], 4: [.72, 1.42, Math.PI], 2: [-.5, -.82, 0], 7: [.5, -.82, 0] };
+function heliTeam(h, tm, n, lt, extra = {}) {
+  for (const nr of [1, 2, 4, 7]) {
+    const f = tm[nr]; if (!f.root.visible) continue;
+    const [x, z, yaw] = PLATZ[nr];
+    sitz(f, x, z, yaw, SITZ_H, { mund: redet(n, lt, String(nr)), kopf: [.1, Math.sin(lt * .7 + nr) * .15, 0], ...(extra[nr] ?? {}) });
+    if (nr === 7) f.ohneGewehr(); else f.haltGewehr('hoch');
+  }
+}
+// Sitzplatz der Kamera (6) im Hubschrauber: Augenhöhe sitzend
+const AUGE6 = V3(-.74, SITZ_H + .8, 1.12);
 
 // ======================================================================= WELT 1: Hauptquartier (früh am Morgen)
 const HQ = (() => {
-  const s = new THREE.Scene(); const hq = hauptquartier(s);
+  const s = new THREE.Scene(); const hq = hauptquartier(s); hqDetails(s);
   const k = kamera(s, 72); const pov = new Pov(k, { aermel: 0x2e3440, handschuhe: false });
   const t = { 1: teamHq(s, 1), 2: teamHq(s, 2), 4: teamHq(s, 4), 7: teamHq(s, 7) };
   const chefin = new Figur({ art: 'chefin', jacke: 0x5c636e, hose: 0x3a3f47, schuh: 0x111111, haare: true, haarfarbe: 0xe9ecef, dutt: true, brille: true, haut: 0xf1c9a5, groesse: 1.7 });
@@ -76,78 +92,188 @@ function zeichneNebelFenster(fx, t) {
 }
 function s_hq(lt, t) {
   const { k, pov, t: tm, chefin, hq } = HQ;
+  const d = SZ('hq').d;
   zeichneHqSchirm(lt, t); zeichneNebelFenster(hq.fenster, t);
-  hq.alarm.intensity = 0; hq.alarmLampe.material.emissiveIntensity = 0; hq.helm6.visible = true;
-  schau(k, V3(.25 + .02 * Math.sin(t * .6), 1.68, .55), V3(-.15, 1.45, -5.9));
+  const alarm = lt > d - 1.6;
+  hq.alarm.intensity = alarm && Math.floor(t * 4) % 2 ? 60 : 0; hq.alarmLampe.material.emissiveIntensity = alarm ? 4 : 0; hq.alarm.target.position.set(Math.sin(t * 8) * 4, 0, -3); hq.helm6.visible = true;
+  // Kamera: kurzer Schwenk übers Büro (Arbeitsplätze) zum großen Schirm, am Ende Aufstehen zum Alarm
+  const schwenk = 1 - smooth(0, 1.6, lt), auf = smooth(d - 1.2, d - .2, lt);
+  schau(k, V3(.25 + .02 * Math.sin(t * .6) + .3 * auf, 1.68 + .12 * auf, .55 - .5 * auf), V3(-.15 - 3.4 * schwenk, 1.45 - .3 * schwenk, -5.9));
   chefin.pose({ ...stehPose(t), kopf: [0, .3, 0], mund: redet('hq', lt, 'Z'), armL: [lt < 6.8 ? 1.3 + .15 * Math.sin(lt * 2) : .1, .5], ellL: .3 });
   chefin.platziere(-1.45, -5.2, .3);
-  const z2 = L('hq', 'Gibt'), z4 = L('hq', 'Nein');
+  const z1 = L('hq', 'Dann');
   const stell = (nr, x, z, yaw, extra = {}) => { tm[nr].pose({ ...stehPose(t + nr), mund: redet('hq', lt, String(nr)), ...extra }); tm[nr].platziere(x, z, yaw); };
-  stell(1, 1.05, -3.35, -2.6, { kopf: [0, lt > L('hq', 'Dann').start ? .5 : 0, 0], armR: [.9, .1], ellR: 1.7 });
-  const beiss = lt < z2.start && (lt * .9) % 1 < .3;
-  stell(2, -.55, -2.75, 2.7, { kopf: [beiss ? .2 : 0, lt > z2.start && lt < z4.ende ? -.6 : 0, 0], mund: redet('hq', lt, '2') || (beiss ? .5 : 0), armR: [beiss ? 1.9 : 1.0, .1], ellR: beiss ? 2.3 : 1.6 });
+  stell(1, 1.05, -3.35, -2.6, { kopf: [0, lt > z1.start ? .5 : 0, 0], armR: [.9, .1], ellR: 1.7 });
+  const beiss = (lt * .9) % 1 < .3 && !alarm;
+  stell(2, -.55, -2.75, 2.7, { kopf: [beiss ? .2 : 0, alarm ? -.8 : 0, 0], mund: redet('hq', lt, '2') || (beiss ? .5 : 0), armR: [beiss ? 1.9 : 1.0, .1], ellR: beiss ? 2.3 : 1.6 });
   HQ.croissant.position.copy(weltPos(tm[2].j.haR)).add(V3(0, -.03, .05));
-  stell(4, .25, -3.95, 3.0, { kopf: [0, lt > z4.start ? -.7 : 0, 0], armL: [.9, -.2, .4], ellL: 1.9, armR: [.9, -.2, .4], ellR: 1.9 });
+  stell(4, .25, -3.95, 3.0, { kopf: [0, alarm ? -.7 : 0, 0], armL: [.9, -.2, .4], ellL: 1.9, armR: [.9, -.2, .4], ellR: 1.9 });
   stell(7, -1.35, -3.45, 2.4, { kopf: [.3, 0, 0], armL: [.8, .1], ellL: 1.6, armR: [.8, .1], ellR: 1.6 });
   pov.setze({ modus: 'tasse', t, zielL: k.localToWorld(V3(-.3, -.5, -.35)) });
-  return { welt: HQ, uhr: '05:12' };
+  return { welt: HQ, uhr: '05:12', rot: alarm ? .35 * (Math.floor(t * 4) % 2) : 0 };
 }
 
-// ======================================================================= WELT 2: Hubschrauber (innen, Tür offen)
-const HELI = (() => {
-  const s = new THREE.Scene(); s.background = new THREE.Color(0xb9c3d0); s.fog = new THREE.Fog(0xb9c3d0, 90, 700);
-  s.add(new THREE.HemisphereLight(0xe8eefc, 0x40444c, 1.1));
-  const sonne = new THREE.DirectionalLight(0xffd2a6, 2.0); sonne.position.set(-6, 3, 1); s.add(sonne); s.add(sonne.target);
-  const innen = mat(0x3d4148, { r: .8 }), dunkel = mat(0x23262b, { r: .8 });
-  s.add(at(box(2.3, .1, 3.6, mat(0x2a2d32, { r: .9 })), 0, -.05, -.1));
-  s.add(at(box(.08, 1.7, 3.6, innen), 1.12, .85, -.1));
-  s.add(at(box(.08, 1.7, 1.4, innen), -1.12, .85, -1.1)); s.add(at(box(.08, 1.7, .6, innen), -1.12, .85, 1.3));
-  s.add(at(box(.08, .25, 1.4, innen), -1.12, 1.6, .3));
-  s.add(at(box(2.3, .08, 3.6, dunkel), 0, 1.72, -.1)); s.add(at(box(2.3, 1.7, .08, innen), 0, .85, -1.88)); s.add(at(box(2.3, 1.7, .08, innen), 0, .85, 1.62));
-  s.add(at(box(.9, .5, .02, mat(0x9fb2c8, { e: 0x7088a8, ei: .6 })), 0, 1.15, -1.83));
-  s.add(at(cyl(.025, .025, 1.4, mat(0x9aa0a6, { m: .8, r: .3 }), 8), -.95, 1.55, .3, Math.PI / 2));   // Abseilstange
-  for (const z of [-.9, .2, 1.1]) s.add(at(new THREE.Mesh(new THREE.TorusGeometry(.16, .035, 8, 16), mat(0x2b2d42)), -1.0, .35, z, Math.PI / 2));   // Seilrollen
-  for (const [x, z0, z1] of [[.85, -1.8, 1.5], [-.85, -1.8, -.45]]) {
-    s.add(at(box(.45, .08, z1 - z0, mat(0x5b5f3a, { r: .9 })), x, .46, (z0 + z1) / 2));
-    s.add(at(box(.08, .55, z1 - z0, mat(0x4b4f2a, { r: .9 })), x + Math.sign(x) * .2, .78, (z0 + z1) / 2));
-    for (let z = z0 + .3; z < z1; z += .55) s.add(at(box(.05, .5, .04, mat(0xc1121f)), x + Math.sign(x) * .16, .8, z));   // Gurte
-  }
-  for (const z of [-1.3, -.1]) s.add(at(cyl(.06, .06, .05, mat(0x400000, { e: 0xff2030, ei: 3 }), 12), 0, 1.68, z));
-  const rot = new THREE.PointLight(0xff3040, 2.5, 4, 1.6); rot.position.set(0, 1.5, -.5); s.add(rot);
-  // Draußen: Felder, Straßen, Lichter – ziehen unter uns vorbei
-  const feld = liveTex(1024, 1024); { const g = feld.ctx, r = rng(3);
-    for (let i = 0; i < 64; i++) { g.fillStyle = ['#7d8a6a', '#8f9c78', '#a09a7a', '#6e7c5e', '#9aa58a'][i % 5]; g.fillRect((i % 8) * 128, Math.floor(i / 8) * 128, 128, 128); }
-    g.fillStyle = '#4a4f57'; g.fillRect(500, 0, 30, 1024); g.fillRect(0, 300, 1024, 20);
-    g.fillStyle = '#ffd27a'; for (let i = 0; i < 60; i++) g.fillRect(r() * 1024, r() * 1024, 4, 4); feld.tex.needsUpdate = true; }
-  feld.tex.wrapS = feld.tex.wrapT = THREE.RepeatWrapping; feld.tex.repeat.set(6, 6);
-  const boden = new THREE.Mesh(new THREE.PlaneGeometry(2400, 2400), new THREE.MeshStandardMaterial({ map: feld.tex, roughness: 1 }));
-  boden.rotation.x = -Math.PI / 2; boden.position.y = -110; s.add(boden);
-  const glut = new THREE.Sprite(new THREE.SpriteMaterial({ map: radialTex('sonne', [[0, 'rgba(255,240,200,1)'], [.3, 'rgba(255,190,120,.6)'], [1, 'rgba(255,170,100,0)']]), fog: false, depthWrite: false }));
-  glut.position.set(-220, 10, 40); glut.scale.set(140, 140, 1); s.add(glut);
+// ======================================================================= WELT 2: Dach mit Landeplatz – Sprint, Einsteigen, Start
+const DACH = (() => {
+  const s = new THREE.Scene(); const d = dachWelt(s);
+  const h = heliModell(); s.add(h.g); h.g.rotation.order = 'YXZ';
   const k = kamera(s, 76); const pov = new Pov(k);
-  const t = { 1: teamOps(s, 1), 2: teamOps(s, 2), 4: teamOps(s, 4), 7: teamOps(s, 7) };
-  return { s, k, pov, t, boden, feld, sonne, rot };
+  const laeufer = { 1: teamOps(s, 1), 2: teamOps(s, 2), 4: teamOps(s, 4), 7: teamOps(s, 7) };
+  const sitzer = {}; for (const nr of [1, 2, 4, 7]) { sitzer[nr] = teamOps(s, nr); s.remove(sitzer[nr].root); h.g.add(sitzer[nr].root); }
+  const wind = new Abwind(s, 80, { farbe: 0xc9c2b4 });
+  return { s, d, h, k, pov, laeufer, sitzer, wind };
 })();
-function s_heli(lt, t) {
-  const { k, pov, t: tm, feld, sonne } = HELI;
-  const d = SZ('heli').d;
-  feld.tex.offset.set(0, (t * .018) % 1);
-  sonne.intensity = 1.6 + .5 * (Math.sin(t * 2 * Math.PI * 4.6) > .6 ? -1 : 0);   // Rotorblätter werfen Schatten
-  const kurve = smooth(d - 2.2, d - .6, lt);
-  const w = wackel(t, .012);
-  schau(k, V3(.72, 1.08, .6).add(w), V3(-1.5, .05 - .5 * kurve, -1.0), .03 * Math.sin(t * 1.3) - .18 * kurve);
-  const sitzen = (nr, x, z, yaw, extra = {}) => { sitz(tm[nr], x, z, yaw, .5, { mund: redet('heli', lt, String(nr)), ...extra }); };
-  sitzen(1, -.85, -1.45, Math.PI / 2, { kopf: [0, lt > L('heli', 'Pilot').start - .2 ? -1.1 : .3, 0] }); tm[1].haltGewehr('hoch');
-  sitzen(2, -.85, -.8, Math.PI / 2, { kopf: [lt < L('heli', 'Sieben').start ? .2 : 0, .25, 0] }); tm[2].haltGewehr('hoch');
-  sitzen(4, .85, -1.45, -Math.PI / 2, { kopf: [.1, lt > L('heli', 'Jet').start - .2 ? .9 : -.2, 0] }); tm[4].haltGewehr('hoch');
-  const r7 = redet('heli', lt, '7');
-  sitzen(7, .85, -.55, -Math.PI / 2, { kopf: [r7 ? -.1 : .45, r7 ? -.6 : .5, 0], armL: [2.9, .1], ellL: .3 });
-  tm[7].ohneGewehr();
-  pov.setze({ modus: 'gewehr', t, senken: .4, zielen: -.25 });
-  return { welt: HELI, uhr: '05:24' };
+const HELI_DACH = V3(0, 0, -8);
+function s_dach(lt, t) {
+  const { d, h, k, pov, laeufer, sitzer, wind } = DACH;
+  dachUpdate(d, t);
+  // Abheben
+  const ab = smooth(4.9, SZ('dach').d + .6, lt);
+  const hoch = 22 * easeIn(clamp((lt - 4.9) / 4.6)) * 1.0 + .35 * smooth(4.7, 5.3, lt);
+  h.g.position.set(HELI_DACH.x - 14 * easeIn(clamp((lt - 6.4) / 3.5)), HELI_DACH.y + hoch, HELI_DACH.z);
+  h.g.rotation.set(-.16 * smooth(5.6, 7.5, lt) + .015 * Math.sin(t * 3) * ab, Math.PI / 2 + .25 * smooth(6.5, 9.5, lt), .05 * Math.sin(t * 1.3) * ab);
+  h.g.updateMatrixWorld(true);
+  heliUpdate(h, t, { rpm: .85 + .15 * smooth(3.5, 5, lt) });
+  wind.update(t, clamp(1 - hoch / 14), HELI_DACH, 0, k);
+  d.sonne.target.position.set(0, 0, -5);
+  // Tür des Treppenhauses fliegt auf
+  d.tuer.rotation.y = -1.9 * easeOut(clamp((lt - .15) / .35));
+  // Läufer → Tür → einsteigen (dann sitzen sie drin)
+  const tuer = h.g.localToWorld(V3(-1.45, 0, -.05));
+  const plan = {
+    2: [[0, -2.1, 6.2], [2.3, tuer.x - .2, tuer.z + .4]], 4: [[.15, -2.6, 6.9], [2.75, tuer.x + .5, tuer.z + .5]], 7: [[.35, -1.6, 7.4], [3.2, tuer.x + .9, tuer.z + .6]],
+  };
+  for (const nr of [2, 4, 7]) {
+    const p = pfad(plan[nr], lt), an = plan[nr][1][0];
+    const drin = lt > an + .35;
+    laeufer[nr].root.visible = !drin; sitzer[nr].root.visible = drin;
+    if (!drin) {
+      const steig = smooth(an, an + .35, lt);
+      laeufer[nr].pose(lt < an ? rennPose(p.dist / .95 * Math.PI, { neig: .45 }) : { ...hockPose(.5), beinL: [1.4, 1.6] });
+      laeufer[nr].platziere(lerp(p.x, tuer.x - .2, steig), lerp(p.z, tuer.z - .9, steig), lt < an ? richtung(p.vx, p.vz, Math.PI) : Math.PI, { boden: steig * HELI_BODEN });
+      laeufer[nr].haltGewehr('tief');
+    }
+  }
+  // 1 steht an der Tür und winkt alle rein, steigt nach uns ein
+  const eins = lt > 4.45;
+  laeufer[1].root.visible = !eins; sitzer[1].root.visible = eins;
+  if (!eins) {
+    const wink = lt > .8 && lt < 3.6;
+    laeufer[1].pose({ ...hockPose(.25), armL: wink ? [2.2 + .7 * Math.sin(t * 9), .4] : [.6, .2], ellL: wink ? .9 : 1.2, mund: redet('dach', lt, '1'), kopf: [0, 0, 0], rumpf: [.25, 0, 0] });
+    laeufer[1].platziere(tuer.x + 1.5, tuer.z + .7, 0); laeufer[1].haltGewehr('tief');
+    laeufer[1].j.hips.updateMatrixWorld(true);
+  }
+  heliTeam(h, sitzer, 'dach', lt, { 2: { kopf: [.1, lt > L('dach', 'Gibt').start - .2 && lt < L('dach', 'Nein').start ? .7 : .2, 0] }, 4: { kopf: [lt > L('dach', 'Nein').start ? .25 : 0, lt > L('dach', 'Nein').start ? .9 : .3, 0] } });
+  // Kamera: aus dem Treppenhaus sprinten, auf die Kufe, rein, hinsetzen
+  let pos, ziel;
+  const sitzW = h.g.localToWorld(AUGE6.clone());
+  if (lt < 3.6) {
+    const p = pfad([[0, -2.0, 8.2], [.45, -2.0, 7.3], [3.6, tuer.x + .3, tuer.z + 1.25]], lt);
+    const lauf = clamp(p.s / 3);
+    pos = V3(p.x, 1.62 + Math.abs(Math.sin(p.dist / .85 * Math.PI)) * .06 * lauf - .12 * lauf, p.z).add(wackel(t, .012 * lauf));
+    ziel = V3(tuer.x + .3, 1.3, tuer.z - 3);
+  } else if (lt < 4.5) {
+    const kk = easeInOut((lt - 3.6) / .9);
+    const a = V3(tuer.x + .3, 1.5, tuer.z + 1.25), m = h.g.localToWorld(V3(-1.0, HELI_BODEN + 1.2, -.05));
+    pos = kk < .5 ? a.clone().lerp(m, kk * 2) : m.clone().lerp(sitzW, (kk - .5) * 2);
+    ziel = kk < .5 ? h.g.localToWorld(V3(.3, 1.0, -.3)) : h.g.localToWorld(V3(0, 1.1, -2.6)).lerp(h.g.localToWorld(V3(-3, .6, -2.2)), (kk - .5) * 2);
+  } else {
+    // sitzend: Blick nach vorne-links aus der offenen Tür, zwischendurch zu 2 und 4
+    const z2 = L('dach', 'Gibt'), z4 = L('dach', 'Nein');
+    const zu2 = smooth(z2.start - .3, z2.start + .2, lt) * (1 - smooth(z4.start - .2, z4.start + .2, lt));
+    const zu4 = smooth(z4.start - .2, z4.start + .2, lt);
+    let zl = V3(-3, .6 - .8 * ab, -2.2);
+    zl.lerp(V3(-.5, 1.5, -.82), zu2).lerp(V3(.72, 1.5, .9), zu4 * .8);
+    pos = sitzW.clone().add(wackel(t, .006 + .01 * ab)); ziel = h.g.localToWorld(zl);
+  }
+  schau(k, pos, ziel, lt > 4.5 ? h.g.rotation.z * .6 : 0);
+  pov.setze({ modus: 'gewehr', t, lauf: lt < 3.6 ? 1 : .15, zielen: -.3, senken: lt > 4.5 ? .35 : 0 });
+  return { welt: DACH, uhr: '05:16' };
 }
 
-// ======================================================================= WELT 3: Vorfeld mit Privatjet (Landung, Tür, Kabine, Twist, Hook)
+// ======================================================================= WELT 3: Flug (Innenraum, Tür offen, Landschaft unten)
+const FLUG = (() => {
+  const s = new THREE.Scene(); s.background = new THREE.Color(0xb9c3d0); s.fog = new THREE.Fog(0xb9c3d0, 120, 900);
+  s.add(new THREE.HemisphereLight(0xe8eefc, 0x40444c, 1.3));
+  const sonne = new THREE.DirectionalLight(0xffd2a6, 2.0); sonne.position.set(-6, 3, 1); s.add(sonne); s.add(sonne.target);
+  const h = heliModell(); s.add(h.g); h.g.rotation.order = 'YXZ';
+  const feld = liveTex(1024, 1024); { const g = feld.ctx, r = rng(3);
+    for (let i = 0; i < 64; i++) { g.fillStyle = ['#7d8a6a', '#8f9c78', '#a09a7a', '#6e7c5e', '#9aa58a', '#b0a882'][(i * 7) % 6]; g.fillRect((i % 8) * 128, Math.floor(i / 8) * 128, 128, 128); }
+    for (let i = 0; i < 30; i++) { g.fillStyle = 'rgba(40,60,40,.5)'; g.beginPath(); g.arc(r() * 1024, r() * 1024, 10 + r() * 40, 0, 7); g.fill(); }
+    g.fillStyle = '#4a4f57'; g.fillRect(500, 0, 30, 1024); g.fillRect(0, 300, 1024, 20); g.fillStyle = '#e9ecef'; for (let y = 0; y < 1024; y += 40) g.fillRect(514, y, 3, 20);
+    for (let i = 0; i < 40; i++) { const x = r() * 900, y = r() * 900; g.fillStyle = '#8d8d8d'; g.fillRect(x, y, 22, 16); g.fillStyle = '#6b2d2d'; g.fillRect(x, y, 22, 6); }
+    g.fillStyle = '#ffd27a'; for (let i = 0; i < 60; i++) g.fillRect(r() * 1024, r() * 1024, 4, 4); feld.tex.needsUpdate = true; }
+  feld.tex.wrapS = feld.tex.wrapT = THREE.RepeatWrapping; feld.tex.repeat.set(8, 8);
+  const boden = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), new THREE.MeshStandardMaterial({ map: feld.tex, roughness: 1 }));
+  boden.rotation.x = -Math.PI / 2; boden.position.y = -160; s.add(boden);
+  const glut = new THREE.Sprite(new THREE.SpriteMaterial({ map: radialTex('sonne', [[0, 'rgba(255,240,200,1)'], [.3, 'rgba(255,190,120,.6)'], [1, 'rgba(255,170,100,0)']]), fog: false, depthWrite: false }));
+  glut.position.set(-420, 30, 60); glut.scale.set(200, 200, 1); s.add(glut);
+  // Wolkenfetzen, die vorbeiziehen
+  const wolken = []; const rt = rauchTex(); const r = rng(11);
+  for (let i = 0; i < 14; i++) { const w = new THREE.Sprite(new THREE.SpriteMaterial({ map: rt, color: 0xf1f3f5, transparent: true, opacity: .55, depthWrite: false })); w.userData = { x: -40 - r() * 60, y: -30 + r() * 40, z: r() * 400, s: 30 + r() * 40 }; s.add(w); wolken.push(w); }
+  const k = kamera(s, 76); const pov = new Pov(k);
+  const t = {}; for (const nr of [1, 2, 4, 7]) { t[nr] = teamOps(s, nr); s.remove(t[nr].root); h.g.add(t[nr].root); }
+  return { s, h, k, pov, t, feld, sonne, wolken };
+})();
+function s_flug(lt, t) {
+  const { h, k, pov, t: tm, feld, sonne, wolken } = FLUG;
+  const d = SZ('flug').d;
+  feld.tex.offset.set((t * .012) % 1, 0);
+  for (const w of FLUG.wolken) { const u = w.userData; w.position.set(u.x, u.y, ((u.z - t * 60) % 400 + 400) % 400 - 200); w.scale.set(u.s, u.s * .5, 1); }
+  const kurve = smooth(d - 3.2, d - .4, lt);
+  h.g.position.set(0, 0, 0); h.g.rotation.set(-.08 + .02 * Math.sin(t * 1.7), Math.PI / 2, -.03 * Math.sin(t * .9) - .22 * kurve);
+  h.g.updateMatrixWorld(true);
+  heliUpdate(h, t, { kurve });
+  sonne.intensity = 1.7 + .4 * (Math.sin(t * 2 * Math.PI * 4.6) > .6 ? -1 : 0);
+  const z7a = L('flug', 'Ich hasse'), z6 = L('flug', 'Sieben'), z7b = L('flug', 'Dich'), z4 = L('flug', 'Jet'), z1 = L('flug', 'Kein');
+  const r7 = redet('flug', lt, '7');
+  heliTeam(h, tm, 'flug', lt, {
+    7: { kopf: [r7 ? -.05 : .35, r7 ? .25 : -.5, 0], armL: [2.9, .1], ellL: .3, armR: lt > z7b.start ? [1.2, .2] : [.4, .1], ellR: 1.2 },
+    4: { kopf: [.1, lt > z4.start - .2 ? .5 : .2, 0], armL: lt > z4.start && lt < z4.ende ? [1.9, .2, .3] : [0, .1], ellL: 1.5 },
+    1: { kopf: [0, lt > z1.start - .2 ? .6 : 0, 0], armR: lt > z1.start ? [1.6 + .3 * Math.sin(t * 5), .4] : [.3, .1], ellR: .6 },
+  });
+  // Kamera sitzt an der offenen Tür: Blick zu 7 (gegenüber), raus, nach unten in der Kurve
+  const sitzW = h.g.localToWorld(AUGE6.clone());
+  let zl = V3(.5, 1.6, -.82);
+  const raus = smooth(z4.start - .3, z4.start + .4, lt);
+  zl.lerp(V3(-3.2, -.4, -1.5), raus).lerp(V3(-2.5, -2.6, .2), kurve);
+  if (lt > z1.start - .2 && lt < z1.ende - .6) zl.lerp(V3(.24, 1.5, .5), .7 * smooth(z1.start - .2, z1.start + .3, lt));
+  schau(k, sitzW.add(wackel(t, .01)), h.g.localToWorld(zl), h.g.rotation.z * .7);
+  pov.setze({ modus: 'gewehr', t, senken: .4, zielen: -.25 });
+  return { welt: FLUG, uhr: '05:24' };
+}
+
+// Zusätzliche Jet-Details außen + innen
+function jetDetails(jet) {
+  const j = jet.j, Y = 2.45, R0 = 1.15;
+  const holz = mat(0x6f4e37, { r: .4, map: holzTex([1, 1]) }), leder = mat(0xd9c7a5, { r: .55 }), chrom = mat(0xced4da, { m: .9, r: .2 });
+  // außen: Antikollisionslichter, Navigationslichter, Antennen, Türkontur, APU
+  jet.beacon = [mat(0xff2030, { e: 0xff2030, ei: 3, noCache: true }), mat(0xff2030, { e: 0xff2030, ei: 3, noCache: true })];
+  j.add(at(sph(.08, jet.beacon[0], 8, 6), 0, Y + R0 + .03, -7)); j.add(at(sph(.08, jet.beacon[1], 8, 6), 0, Y - R0 - .03, -7));
+  j.add(at(sph(.07, mat(0xff2030, { e: 0xff2030, ei: 4 }), 6, 4), -7.0, 1.75, -10.6)); j.add(at(sph(.07, mat(0x30ff60, { e: 0x30ff60, ei: 4 }), 6, 4), 7.0, 1.75, -10.6));
+  for (const z of [-5, -9]) j.add(at(box(.04, .35, .25, mat(0xdee2e6)), 0, Y + R0 + .15, z, -.4));
+  j.add(at(cyl(.012, .012, .3, chrom, 6), .45, Y - .2, -1.5, Math.PI / 2));
+  j.add(at(cyl(.18, .14, .3, mat(0x343a40), 12), 0, Y + .2, -17.3, Math.PI / 2));
+  for (const sx of [1, -1]) for (let k = 0; k < 4; k++) j.add(at(box(.6, .05, .5, mat(0xdee2e6, { r: .4 })), sx * (2 + k * 1.1), 1.62, -9.4 - k * .38));     // Klappen
+  j.add(at(box(.02, 1.75, .02, mat(0x8d99ae)), R0 + .012, 2.35, -2.6)); j.add(at(box(.02, 1.75, .02, mat(0x8d99ae)), R0 + .012, 2.35, -3.5));
+  // Cockpit-Seitenfenster
+  for (const sx of [1, -1]) j.add(at(box(.03, .28, .5, mat(0x15171c, { r: .1, m: .5 })), sx * (R0 - .05), Y + .45, -1.4, 0, 0, sx * -.4));
+  // innen: Teppich-Läufer, Holzleisten, Wandlampen, Galley, Sofa, Bar, Fensterblenden
+  j.add(at(box(.6, .012, 9.5, mat(0x3c2f5c, { r: 1 })), 0, 1.51, -8.2));
+  for (const sx of [1, -1]) {
+    j.add(at(box(.12, .06, 9, holz), sx * .98, 2.05, -8.2));
+    for (let z = -4.3; z > -11.5; z -= .95) { j.add(at(box(.03, .1, .26, mat(0xe9dcc3)), sx * (R0 - .09), Y + .44, z)); j.add(at(sph(.04, mat(0xfff1d6, { e: 0xffe2b0, ei: 2 }), 8, 6), sx * (R0 - .14), Y + .7, z - .45)); }
+  }
+  j.add(at(box(.5, 1.0, .7, holz), .7, 2.0, -3.85)); j.add(at(box(.5, .04, .7, mat(0x212529, { r: .2 })), .7, 2.52, -3.85));
+  for (let k = 0; k < 4; k++) j.add(at(cyl(.03, .03, .22, mat([0x2d6a4f, 0x9d0208, 0xf1faee, 0x6a4c93][k], { r: .1, transparent: true, opacity: .8 }), 8), .55 + k * .1, 2.65, -3.75));
+  j.add(at(box(1.5, .4, .6, leder), 0, 1.75, -12.0)); j.add(at(box(1.5, .6, .15, leder), 0, 2.15, -12.3));
+  for (const sx of [-.55, .55]) j.add(at(box(.36, .2, .3, mat(0x9c8662)), sx, 2.05, -11.95));
+  for (const [x, z] of [[-.55, -5.0], [.55, -5.0], [-.55, -8.1], [.55, -8.1]]) { j.add(at(cyl(.03, .05, .7, chrom, 8), x, 1.85, z)); j.add(at(cyl(.06, .08, .12, mat(0xfff1d6, { e: 0xffe2b0, ei: 1 }), 10), x + (x > 0 ? .15 : -.15), 2.32, z)); }
+  j.add(at(box(.04, .9, 1.4, mat(0xd8cbb5)), -.95, 2.2, -12.9));
+  return jet;
+}
+
+// ======================================================================= WELT 4: Flughafen-Vorfeld mit Privatjet (Abseilen, Tür, Kabine, Twist, Hook)
 function bauJet(s) {
   const j = new THREE.Group(); s.add(j);
   const lack = mat(0xf1f3f5, { r: .35, m: .1 }), streifen = mat(0x1d3557, { r: .4 }), dunkel = mat(0x15171c, { r: .3, m: .4 });
@@ -219,27 +345,20 @@ function bauJet(s) {
   return { j, pivot, tuer, raeder, licht };
 }
 
+
 const VF = (() => {
-  const s = new THREE.Scene(); s.background = new THREE.Color(0xbfc8d3); s.fog = new THREE.Fog(0xbfc8d3, 6, 95);
+  const s = new THREE.Scene(); s.background = new THREE.Color(0xc4ccd6); s.fog = new THREE.Fog(0xc4ccd6, 14, 230);
   s.add(new THREE.HemisphereLight(0xe9eef7, 0x6a6660, 1.7));
   const fuell = new THREE.DirectionalLight(0xdfe6f2, .9); fuell.position.set(30, 10, 40); s.add(fuell);
   const sonne = new THREE.DirectionalLight(0xffd4ab, 1.6); sonne.position.set(-25, 18, 20); sonne.castShadow = true; sonne.shadow.mapSize.set(2048, 2048);
   Object.assign(sonne.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 90 }); s.add(sonne); s.add(sonne.target);
-  s.add(bodenPlatte(500, 500, mat(0x8e9298, { r: .6, map: betonTex('#8e9298', [60, 60], 'vorfeld') }), 0, -40));
+  s.add(bodenPlatte(700, 700, mat(0x8e9298, { r: .6, map: betonTex('#8e9298', [80, 80], 'vorfeld') }), 0, -60));
   for (let z = 20; z > -180; z -= 6) s.add(at(box(.18, .01, 3.6, mat(0xf2c14e, { e: 0x4a3a10, ei: .3 })), 0, .006, z));   // Mittellinie
-  for (const x of [-12, 12]) for (let z = 20; z > -180; z -= 14) s.add(at(sph(.12, mat(0x3a7bff, { e: 0x3a7bff, ei: 4 }), 8, 6), x, .15, z));
-  s.add(at(box(46, 16, 30, mat(0x9aa3ad, { r: .7 })), 45, 8, -70)); s.add(at(box(30, 12, .3, mat(0x6c757d)), 45, 6, -54.9));
-  s.add(at(cyl(2.5, 3, 28, mat(0xadb5bd)), -55, 14, -110)); s.add(at(cyl(5, 5, 3, mat(0x495057, { e: 0x88bbff, ei: .3 })), -55, 29, -110));
-  const jet = bauJet(s);
+  const fa = flughafen(s);
+  const jet = jetDetails(bauJet(s));
   const expl = new Explosion(s, V3(0, 0, 0), { groesse: .6, richtung: V3(1, .3, 0), seed: 9, truemmer: 16, farbe: 0xdee2e6 });
   const rauch = new Schwaden(s, V3(0, 0, 0), 8, 4);
   const k = kamera(s, 74); const pov = new Pov(k);
-  const rahmen = new THREE.Group();   // Hubschraubertür-Rahmen vor der Kamera (Landung)
-  const rm = mat(0x2a2d33, { r: .8 });
-  rahmen.add(at(box(.08, 1.6, .05, rm), -.42, 0, -.55)); rahmen.add(at(box(.08, 1.6, .05, rm), .42, 0, -.55));
-  rahmen.add(at(box(1.0, .1, .05, rm), 0, .55, -.55)); rahmen.add(at(box(1.0, .14, .3, rm), 0, -.5, -.55));
-  rahmen.add(at(cyl(.025, .025, 1, mat(0x9aa0a6, { m: .8 }), 8), 0, .45, -.5, 0, 0, Math.PI / 2));
-  k.add(rahmen);
   const t = { 1: teamOps(s, 1), 2: teamOps(s, 2), 4: teamOps(s, 4), 7: teamOps(s, 7) };
   const schild2 = schildModell(); t[2].j.elL.add(schild2); schild2.position.set(.02, -.2, .12); schild2.rotation.set(-1.4, 0, 0);
   const pilot = new Figur({ art: 'zivil', jacke: 0xf8f9fa, hose: 0x212529, kappe: 0x1d3557, haut: 0xe8b98a, groesse: 1.78 }); s.add(pilot.root);
@@ -249,20 +368,21 @@ const VF = (() => {
   tablet.add(at(box(.26, .18, .012, mat(0x111111, { r: .3 })), 0, 0, 0));
   tablet.add(at(new THREE.Mesh(new THREE.PlaneGeometry(.24, .16), new THREE.MeshBasicMaterial({ map: ts.tex })), 0, 0, .007));
   s.add(tablet);
-  const heli = new THREE.Group();   // geparkter Hubschrauber vor dem Jet
-  heli.add(at(caps(1.1, 2.4, mat(0x2b2d42, { r: .5, m: .3 })), 0, 1.4, 0, Math.PI / 2)); heli.add(at(box(.3, .4, 5, mat(0x2b2d42)), 0, 1.6, 3.6));
-  heli.add(at(box(.5, 1.2, .2, mat(0x2b2d42)), 0, 2.2, 6.0)); for (const x of [-.9, .9]) heli.add(at(box(.1, .1, 3.2, mat(0x111111)), x, .05, 0));
-  const rotor = new THREE.Mesh(new THREE.CylinderGeometry(5.4, 5.4, .02, 40), new THREE.MeshBasicMaterial({ color: 0x222222, transparent: true, opacity: .25 }));
-  rotor.position.set(0, 2.75, 0); heli.add(rotor); heli.position.set(-1.5, 0, 4.5); heli.rotation.y = .4; s.add(heli);
-  return { s, k, pov, jet, expl, rauch, rahmen, t, schild2, pilot, gorilla, schellen, tablet, ts, heli, rotor, sonne };
+  const heli = heliModell(); s.add(heli.g); heli.g.rotation.order = 'YXZ';
+  const wind = new Abwind(s, 90, { farbe: 0xb8b1a3 });
+  // Reifenqualm beim Bremsen
+  const qualm = []; const rt = rauchTex();
+  for (let i = 0; i < 18; i++) { const q = new THREE.Sprite(new THREE.SpriteMaterial({ map: rt, color: 0xdee2e6, transparent: true, depthWrite: false })); q.userData = { ph: i / 18, seite: i % 2 ? 1 : -1 }; s.add(q); qualm.push(q); }
+  return { s, k, pov, jet, expl, rauch, t, schild2, pilot, gorilla, schellen, tablet, ts, heli, wind, qualm, sonne, fa };
 })();
 
 const NASE_STOP = -10;          // Nasenspitze des Jets (Welt-z), wenn er steht
 const TUER_Z = NASE_STOP - 3.05, TUER_X = 1.16;
 const RAMPE_X = TUER_X + .9;    // Ende der Treppe auf dem Boden
 const rampeH = x => clamp((RAMPE_X - x) / (RAMPE_X - TUER_X)) * 1.5;
-function jetZ(lt) {             // Szene 'landung': Jet rollt aus dem Nebel und bremst
-  const tb = 3.7, v0 = 9, ab = 5.6;
+const JB = { tb: 5.0, v0: 11, ab: 5.5 };
+function jetZ(lt) {             // Szene 'abseilen': Jet rollt aus dem Nebel, bremst vor dem Hubschrauber
+  const { tb, v0, ab } = JB;
   if (lt < tb) return NASE_STOP - (v0 * (tb - lt) + v0 * v0 / (2 * ab));
   const d = lt - tb, tStop = v0 / ab;
   return d >= tStop ? NASE_STOP : NASE_STOP - v0 * v0 / (2 * ab) + v0 * d - .5 * ab * d * d;
@@ -274,66 +394,122 @@ function tuerWinkel(d) {        // Tür klappt nach der Sprengung nach außen un
   return th;
 }
 function vfStandard(t) {
-  VF.rotor.rotation.y = t * 30; VF.rahmen.visible = false; VF.tablet.visible = false; VF.schellen.visible = false;
-  VF.expl.update(-1); VF.rauch.update(-1, 0);
+  VF.schild2.visible = true;
+  VF.heli.g.visible = true;
+  VF.tablet.visible = false; VF.schellen.visible = false;
+  VF.expl.update(-1); VF.rauch.update(-1, 0); VF.wind.update(t, 0, V3(0, 0, 0)); VF.qualm.forEach(q => { q.visible = false; });
+  VF.heli.seil.visible = false;
   for (const nr of [1, 2, 4, 7]) VF.t[nr].root.visible = true;
   VF.pilot.root.visible = true; VF.gorilla.root.visible = true;
   VF.sonne.target.position.set(VF.k.position.x, 0, VF.k.position.z - 6); VF.sonne.position.set(VF.k.position.x - 25, 18, VF.k.position.z + 20);
+  flughafenUpdate(VF.fa, t);
+  VF.jet.beacon.forEach((m, i) => { m.emissiveIntensity = ((t + i * .5) * 1.2) % 1 < .12 ? 7 : .3; });
+  // Hubschrauber kreist weiter oben (Sicherung aus der Luft)
+  const h = VF.heli; h.g.position.set(-14 + 4 * Math.sin(t * .3), 17, -6 + 3 * Math.cos(t * .3)); h.g.rotation.set(-.05, -Math.PI / 2 + .3 * Math.sin(t * .3), .04);
+  heliUpdate(h, t);
 }
 function stelleJet(nz, nick = 0) {
   const j = VF.jet; j.j.position.set(0, 0, nz); j.j.rotation.set(-nick, 0, 0);
 }
-function pilotSitzt(lt, haendeHoch, blickZurueck) {
+function pilotSitzt(lt, haendeHoch, blickZurueck, szene = 'kabine') {
   VF.pilot.pose({ beinL: [1.5, 1.55], beinR: [1.45, 1.5], armL: haendeHoch ? [2.9, .35] : [1.1, .1], ellL: haendeHoch ? .5 : .6, armR: haendeHoch ? [2.9, .35] : [1.1, .1], ellR: haendeHoch ? .5 : .6,
-    kopf: [0, blickZurueck ? 2.2 : 0, 0], mund: redet('kabine', lt, 'P') });
+    kopf: [0, blickZurueck ? 2.2 : 0, 0], mund: redet(szene, lt, 'P') });
   const p = VF.jet.j.localToWorld(V3(.4, 0, -1.45));
   VF.pilot.platziere(p.x, p.z, 0, { hoehe: 1.5 + .5 - .98 * VF.pilot.root.scale.x + .04 });
 }
 
-// ---------------------------------------------------------------- Landung (aus der Hubschraubertür)
-const WEG_L = {
-  1: [[0, -.5, 3.4], [4.9, -.5, 3.4], [7.2, 2.25, -11.6]],
-  2: [[0, -.2, 3.8], [5.0, -.2, 3.8], [7.2, 1.62, -13.1]],
-  4: [[0, -.8, 4.2], [5.2, -.8, 4.2], [7.2, 2.45, -14.4]],
-  7: [[0, -.4, 4.6], [5.4, -.4, 4.6], [7.2, 3.15, -15.1]],
-};
-function s_landung(lt, t) {
+// ---------------------------------------------------------------- Abseilen (Hubschrauber schwebt vor dem rollenden Jet)
+const HH = 11.5;                 // Schwebehöhe
+const HELI_AB = V3(0, HH, 3.6);
+function s_abseilen(lt, t) {
   vfStandard(t);
-  const { k, pov, t: tm } = VF;
-  const tb = 3.6;
-  const raus = smooth(4.85, 5.25, lt);
-  const nz = jetZ(lt); const brems = lt > 3.7 && lt < 5.3 ? Math.sin((lt - 3.7) / 1.6 * Math.PI) * .03 : 0;
-  stelleJet(nz, brems);
-  VF.jet.licht.forEach(l => { l.intensity = 160; });
-  VF.jet.raeder.forEach(r => { r.rotation.x = -t * 9 * (lt < 5.3 ? 1 : 0); });
-  VF.jet.pivot.rotation.z = 0;
-  VF.heli.visible = false; VF.pilot.root.visible = true; pilotSitzt(lt, false, false); VF.gorilla.root.visible = false;
-  // Kamera: sinkt mit dem Hubschrauber, Aufsetzen, Sprung raus, Rennen zum Jet
-  let pos, ziel;
-  const nasePos = V3(0, 2.4, nz);
-  if (lt < tb) {
-    const h = 1.9 + 20 * Math.pow(1 - easeOut(lt / tb), 1.6);
-    pos = V3(.2 * Math.sin(t * .9), h, 2.0).add(wackel(t, .02));
-    ziel = nasePos.clone().add(V3(0, -.5, 0));
-  } else if (lt < 4.85) {
-    const stoss = Math.exp(-7 * (lt - tb)) * Math.sin((lt - tb) * 30) * .06;
-    pos = V3(0, 1.9 + stoss, 2.0).add(wackel(t, .012)); ziel = nasePos;
+  const { k, pov, t: tm, jet, heli: h, wind } = VF;
+  const d = SZ('abseilen').d;
+  // Hubschrauber: schwebt, Tür links zeigt zum Jet (−z); am Ende steigt er weg
+  const weg = smooth(6.8, d + 1, lt);
+  h.g.position.set(HELI_AB.x + .25 * Math.sin(t * .8) + 6 * weg, HELI_AB.y + .2 * Math.sin(t * 1.1) + 7 * weg, HELI_AB.z + .15 * Math.cos(t * .7));
+  h.g.rotation.set(.03 * Math.sin(t * .9), -Math.PI / 2, .04 * Math.sin(t * .6) - .1 * weg);
+  h.g.updateMatrixWorld(true);
+  heliUpdate(h, t);
+  const fuss = h.g.localToWorld(V3(-1.6, 0, -.05)); fuss.y = 0;
+  wind.update(t, 1 - weg * .7, V3(fuss.x, 0, fuss.z + 1.5), 0, k);
+  // Seil fällt
+  const raus = easeOut(clamp((lt - .25) / .6));
+  const seil = setzeSeil(h, lerp(HH + 1.5, 0, raus), .02 * Math.sin(t * 2));
+  // Jet rollt heran, bremst, Reifenqualm
+  const nz = jetZ(lt), brems = lt > JB.tb && lt < JB.tb + 2.2 ? Math.sin((lt - JB.tb) / 2.2 * Math.PI) * .035 : 0;
+  stelleJet(nz, brems); jet.licht.forEach(l => { l.intensity = 160; }); jet.pivot.rotation.z = 0;
+  jet.raeder.forEach(r => { r.rotation.x = -t * 9 * (lt < JB.tb + 2 ? 1 : 0); });
+  VF.qualm.forEach(q => {
+    const u = q.userData, dt = lt - JB.tb - u.ph * 1.8; q.visible = dt > 0 && lt < JB.tb + 4;
+    if (!q.visible) return;
+    const quelle = jet.j.localToWorld(V3(u.seite * 1.3, .2, -9));
+    q.position.set(quelle.x + u.seite * dt * .6, .3 + dt * .7, quelle.z - dt * 1.5);
+    const sz = .8 + dt * 2.2; q.scale.set(sz, sz, 1); q.material.opacity = .55 * clamp(1 - dt / 2.2);
+  });
+  pilotSitzt(lt, false, false, 'abseilen'); VF.gorilla.root.visible = false;
+  // 2 rutscht zuerst ab, landet, sichert
+  const r2a = 1.1, r2b = 2.5;
+  const seilX = seil.oben.x, seilZ = seil.oben.z;
+  for (const nr of [1, 4, 7]) tm[nr].root.visible = false;
+  {
+    const f = tm[2];
+    VF.schild2.visible = lt > r2b;
+    if (lt < r2a) { f.root.visible = false; }
+    else if (lt < r2b + .3) {
+      const kk = clamp((lt - r2a) / (r2b - r2a)); const y = lerp(HH + HELI_BODEN - .3, 0, kk * kk * (1.6 - .6 * kk));
+      const lande = smooth(r2b, r2b + .3, lt);
+      f.pose(lande > 0 ? { ...hockPose(.6 * (1 - lande) + .3) } : { beinL: [.9, 1.3], beinR: [.5, 1.0], armL: [3.0, .1], armR: [2.9, .1], ellL: .3, ellR: .4, rumpf: [.1, 0, 0], kopf: [-.5, 0, 0] });
+      f.ohneGewehr();
+      if (lande > 0) f.platziere(seilX, seilZ + .25, Math.PI);
+      else {
+        f.platziere(seilX, seilZ + .25, Math.PI, { hoehe: y });
+        f.greife('L', V3(seilX, y + 2.05, seilZ), f.lokal(.5, 1.6, .3)); f.greife('R', V3(seilX, y + 1.75, seilZ), f.lokal(-.5, 1.4, .3));
+      }
+    } else {
+      const p = pfad([[r2b + .3, seilX, seilZ + .25], [r2b + .9, seilX + 1.6, seilZ - 1.0], [6.4, seilX + 1.6, seilZ - 1.0], [d, 1.8, -7.5]], lt);
+      f.pose(p.s > .05 ? rennPose(p.dist / .9 * Math.PI, { neig: .3 }) : hockPose(.45)); f.platziere(p.x, p.z, p.s > .05 ? richtung(p.vx, p.vz, Math.PI) : Math.PI); f.haltGewehr(p.s > .05 ? 'tief' : 'anschlag');
+    }
+  }
+  // 4 + 7 + 1 kommen nach uns runter und überholen uns im Sprint
+  const nach = { 4: [[6.1, seilX - .8, seilZ + .6], [d, 2.6, -8.8]], 7: [[6.5, seilX + .5, seilZ + .9], [d, 3.4, -7.0]], 1: [[6.9, seilX - .3, seilZ + .4], [d, 1.0, -5.5]] };
+  for (const nr of [4, 7, 1]) {
+    if (lt < nach[nr][0][0]) continue;
+    const p = pfad(nach[nr], lt); tm[nr].root.visible = true;
+    tm[nr].pose(rennPose(p.dist / .9 * Math.PI, { neig: .35 })); tm[nr].platziere(p.x, p.z, richtung(p.vx, p.vz, Math.PI));
+    if (nr === 7) tm[7].ohneGewehr(); else tm[nr].haltGewehr('tief');
+  }
+  // Kamera: sitzt in der Tür → greift das Seil → rutscht runter → Landung → Sprint zum Jet
+  const tuerSitz = h.g.localToWorld(V3(-1.22, HELI_BODEN + .95, .35));
+  const g0 = 3.0, g1 = 3.5, unten = 5.55;
+  let pos, ziel, hande = null;
+  const nase = V3(0, 2.2, nz);
+  if (lt < g0) {
+    pos = tuerSitz.clone().add(wackel(t, .008));
+    ziel = lt < r2a ? h.g.localToWorld(V3(-9, -2.5, -1.6)) : (tm[2].root.visible ? weltPos(tm[2].j.hips) : V3(seilX, 0, seilZ));
+    if (lt < .5) ziel = h.g.localToWorld(V3(-2.5, -3, .6));
+  } else if (lt < g1) {
+    const kk = easeInOut((lt - g0) / (g1 - g0));
+    pos = tuerSitz.clone().lerp(V3(seilX + .04, HH + HELI_BODEN + 1.25, seilZ + .24), kk);
+    ziel = V3(seilX, 0, seilZ).lerp(nase, .15);
+  } else if (lt < unten) {
+    const kk = clamp((lt - g1) / (unten - g1)); const f = kk < .75 ? kk * kk / .75 * 1.33 * .75 : 1 - (1 - kk) * (1 - kk) * 4 * .25 / 1;
+    const y = lerp(HH + HELI_BODEN + 1.25, 1.75, clamp(kk < .8 ? .9 * (kk / .8) * (kk / .8) : .9 + .1 * easeOut((kk - .8) / .2)));
+    pos = V3(seilX + .04 + .02 * Math.sin(t * 7), y, seilZ + .24);
+    ziel = V3(seilX, y - 2.4, seilZ - 1.1).lerp(nase, smooth(.55, .95, kk));
   } else {
-    const p = pfad([[4.85, 0, 2.0], [5.3, .3, 1.2], [7.2, 3.0, -9.5]], lt);
-    pos = V3(p.x, 1.6 + Math.sin(p.dist / .7 * Math.PI) * .05 - .3 * Math.exp(-8 * (lt - 4.85)) * (lt < 5.3 ? 1 : 0), p.z);
-    ziel = V3(1.2, 1.8, TUER_Z);
+    const stoss = Math.exp(-6 * (lt - unten)) * Math.sin((lt - unten) * 14) * .3;
+    const p = pfad([[unten + .35, seilX + .04, seilZ + .24], [d, 3.2, -6.8]], lt);
+    const lauf = clamp(p.s / 3);
+    pos = V3(p.x, 1.62 - Math.max(0, stoss) - .1 * lauf + Math.abs(Math.sin(p.dist / .85 * Math.PI)) * .05 * lauf, p.z);
+    ziel = V3(1.2, 1.9, TUER_Z).lerp(nase, 1 - smooth(unten + .5, unten + 1.6, lt));
   }
-  schau(k, pos, ziel, lt < tb ? .04 * Math.sin(t * 1.4) : 0);
-  VF.rahmen.visible = raus < .5;
-  for (const nr of [1, 2, 4, 7]) {
-    const p = pfad(WEG_L[nr], lt); const geht = p.s > .05;
-    tm[nr].root.visible = lt > 4.9;
-    tm[nr].pose(geht ? rennPose(p.dist / .9 * Math.PI, { neig: .3 }) : hockPose(.4));
-    tm[nr].platziere(p.x, p.z, richtung(p.vx, p.vz, Math.PI));
-    tm[nr].haltGewehr('tief');
-  }
-  pov.setze({ modus: 'gewehr', t, lauf: lt > 5.2 ? 1 : .1, zielen: lt > 5.2 ? -.2 : -.4 });
-  return { welt: VF, uhr: '05:31', blitz: 0 };
+  schau(k, pos, ziel);
+  if (lt > g0 - .2 && lt < unten + .15) {
+    const seilPunkt = dy => V3(seilX, k.position.y + dy, seilZ);
+    pov.setze({ modus: 'frei', t, zielR: seilPunkt(-.62), zielL: seilPunkt(-.36) });
+  } else pov.setze({ modus: 'gewehr', t, lauf: lt > unten + .4 ? 1 : .1, zielen: lt > unten ? -.1 : -.35, senken: lt < g0 ? .3 : 0 });
+  return { welt: VF, uhr: '05:31' };
 }
 
 // ---------------------------------------------------------------- Tür (Ladung, Countdown, Sprengung, Treppe)
@@ -343,7 +519,7 @@ const SPRENG = 4.9 + VERZUG;
 function s_tuer(lt, t) {
   vfStandard(t);
   const { k, pov, t: tm, jet } = VF;
-  stelleJet(NASE_STOP); jet.licht.forEach(l => { l.intensity = 90; }); VF.heli.visible = true;
+  stelleJet(NASE_STOP); jet.licht.forEach(l => { l.intensity = 90; }); VF.heli.g.visible = true;
   pilotSitzt(lt, false, false); VF.gorilla.root.visible = false;
   const d = lt - SPRENG;
   jet.pivot.rotation.z = -tuerWinkel(d);
@@ -399,7 +575,7 @@ function s_tuer(lt, t) {
 function s_kabine(lt, t) {
   vfStandard(t);
   const { k, pov, t: tm, jet, gorilla, schellen } = VF;
-  stelleJet(NASE_STOP); jet.licht.forEach(l => { l.intensity = 0; }); VF.heli.visible = false;
+  stelleJet(NASE_STOP); jet.licht.forEach(l => { l.intensity = 0; }); VF.heli.g.visible = false;
   jet.pivot.rotation.z = -2.59;
   tm[7].root.visible = false; tm[4].root.visible = false;
   const zP = L('kabine', 'Nicht'), tackle = zP.ende + .1;
@@ -502,7 +678,7 @@ function zeichneTablet(phase, t, lt = 0) {
 function s_twist(lt, t) {
   vfStandard(t);
   const { k, pov, t: tm, jet, gorilla, schellen } = VF;
-  stelleJet(NASE_STOP); jet.pivot.rotation.z = -2.59; VF.heli.visible = false;
+  stelleJet(NASE_STOP); jet.pivot.rotation.z = -2.59; VF.heli.g.visible = false;
   tm[7].root.visible = false; tm[4].root.visible = false; tm[1].root.visible = false;
   pilotSitzt(lt, true, false);
   gorilla.pose({ armL: [0, .3], armR: [0, .3], beinL: [0, .05], beinR: [.05, .05], kopf: [-.4, .9, 0] });
@@ -555,8 +731,8 @@ function zeigeUI(n, lt, r, t) {
   if (r.ende !== null && r.ende !== undefined) { ui.ende.style.opacity = clamp(r.ende * 3); ui.ende.querySelector('.berg').style.transform = `translateY(${(1 - easeOut(r.ende / .6)) * 80}px)`; }
   else ui.ende.style.opacity = 0;
 }
-const SZENEN = { hook: s_hook, hq: s_hq, heli: s_heli, landung: s_landung, tuer: s_tuer, kabine: s_kabine, twist: s_twist };
-const KARTE = { landung: ['05:31 · ZUGRIFFSORT', 'Flughafen · Vorfeld Ost'] };
+const SZENEN = { hook: s_hook, hq: s_hq, dach: s_dach, flug: s_flug, abseilen: s_abseilen, tuer: s_tuer, kabine: s_kabine, twist: s_twist };
+const KARTE = { abseilen: ['05:31 · ZUGRIFFSORT', 'Flughafen · Vorfeld Ost'], dach: ['05:16 · ABFLUG', 'Hauptquartier · Dach'] };
 function szeneRendern(i, lt, ziel) {
   const s = TL.szenen[i]; const r = SZENEN[s.n](lt, s.start + lt);
   if (KARTE[s.n] && lt < 4) r.karte = { o: KARTE[s.n][0], u: KARTE[s.n][1], k: lt };
@@ -574,7 +750,7 @@ window.renderFrame = async (t) => {
     ui.zeit.style.opacity = tr === 'uhr' ? Math.sin(Math.PI * p) : 0;
     if (tr === 'uhr') { ui.zeit.querySelector('.zeiger').style.transform = `rotate(${p * 1080}deg)`; ui.zeit.querySelector('.std').style.transform = `rotate(${p * 160}deg)`; ui.zeit.querySelector('b').textContent = s.karte; }
   } else { r = szeneRendern(i, lt, POST.a); ui.zeit.style.opacity = 0; }
-  POST.fertig({ ...post, zeit: t, blitz: r.blitz ?? 0, sat: r.sat ?? 1, spulen: r.spulen ?? 0, rot: 0 });
+  POST.fertig({ ...post, zeit: t, blitz: r.blitz ?? 0, sat: r.sat ?? 1, spulen: r.spulen ?? 0, rot: r.rot ?? 0 });
   zeigeUI(s.n, lt, r, t);
   await new Promise(res => requestAnimationFrame(() => res()));
 };

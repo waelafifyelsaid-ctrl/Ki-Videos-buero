@@ -55,7 +55,7 @@
   },
   {
    "n": "hq",
-   "d": 13.477,
+   "d": 9.263,
    "tr": "uhr",
    "trd": 1.0,
    "karte": "2 STUNDEN VORHER",
@@ -63,20 +63,28 @@
    "start": 4.0
   },
   {
-   "n": "heli",
-   "d": 11.71,
+   "n": "dach",
+   "d": 9.414,
    "tr": "whip",
    "trd": 0.45,
    "verzug": 0.0,
-   "start": 17.477
+   "start": 13.263
   },
   {
-   "n": "landung",
-   "d": 7.2,
+   "n": "flug",
+   "d": 12.094,
+   "tr": "mix",
+   "trd": 0.5,
+   "verzug": 0.0,
+   "start": 22.677
+  },
+  {
+   "n": "abseilen",
+   "d": 9.0,
    "tr": "glitch",
    "trd": 0.45,
    "verzug": 0.0,
-   "start": 29.187
+   "start": 34.771
   },
   {
    "n": "tuer",
@@ -100,13 +108,13 @@
     3.63,
     4.75
    ],
-   "start": 36.387
+   "start": 43.771
   },
   {
    "n": "kabine",
    "d": 16.507,
    "verzug": 0.0,
-   "start": 47.302
+   "start": 54.686
   },
   {
    "n": "twist",
@@ -114,7 +122,7 @@
    "tr": "zoom",
    "trd": 0.6,
    "verzug": 0.0,
-   "start": 63.809
+   "start": 71.193
   }
  ],
  "dialog": [
@@ -155,32 +163,44 @@
    "verschoben": 2.76
   },
   {
-   "id": "04_hq_2",
-   "szene": "hq",
-   "start": 9.063,
-   "ende": 11.397,
+   "id": "04_dach_1",
+   "szene": "dach",
+   "start": 1.0,
+   "ende": 2.518,
+   "wer": "1",
+   "text": "Einsteigen! Los!",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "04_dach_1.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "05_dach_2",
+   "szene": "dach",
+   "start": 5.0,
+   "ende": 7.334,
    "wer": "2",
    "text": "Gibt's im Hubschrauber Frühstück?",
    "funk": false,
    "lautsprecher": false,
    "datei": "04_hq_2.mp3",
-   "verschoben": 2.96
+   "verschoben": 0.0
   },
   {
-   "id": "05_hq_4",
-   "szene": "hq",
-   "start": 11.547,
-   "ende": 13.127,
+   "id": "06_dach_4",
+   "szene": "dach",
+   "start": 7.484,
+   "ende": 9.064,
    "wer": "4",
    "text": "Nein.",
    "funk": false,
    "lautsprecher": false,
    "datei": "05_hq_4.mp3",
-   "verschoben": 3.55
+   "verschoben": 0.28
   },
   {
-   "id": "06_heli_7v",
-   "szene": "heli",
+   "id": "07_flug_7v",
+   "szene": "flug",
    "start": 0.6,
    "ende": 2.18,
    "wer": "7v",
@@ -191,8 +211,8 @@
    "verschoben": 0.0
   },
   {
-   "id": "07_heli_6",
-   "szene": "heli",
+   "id": "08_flug_6",
+   "szene": "flug",
    "start": 2.33,
    "ende": 4.615,
    "wer": "6",
@@ -203,8 +223,8 @@
    "verschoben": 0.33
   },
   {
-   "id": "08_heli_7v",
-   "szene": "heli",
+   "id": "09_flug_7v",
+   "szene": "flug",
    "start": 4.765,
    "ende": 6.528,
    "wer": "7v",
@@ -215,8 +235,8 @@
    "verschoben": 0.97
   },
   {
-   "id": "09_heli_4f",
-   "szene": "heli",
+   "id": "10_flug_4f",
+   "szene": "flug",
    "start": 6.678,
    "ende": 9.068,
    "wer": "4f",
@@ -227,31 +247,31 @@
    "verschoben": 1.28
   },
   {
-   "id": "10_heli_1f",
-   "szene": "heli",
+   "id": "11_flug_1f",
+   "szene": "flug",
    "start": 9.218,
-   "ende": 11.36,
+   "ende": 11.744,
    "wer": "1f",
-   "text": "Pilot, setz uns direkt davor!",
+   "text": "Kein Platz zum Landen. Wir seilen ab!",
    "funk": true,
    "lautsprecher": false,
-   "datei": "10_heli_1f.mp3",
-   "verschoben": 1.42
+   "datei": "11_flug_1f.mp3",
+   "verschoben": 1.92
   },
   {
-   "id": "11_landung_1",
-   "szene": "landung",
-   "start": 4.6,
-   "ende": 6.166,
+   "id": "12_abseilen_1",
+   "szene": "abseilen",
+   "start": 0.4,
+   "ende": 1.7,
    "wer": "1",
-   "text": "Raus! Raus! Raus!",
+   "text": "Seil frei!",
    "funk": false,
    "lautsprecher": false,
-   "datei": "11_landung_1.mp3",
+   "datei": "12_abseilen_1.mp3",
    "verschoben": 0.0
   },
   {
-   "id": "12_tuer_2",
+   "id": "13_tuer_2",
    "szene": "tuer",
    "start": 0.4,
    "ende": 1.87,
@@ -263,7 +283,7 @@
    "verschoben": 0.0
   },
   {
-   "id": "13_tuer_1",
+   "id": "14_tuer_1",
    "szene": "tuer",
    "start": 2.5,
    "ende": 5.595,
@@ -275,7 +295,7 @@
    "verschoben": 0.0
   },
   {
-   "id": "14_tuer_2",
+   "id": "15_tuer_2",
    "szene": "tuer",
    "start": 6.6,
    "ende": 8.022,
@@ -287,7 +307,7 @@
    "verschoben": 0.0
   },
   {
-   "id": "15_tuer_1",
+   "id": "16_tuer_1",
    "szene": "tuer",
    "start": 8.172,
    "ende": 9.472,
@@ -299,7 +319,7 @@
    "verschoben": 0.17
   },
   {
-   "id": "16_kabine_4",
+   "id": "17_kabine_4",
    "szene": "kabine",
    "start": 0.6,
    "ende": 2.441,
@@ -311,7 +331,7 @@
    "verschoben": 0.0
   },
   {
-   "id": "17_kabine_P",
+   "id": "18_kabine_P",
    "szene": "kabine",
    "start": 2.591,
    "ende": 5.165,
@@ -323,7 +343,7 @@
    "verschoben": 0.19
   },
   {
-   "id": "18_kabine_6",
+   "id": "19_kabine_6",
    "szene": "kabine",
    "start": 5.8,
    "ende": 8.582,
@@ -335,7 +355,7 @@
    "verschoben": 0.0
   },
   {
-   "id": "19_kabine_2",
+   "id": "20_kabine_2",
    "szene": "kabine",
    "start": 8.732,
    "ende": 10.346,
@@ -347,7 +367,7 @@
    "verschoben": 1.33
   },
   {
-   "id": "20_kabine_6",
+   "id": "21_kabine_6",
    "szene": "kabine",
    "start": 10.496,
    "ende": 12.546,
@@ -359,7 +379,7 @@
    "verschoben": 1.7
   },
   {
-   "id": "21_kabine_7f",
+   "id": "22_kabine_7f",
    "szene": "kabine",
    "start": 12.696,
    "ende": 16.157,
@@ -371,7 +391,7 @@
    "verschoben": 2.7
   },
   {
-   "id": "22_twist_X",
+   "id": "23_twist_X",
    "szene": "twist",
    "start": 0.8,
    "ende": 2.458,
@@ -383,7 +403,7 @@
    "verschoben": 0.0
   },
   {
-   "id": "23_twist_X",
+   "id": "24_twist_X",
    "szene": "twist",
    "start": 2.608,
    "ende": 4.702,
@@ -395,7 +415,7 @@
    "verschoben": 0.01
   },
   {
-   "id": "24_twist_6",
+   "id": "25_twist_6",
    "szene": "twist",
    "start": 5.2,
    "ende": 7.224,
@@ -407,7 +427,7 @@
    "verschoben": 0.0
   },
   {
-   "id": "25_twist_2",
+   "id": "26_twist_2",
    "szene": "twist",
    "start": 7.374,
    "ende": 9.084,
@@ -419,5 +439,5 @@
    "verschoben": 0.57
   }
  ],
- "dauer": 75.143
+ "dauer": 82.527
 }

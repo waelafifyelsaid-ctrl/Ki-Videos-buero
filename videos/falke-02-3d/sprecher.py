@@ -34,6 +34,9 @@ ZEILEN = {
     "Wir sehen uns in den Bergen.": ("[kalt]", "Wir sehen uns in den Bergen."),
     "Ich hasse Berge.": ("[kleinlaut]", "Ich hasse Berge."),
     "Gibt's da Frühstück?": ("[hungrig]", "Gibt's da Frühstück?"),
+    "Einsteigen! Los!": ("[schreit]", "Einsteigen! Los!"),
+    "Kein Platz zum Landen. Wir seilen ab!": ("[ruft]", "Kein Platz zum Landen. Wir seilen ab!"),
+    "Seil frei!": ("[ruft]", "Seil frei!"),
 }
 start = {s["n"]: s["start"] for s in TL["szenen"]}
 with open(HIER / "stimmen" / "skript.csv", "w", newline="", encoding="utf-8") as f:
