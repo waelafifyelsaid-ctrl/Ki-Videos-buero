@@ -8,3 +8,4 @@ datum,slug,titel,status,laenge_s,aufrufe,likes,kommentare,shares,zuschauzeit_avg
 2026-11-25,falke-01-3d-stimmen,EINHEIT FALKE – Einsatz 01 (3D; mit Piper-Stimmen),fertig,113.3,,,,,,kostenlose Piper-Stimmen; Funkfilter; Ducking
 2026-11-25,falke-01-3d-elevenlabs,EINHEIT FALKE – Einsatz 01 (3D; ElevenLabs v3),fertig,127.6,,,,,,ElevenLabs-Standardstimmen; Countdown synchron
 2026-11-25,falke-01-3d-musik,EINHEIT FALKE – Einsatz 01 (3D; ElevenLabs + Musik),fertig,127.6,,,,,,eigene Musik per Code
+2026-11-25,falke-01-3d-final,EINHEIT FALKE – Einsatz 01 (3D; final),fertig,126.9,,,,,,stabile Stimmen; HUD in Safe-Zone; Musik lauter
