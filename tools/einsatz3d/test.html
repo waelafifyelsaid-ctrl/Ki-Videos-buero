@@ -1,0 +1,28 @@
+<!doctype html><html><head><style>html,body{margin:0;background:#000}</style></head><body>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js"}}</script>
+<script type="module">
+import { THREE, mat, bodenPlatte, betonTex } from './kern.js';
+import { Figur, gehPose, hockPose } from './figur.js';
+const r = new THREE.WebGLRenderer({ antialias: true }); r.setSize(1080, 1920); r.shadowMap.enabled = true;
+r.toneMapping = THREE.ACESFilmicToneMapping; r.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(r.domElement);
+const s = new THREE.Scene(); s.background = new THREE.Color(0x6b7a90);
+s.add(bodenPlatte(30, 30, mat(0x777777, { map: betonTex() })));
+s.add(new THREE.HemisphereLight(0xdde6ff, 0x404040, 1.2));
+const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(3, 6, 4); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5 }); s.add(sun);
+const cam = new THREE.PerspectiveCamera(50, 1080 / 1920, 0.05, 100); cam.position.set(0, 1.5, 5.2); cam.lookAt(0, 1.0, 0);
+const team = (nr, x, z, extra = {}) => { const f = new Figur({ art: 'team', nummer: nr, maske: true, helm: true, headset: nr === 1, visier: true, ...extra }); s.add(f.root); return f; };
+const f1 = team(1, -1.1, 0); const f2 = team(2, 0.1, -0.4, { groesse: 2.0 }); const f4 = team(4, 1.1, 0.2, { groesse: 1.72 });
+const g = new Figur({ art: 'zivil', jacke: 0xf77f00, kappe: 0x111111, sonnenbrille: true, haut: 0xe8b98a }); s.add(g.root);
+const g2 = new Figur({ art: 'zivil', kapuze: true, jacke: 0x6c757d, haare: true, haut: 0xc68642 }); s.add(g2.root);
+window.renderFrame = async (t) => {
+  f1.pose({ ...hockPose(0.4), kopf: [0, 0.3, 0] }); f1.platziere(-1.1, 0, 0.3); f1.haltGewehr('tief');
+  f2.pose(gehPose(t * 6, { hocke: 0.3, arme: false })); f2.platziere(0.1, -0.4, -0.2); f2.haltGewehr('anschlag');
+  f4.pose({ armL: [3.0, 0.2], armR: [0.2, 0.1], ellL: 0.1, fingerL: 3 }); f4.platziere(1.1, 0.2, -0.5);
+  g.pose({ armL: [3.0, 0.3], armR: [3.0, 0.3], ellL: 0.3, ellR: 0.3, mund: 0.8 }); g.platziere(-0.4, 1.5, 0.2);
+  g2.pose({ beinL: [0, 0], beinR: [0, 0] }); g2.platziere(0.9, 1.6, Math.PI / 2, { kipp: [Math.PI / 2, 0] });
+  r.render(s, cam);
+};
+window.bereit = true;
+</script></body></html>

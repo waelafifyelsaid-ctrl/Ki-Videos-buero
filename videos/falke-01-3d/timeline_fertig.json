@@ -1,0 +1,395 @@
+{
+ "titel": "EINHEIT FALKE – Einsatz 01: Lagerhaus 7 (3D, POV)",
+ "sprecher": {
+  "6": [
+   "6 · DU",
+   "#80ed99"
+  ],
+  "1": [
+   "1",
+   "#ffd166"
+  ],
+  "2": [
+   "2",
+   "#ef476f"
+  ],
+  "4": [
+   "4",
+   "#c77dff"
+  ],
+  "7": [
+   "7 · FUNK",
+   "#4cc9f0"
+  ],
+  "7v": [
+   "7",
+   "#4cc9f0"
+  ],
+  "Z": [
+   "ZENTRALE",
+   "#e9ecef"
+  ],
+  "F": [
+   "ORANGE JACKE",
+   "#ff9f1c"
+  ]
+ },
+ "szenen": [
+  {
+   "n": "hook",
+   "d": 4.0,
+   "start": 0.0
+  },
+  {
+   "n": "hq",
+   "d": 9.216,
+   "tr": "uhr",
+   "trd": 1.0,
+   "karte": "6 STUNDEN VORHER",
+   "start": 4.0
+  },
+  {
+   "n": "briefing",
+   "d": 12.166,
+   "tr": "whip",
+   "trd": 0.45,
+   "start": 13.216
+  },
+  {
+   "n": "spind",
+   "d": 7.0,
+   "tr": "zoom",
+   "trd": 0.6,
+   "start": 25.382
+  },
+  {
+   "n": "van",
+   "d": 10.248,
+   "tr": "schwarz",
+   "trd": 0.7,
+   "start": 32.382
+  },
+  {
+   "n": "anschleichen",
+   "d": 8.6,
+   "tr": "mix",
+   "trd": 0.6,
+   "start": 42.63
+  },
+  {
+   "n": "zugriff",
+   "d": 8.0,
+   "start": 51.23
+  },
+  {
+   "n": "innen",
+   "d": 12.6,
+   "start": 59.23
+  },
+  {
+   "n": "verfolgung",
+   "d": 13.92,
+   "tr": "whip",
+   "trd": 0.45,
+   "start": 71.83
+  },
+  {
+   "n": "twist",
+   "d": 13.784,
+   "tr": "schwarz",
+   "trd": 0.7,
+   "start": 85.75
+  }
+ ],
+ "dialog": [
+  {
+   "szene": "hook",
+   "start": 0.5,
+   "ende": 2.882,
+   "wer": "6",
+   "text": "Okay … das war lauter als geplant.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "hq",
+   "start": 3.0,
+   "ende": 5.526,
+   "wer": "6",
+   "text": "Zwei, das ist dein drittes Frühstück.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "hq",
+   "start": 5.8,
+   "ende": 7.1,
+   "wer": "2",
+   "text": "Viertes.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "hq",
+   "start": 7.3,
+   "ende": 8.866,
+   "wer": "1",
+   "text": "Briefing. Sofort.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "briefing",
+   "start": 0.3,
+   "ende": 3.21,
+   "wer": "Z",
+   "text": "Lagerhaus 7 am Hafen. 40 Millionen in Drogen.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "briefing",
+   "start": 3.4,
+   "ende": 6.358,
+   "wer": "Z",
+   "text": "Zielperson: der Fuchs. Hat immer einen Plan B.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "briefing",
+   "start": 6.508,
+   "ende": 8.458,
+   "wer": "6",
+   "text": "Und was ist UNSER Plan B?",
+   "verschoben": 0.11
+  },
+  {
+   "szene": "briefing",
+   "start": 8.608,
+   "ende": 9.908,
+   "wer": "1",
+   "text": "Zwei.",
+   "verschoben": 0.31
+  },
+  {
+   "szene": "briefing",
+   "start": 10.058,
+   "ende": 11.816,
+   "wer": "2",
+   "text": "Ich bin Plan A bis Z.",
+   "verschoben": 0.36
+  },
+  {
+   "szene": "spind",
+   "start": 0.6,
+   "ende": 3.27,
+   "wer": "4",
+   "text": "Visier runter, Neuer. Heute wird's laut.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "spind",
+   "start": 3.42,
+   "ende": 4.746,
+   "wer": "6",
+   "text": "Danke, Mama.",
+   "verschoben": 0.02
+  },
+  {
+   "szene": "spind",
+   "start": 5.2,
+   "ende": 6.5,
+   "wer": "1",
+   "text": "Abfahrt!",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "van",
+   "start": 0.4,
+   "ende": 2.974,
+   "wer": "7v",
+   "text": "Ich hasse Regen. Und Häfen. Und Möwen.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "van",
+   "start": 3.124,
+   "ende": 5.746,
+   "wer": "6",
+   "text": "Sieben, du bist ein Angsthase mit WLAN.",
+   "verschoben": 0.12
+  },
+  {
+   "szene": "van",
+   "start": 5.896,
+   "ende": 8.422,
+   "wer": "2",
+   "text": "Lass ihn. Er hat heute schon geweint.",
+   "verschoben": 0.2
+  },
+  {
+   "szene": "van",
+   "start": 8.572,
+   "ende": 9.898,
+   "wer": "1",
+   "text": "Wir sind da.",
+   "verschoben": 0.27
+  },
+  {
+   "szene": "anschleichen",
+   "start": 0.6,
+   "ende": 3.174,
+   "wer": "4",
+   "text": "Drohne oben. Drei Personen im Gebäude.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "anschleichen",
+   "start": 3.4,
+   "ende": 5.206,
+   "wer": "1",
+   "text": "Leise. Wie besprochen.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "anschleichen",
+   "start": 5.6,
+   "ende": 7.31,
+   "wer": "2",
+   "text": "Ich bin IMMER leise.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "zugriff",
+   "start": 0.4,
+   "ende": 1.87,
+   "wer": "2",
+   "text": "Ladung gesetzt.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "zugriff",
+   "start": 2.2,
+   "ende": 4.774,
+   "wer": "1",
+   "text": "Auf mein Zeichen. Drei … zwei … eins …",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "zugriff",
+   "start": 5.6,
+   "ende": 6.9,
+   "wer": "1",
+   "text": "ZUGRIFF!",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "innen",
+   "start": 2.2,
+   "ende": 4.63,
+   "wer": "4",
+   "text": "POLIZEI! Hände hoch! Auf den Boden!",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "innen",
+   "start": 5.0,
+   "ende": 7.766,
+   "wer": "7",
+   "text": "Orange Jacke! Hinterausgang – er ist raus!",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "innen",
+   "start": 8.0,
+   "ende": 9.758,
+   "wer": "2",
+   "text": "Hingefallen. Komisch.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "innen",
+   "start": 10.1,
+   "ende": 11.714,
+   "wer": "1",
+   "text": "Sechs – hinterher!",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "verfolgung",
+   "start": 0.6,
+   "ende": 2.886,
+   "wer": "6",
+   "text": "Stehen bleiben, du Billig-Fuchs!",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "verfolgung",
+   "start": 3.2,
+   "ende": 5.15,
+   "wer": "F",
+   "text": "Fang mich doch, Anfänger!",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "verfolgung",
+   "start": 6.6,
+   "ende": 8.358,
+   "wer": "6",
+   "text": "Hände auf den Rücken!",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "verfolgung",
+   "start": 8.8,
+   "ende": 10.942,
+   "wer": "6",
+   "text": "Plan B war wohl: ausrutschen.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "verfolgung",
+   "start": 11.092,
+   "ende": 13.57,
+   "wer": "F",
+   "text": "Ihr habt keine Ahnung, wer ich bin …",
+   "verschoben": 0.09
+  },
+  {
+   "szene": "twist",
+   "start": 0.4,
+   "ende": 3.502,
+   "wer": "7v",
+   "text": "Leute … das ist nicht der Fuchs. Nur sein Fahrer.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "twist",
+   "start": 3.7,
+   "ende": 5.986,
+   "wer": "F",
+   "text": "Der echte Fuchs fliegt um sechs.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "twist",
+   "start": 6.2,
+   "ende": 8.438,
+   "wer": "1",
+   "text": "Packt eure Sachen. Wir fliegen.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "twist",
+   "start": 8.6,
+   "ende": 10.214,
+   "wer": "6",
+   "text": "Ich hab Flugangst.",
+   "verschoben": 0.0
+  },
+  {
+   "szene": "twist",
+   "start": 10.364,
+   "ende": 11.834,
+   "wer": "2",
+   "text": "Ich hab Hunger.",
+   "verschoben": 0.06
+  }
+ ],
+ "dauer": 99.534
+}

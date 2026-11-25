@@ -39,12 +39,19 @@ Ziel des Büros: kurze KI-Videos für TikTok, die Reichweite bringen und Geld ve
 - Serienbibel: `ideen/serie-einheit-falke.md` (Team, Hauptquartier, Folgen-Plan, Aufbau jeder Folge).
 - Jede Folge startet mit einer Explosion/Action-Szene als Hook, endet mit Cliffhanger auf die nächste Folge.
 - Stil wie Referenz: Perspektiv-Straßen, kräftige Konturen, POV-Waffe, großer hellblauer Untertitel.
-- **Nur POV** (Ich-Sicht in jeder Szene), Bodycam-Look, **keine Babbel-Stimmen** (Dialog nur als Untertitel),
-  keine Comic-Wörter. Vorlage: `videos/falke-01-lagerhaus-pov/`.
+- **3D** (Three.js im Headless-Browser): Baukasten `tools/einsatz3d/` + Renderer `tools/render3d.js`.
+  Vorlage einer kompletten Folge: `videos/falke-01-3d/` (timeline.json → timeline.py → episode.js + ton.py, build.sh).
+- **Nur POV** (Ich-Sicht in jeder Szene), Bodycam-Look, **keine Stimmen-Töne** (Dialog nur als Untertitel), keine Comic-Wörter.
+- **Keine Namen:** Team nur mit Nummern (1 Teamführer, 2 Türöffner, 4 Präzision/Drohne, 7 Technik, **6 = Ich, der Neue**),
+  Leitstelle = „Zentrale“. Nummern stehen auf Westen/Rücken.
+- **Untertitel unten** (nicht mittig), ganzer Satz auf einmal; Dauer aus der Textlänge (timeline.py) – nie abgeschnitten.
+- **Details zählen:** Hände greifen per IK wirklich (Waffe, Tür, Handschellen um die Handgelenke), Türen fliegen nach innen,
+  Flüchtende sind sichtbar, Fahrzeuge innen detailliert.
 - Wetter wechseln (Regen, Sommer, Schnee, Gewitter, Nebel). Fiktive Einheit, keine echten Abzeichen.
 - Niemand wird erschossen, kein Blut – Festnahmen, Tackles, Blendgranaten, Türsprengungen.
-- Technik: `tools/einsatz.py` + Vorlage `videos/falke-01-lagerhaus/`. Physik: Figuren nur über
-  `teammitglied()`/`figur()` platzieren (Bodenkontakt automatisch), Tiefe sortieren, nichts darf durch Wände/Boden.
+- Physik: Figuren immer über `Figur.platziere()` setzen (tiefster Körperpunkt liegt automatisch auf dem Boden – auch
+  liegend/kniend), Wurfobjekte mit `wurf3()` (Schwerkraft + Abprallen), nichts darf durch Wände/Boden.
+- Alte 2D-Technik (`tools/einsatz.py`) nur noch für Notfälle.
 
 ## Befehle
 - `/neues-video [Thema]` – kompletter Ablauf von Idee bis fertiges Video

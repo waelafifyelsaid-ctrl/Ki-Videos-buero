@@ -24,7 +24,17 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Nutzer-Feedback Einsatz 01: Richtung „sehr gut“, aber: keine Babbel-Töne zum Text, NUR POV, etwas realistischer.
   → Serie EINHEIT FALKE ab jetzt: komplett Ich-Sicht, Bodycam-Look, Dialog nur als Untertitel, keine Comic-Wörter.
 
+- Nutzer-Feedback POV-Fassung: „sehr gut“ → jetzt 3D-Figuren, besserer Zugriff, keine Namen (Nummern, Ich = 6),
+  mehr Details (auch im Van), Untertitel nicht mittig + nie abgeschnitten, Fake-Fuchs sichtbar fliehen lassen,
+  Handschellen wirklich anlegen.
+
 ## Technik-Learnings (Produktion)
+- 3D-Pipeline: Three.js + Headless-Chromium (SwiftShader) rendert ~0,2–0,5 s/Bild; 4 Browser parallel.
+- Hochkant-Kamera ist horizontal sehr eng (≈45° bei 74° vertikal): Figuren nah an die Bildachse stellen.
+- Nachts Belichtung hoch (toneMappingExposure ~1.35), Hemisphären-Licht ~0.85, sonst ist alles schwarz.
+- Sprites (Rauch/Feuer) direkt vor der Kamera machen das Bild grau/weiß → nach Kamera-Abstand ausblenden.
+- Welt-Zustand bleibt zwischen Bildern erhalten: jede Szene muss Sichtbarkeit/Türen ihrer Objekte selbst setzen.
+- Dialog-Timing zentral in timeline.json; timeline.py legt Zeilen überschneidungsfrei mit Lesedauer 0,75 s + 0,048 s/Zeichen.
 - Bodycam-Look: `bodycam()` in `videos/falke-01-lagerhaus-pov/animation.py` (Weitwinkel-Wölbung, Vignette, Korn, REC-Anzeige).
 - Realistischer Ton statt Stimmen: Schritte, Atmen, Herzschlag, Spind/Türen/Durchladen (Funktionen in `ton()`).
 - Objekte, an denen die Kamera vorbeiläuft (Laternen), müssen hinter der Kamera übersprungen werden (sonst Division durch 0).
