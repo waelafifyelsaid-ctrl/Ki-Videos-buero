@@ -137,3 +137,13 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Von oben: Markierungen/Startbahnen als Textur (mit Mipmaps + Anisotropie) statt dünner 3D-Streifen → sichtbar UND ohne Flimmern. Nah: 3D-Streifen.
 - Bodenebenen nie überlappend knapp übereinander (Gras unter das Vorfeld legen).
 - Musik-Baukasten: `braam()`, `taiko()`, `ostinato()` in tools/musik.py für Trailer-Spannung; Musik-Gain 2.1, Geräusche .5.
+
+## Einsatz 03 – Die Berghütte (Nutzer-Wunsch nach Folge 02)
+- Nutzer: „weniger Gespräche, weil man nicht checkt, wer wer ist“ → nur 9 kurze Sätze + **farbige Sprecher-Nummer über dem Kopf** (`#redner`, Position inkl. Fischaugen-Linse berechnet).
+- Mehr Action pro Sekunde: Absprung aus dem schwebenden Heli, Seilwerfer, Klettern am Seil, Tackle, Doppelsprengung, Blendgranate.
+- **Eine Einsatz-Uhr** (E) für alle Szenen nach dem Hook: jede Figur hat zu jedem E genau eine Position → keine Sprünge/Teleports zwischen Szenen.
+- **Automatische Abstandsprüfung** (`__pruefe`): alle Figuren + Kamera, alle 0,05 s – nur gewollte Kontakte (Tackles) dürfen übrig bleiben.
+- Klettern: Körper 0,3 m vom Seil, Knie nach außen/oben (nie Richtung Wand), Hände greifen abwechselnd (0,6-m-Zyklus); POV-Blick nur ~25° hoch, sonst sieht man die eigenen Hände nicht.
+- Übers Geländer: tiefster Körperpunkt wird während der Überquerung über den Handlauf gelegt (`platziere({boden})`) → nichts geht durchs Geländer.
+- Schneefall nie in der Hütte (Flocken im Hüttenvolumen werden ausgeblendet); Explosionslicht im Toon-Look auf 20 % – sonst ist das ganze Bild orange.
+- Frauenfigur: lange Haare/Pony/Wimpern ergänzen, sonst wirkt sie männlich. `zopf` erwartet eine Farbe, nicht `true`.

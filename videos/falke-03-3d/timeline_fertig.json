@@ -1,0 +1,189 @@
+{
+ "titel": "EINHEIT FALKE – Einsatz 03: Die Berghütte (3D, POV)",
+ "sprecher": {
+  "6": [
+   "6 · DU",
+   "#80ed99"
+  ],
+  "1": [
+   "1",
+   "#ffd166"
+  ],
+  "1f": [
+   "1 · FUNK",
+   "#ffd166"
+  ],
+  "2": [
+   "2",
+   "#ef476f"
+  ],
+  "4": [
+   "4",
+   "#c77dff"
+  ],
+  "7v": [
+   "7",
+   "#4cc9f0"
+  ],
+  "Zf": [
+   "ZENTRALE · FUNK",
+   "#e9ecef"
+  ],
+  "G": [
+   "GEISEL",
+   "#ff9f1c"
+  ]
+ },
+ "szenen": [
+  {
+   "n": "hook",
+   "d": 4.6,
+   "verzug": 0.0,
+   "start": 0.0
+  },
+  {
+   "n": "anflug",
+   "d": 16.0,
+   "tr": "uhr",
+   "trd": 1.0,
+   "karte": "20 MINUTEN VORHER",
+   "verzug": 0.0,
+   "start": 4.6
+  },
+  {
+   "n": "wand",
+   "d": 12.06,
+   "verzug": 0.0,
+   "start": 20.6
+  },
+  {
+   "n": "huette",
+   "d": 12.74,
+   "verzug": 0.0,
+   "start": 32.66
+  },
+  {
+   "n": "innen",
+   "d": 9.948,
+   "verzug": 0.0,
+   "start": 45.4
+  },
+  {
+   "n": "twist",
+   "d": 10.0,
+   "verzug": 0.0,
+   "start": 55.348
+  }
+ ],
+ "dialog": [
+  {
+   "id": "01_hook_6",
+   "szene": "hook",
+   "start": 0.15,
+   "ende": 2.436,
+   "wer": "6",
+   "text": "Klettern stand nicht im Vertrag.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "01_hook_6.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "02_anflug_Zf",
+   "szene": "anflug",
+   "start": 1.4,
+   "ende": 4.391,
+   "wer": "Zf",
+   "text": "Geisel in der Hütte. Drei Täter.",
+   "funk": true,
+   "lautsprecher": false,
+   "datei": "02_anflug_Zf.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "03_anflug_1f",
+   "szene": "anflug",
+   "start": 5.6,
+   "ende": 8.174,
+   "wer": "1f",
+   "text": "Zu viel Wind zum Landen. Wir springen!",
+   "funk": true,
+   "lautsprecher": false,
+   "datei": "03_anflug_1f.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "04_wand_7v",
+   "szene": "wand",
+   "start": 6.2,
+   "ende": 7.78,
+   "wer": "7v",
+   "text": "Ich hasse Höhe.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "hoehe_7v.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "05_wand_6",
+   "szene": "wand",
+   "start": 8.2,
+   "ende": 10.294,
+   "wer": "6",
+   "text": "Nicht runterschauen, Sieben.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "05_wand_6.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "06_huette_1",
+   "szene": "huette",
+   "start": 9.94,
+   "ende": 11.24,
+   "wer": "1",
+   "text": "ZUGRIFF!",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "zugriff_1.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "07_innen_1",
+   "szene": "innen",
+   "start": 0.6,
+   "ende": 2.65,
+   "wer": "1",
+   "text": "POLIZEI! Auf den Boden!",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "07_innen_1.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "08_innen_G",
+   "szene": "innen",
+   "start": 7.6,
+   "ende": 9.598,
+   "wer": "G",
+   "text": "Danke … ihr wart schnell.",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "08_innen_G.mp3",
+   "verschoben": 0.0
+  },
+  {
+   "id": "09_twist_6",
+   "szene": "twist",
+   "start": 3.9,
+   "ende": 5.226,
+   "wer": "6",
+   "text": "Moment mal …",
+   "funk": false,
+   "lautsprecher": false,
+   "datei": "09_twist_6.mp3",
+   "verschoben": 0.0
+  }
+ ],
+ "dauer": 65.348
+}

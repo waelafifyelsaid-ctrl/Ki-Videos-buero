@@ -148,8 +148,8 @@ export function wurf3(p0, v0, d, { boden = 0, radius = 0.05, rest = 0.35, reib =
 
 // ---------------------------------------------------------------- Explosion
 export class Explosion {
-  constructor(szene, pos, { groesse = 1, richtung = new THREE.Vector3(0, 0, 1), seed = 4, truemmer = 36, farbe = 0x6c584c } = {}) {
-    this.pos = pos.clone(); this.g = groesse; this.richt = richtung.clone().normalize();
+  constructor(szene, pos, { groesse = 1, richtung = new THREE.Vector3(0, 0, 1), seed = 4, truemmer = 36, farbe = 0x6c584c, boden = 0 } = {}) {
+    this.pos = pos.clone(); this.boden = boden; this.g = groesse; this.richt = richtung.clone().normalize();
     this.gruppe = new THREE.Group(); szene.add(this.gruppe);
     const feuerTex = radialTex('feuer', [[0, 'rgba(255,250,220,1)'], [0.25, 'rgba(255,200,80,0.95)'], [0.55, 'rgba(240,90,20,0.6)'], [1, 'rgba(120,20,0,0)']]);
     const rauch = rauchTex();
@@ -202,7 +202,7 @@ export class Explosion {
     });
     this.brocken.forEach((m, i) => {
       const u = m.userData;
-      const q = wurf3([this.pos.x, this.pos.y, this.pos.z], [u.v.x, u.v.y, u.v.z], d, { radius: .03 });
+      const q = wurf3([this.pos.x, this.pos.y, this.pos.z], [u.v.x, u.v.y, u.v.z], d, { radius: .03, boden: this.boden });
       m.position.set(q.x, q.y, q.z);
       if (!q.liegt) m.rotation.set(u.rot[0] * d, u.rot[1] * d, u.rot[2] * d);
       else m.rotation.set(0, u.rot[1], 0);

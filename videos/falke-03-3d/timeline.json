@@ -1,0 +1,123 @@
+{
+ "titel": "EINHEIT FALKE – Einsatz 03: Die Berghütte (3D, POV)",
+ "sprecher": {
+  "6": [
+   "6 · DU",
+   "#80ed99"
+  ],
+  "1": [
+   "1",
+   "#ffd166"
+  ],
+  "1f": [
+   "1 · FUNK",
+   "#ffd166"
+  ],
+  "2": [
+   "2",
+   "#ef476f"
+  ],
+  "4": [
+   "4",
+   "#c77dff"
+  ],
+  "7v": [
+   "7",
+   "#4cc9f0"
+  ],
+  "Zf": [
+   "ZENTRALE · FUNK",
+   "#e9ecef"
+  ],
+  "G": [
+   "GEISEL",
+   "#ff9f1c"
+  ]
+ },
+ "szenen": [
+  {
+   "n": "hook",
+   "d": 4.6
+  },
+  {
+   "n": "anflug",
+   "d": 16.0,
+   "tr": "uhr",
+   "trd": 1.0,
+   "karte": "20 MINUTEN VORHER"
+  },
+  {
+   "n": "wand",
+   "d": 12.06
+  },
+  {
+   "n": "huette",
+   "d": 12.74
+  },
+  {
+   "n": "innen",
+   "d": 9.6
+  },
+  {
+   "n": "twist",
+   "d": 10.0
+  }
+ ],
+ "dialog": [
+  [
+   "hook",
+   0.15,
+   "6",
+   "Klettern stand nicht im Vertrag."
+  ],
+  [
+   "anflug",
+   1.4,
+   "Zf",
+   "Geisel in der Hütte. Drei Täter."
+  ],
+  [
+   "anflug",
+   5.6,
+   "1f",
+   "Zu viel Wind zum Landen. Wir springen!"
+  ],
+  [
+   "wand",
+   6.2,
+   "7v",
+   "Ich hasse Höhe."
+  ],
+  [
+   "wand",
+   8.2,
+   "6",
+   "Nicht runterschauen, Sieben."
+  ],
+  [
+   "huette",
+   9.94,
+   "1",
+   "ZUGRIFF!"
+  ],
+  [
+   "innen",
+   0.6,
+   "1",
+   "POLIZEI! Auf den Boden!"
+  ],
+  [
+   "innen",
+   7.6,
+   "G",
+   "Danke … ihr wart schnell."
+  ],
+  [
+   "twist",
+   3.9,
+   "6",
+   "Moment mal …"
+  ]
+ ],
+ "ende": 2.6
+}
