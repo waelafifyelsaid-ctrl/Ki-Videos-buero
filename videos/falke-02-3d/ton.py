@@ -115,20 +115,32 @@ for k in range(int(3.2 / .28)):
 add(d0 + 3.9, schritt(True), .5); add(d0 + 4.3, thud(.4))
 add(d0 + 4.9, turbine(dd - 4.9, 500, 900, .25))
 # Flug: Rotor + Wind an der offenen Tür
-f0, fd = st("flug"), SZ["flug"]["d"]
-add(f0, rotor(fd, laut=.55))
-add(f0, .22 * band(fd, 200, 2500))
-# Abseilen: Rotor laut, Seil fällt, Rutschen, Landung, Jet rollt heran und bremst, Sprint
-a0, ad = st("abseilen"), SZ["abseilen"]["d"]
-add(a0, rotor(ad + 2, f=4.4, laut=.8) * np.concatenate([np.ones(int((ad - 2) * SR)), np.linspace(1, .3, int(4 * SR))]))
-add(a0, .3 * band(ad, 150, 2000))
+# Anflug ohne Schnitt (0–13 s Flug, danach Schweben + Abseilen ab AB0)
+AB0 = 13.0
+f0, fd = st("anflug"), SZ["anflug"]["d"]
+a0, ad = f0 + AB0, fd - AB0
+add(f0, rotor(fd + 2, f=4.5, laut=.62) * np.concatenate([np.ones(int((fd - 2) * SR)), np.linspace(1, .3, int(4 * SR))]))
+add(f0, .22 * band(fd, 180, 2400))                                                    # Fahrtwind an der offenen Tür
+# Jet: Triebwerke laufen hoch (ab 4 s), rollt, Vollbremsung vor den Streifenwagen (12,75 s), Reifen quietschen
+add(f0 + 3.0, turbine(fd - 3.0, 250, 900, .38) * np.concatenate([np.linspace(.1, 1, int(3 * SR)), np.ones(int((fd - 6.0) * SR)), np.linspace(1, .5, int(3 * SR))])[:int((fd - 3.0) * SR)])
+add(f0 + 12.75, .3 * band(2.0, 2500, 7500) * np.exp(-.9 * ts(2.0)))
+# Polizeisirenen (Zweiklang) nähern sich ab 8 s
+def sirene(d, laut=1.0):
+    t = ts(d); f = np.where((t * 1.4) % 1 < .5, 466, 622)
+    return laut * np.sign(np.sin(2 * np.pi * np.cumsum(f) / SR)) * .5
+for k, t0 in enumerate((8.0, 8.4, 8.9)):
+    d = fd - t0 + 2
+    add(f0 + t0, lowpass(sirene(d, .09), 3500) * np.concatenate([np.linspace(.2, 1, int(3 * SR)), np.ones(int((d - 3) * SR))])[:int(d * SR)])
+for t0 in (11.2, 11.5, 11.9):
+    add(f0 + t0, .25 * band(.6, 300, 2000) * np.exp(-4 * ts(.6)))                    # Bremsen der Autos
+    add(f0 + t0 + .3, metall(500, .3), .3)                                                  # Autotür
+# Abseilen
 add(a0 + .3, whoosh(.6), .5); add(a0 + 1.0, thud(.3))
-add(a0 + 1.1, .35 * band(1.4, 1500, 6000) * np.linspace(.3, 1, int(1.4 * SR)))     # 2 rutscht
-add(a0 + 2.5, thud(.7))
+add(a0 + 1.4, .35 * band(1.3, 1500, 6000) * np.linspace(.3, 1, int(1.3 * SR)))     # 2 rutscht
+add(a0 + 2.7, thud(.7))
 add(a0 + 3.5, .5 * band(2.05, 1200, 6500) * np.linspace(.4, 1, int(2.05 * SR)) ** 2)   # wir rutschen
 add(a0 + 5.55, thud(1.0), .9); add(a0 + 5.6, schritt(), .5)
-add(a0, turbine(ad + 3.0, 300, 900, .4) * np.concatenate([np.linspace(.1, 1, int(5.0 * SR)), np.linspace(1, .5, int((ad - 2.0) * SR))])[:int((ad + 3.0) * SR)])
-add(a0 + 5.0, .3 * band(2.2, 2500, 7500) * np.exp(-.8 * ts(2.2)))                  # Bremsen quietschen
+add(a0 + 6.65, thud(.6), .6)                                                          # 4 landet
 for k in range(int((ad - 6.0) / .3)):
     add(a0 + 6.0 + k * .3, schritt(), .4)
 add(st("tuer"), rotor(SZ["tuer"]["d"], f=4.0, laut=.2) * np.linspace(.8, .3, int(SZ["tuer"]["d"] * SR)))
@@ -205,8 +217,9 @@ M.riser(h0 + hd - 2.0, 2.0, .45)
 M.groove(d0 + .2, d0 + dd, 124, 2, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=550)
 M.impact(d0 + .2, .7)
 M.riser(d0 + 3.0, 1.8, .45); M.impact(d0 + 4.9, .7)
-M.groove(f0, f0 + fd - 1.6, 118, 2, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=500)
-M.riser(f0 + fd - 2.6, 2.6, .65)
+M.groove(f0, f0 + 8.0, 118, 2, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=500)
+M.groove(f0 + 8.0, a0, 128, 3, [DM, CD, BB, CD], ["D", "C", "A#", "C"], cutoff_bass=600)
+M.riser(a0 - 2.4, 2.4, .65)
 M.impact(a0, 1.0)
 M.pad(a0, [("D", 2), ("A", 2), ("D#", 3)], 3.4, .32, cutoff=700)
 M.arp(a0 + .2, [("D", 4), ("A", 4), ("D#", 5), ("A", 4)], .2, int(3.2 / .2), .12)
@@ -261,11 +274,7 @@ for z in TL["dialog"]:
     gef += 1
     x = x / max(1e-9, np.max(np.abs(x))) * .9
     if z["text"].startswith(("POLIZEI", "ZUGRIFF", "Einsteigen", "Seil frei", "Raus")):   # Festnahme-Gebrüll: lauter, leicht übersteuert, mit Raumhall
-        x = np.tanh(x * 2.2) / np.tanh(2.2) * 1.25
-        hall = np.zeros(len(x) + int(.25 * SR))
-        for dly, g in ((.045, .35), (.09, .22), (.16, .12)):
-            i0 = int(dly * SR); hall[i0:i0 + len(x)] += g * x
-        hall[:len(x)] += x; x = hall
+        x = np.tanh(x * 2.2) / np.tanh(2.2) * 1.25   # laut gebrüllt, ohne Hall
     if z["funk"]:
         x = np.concatenate([funkfilter(x) * .9, .4 * funk()[:int(.12 * SR)]])
     elif z.get("lautsprecher"):

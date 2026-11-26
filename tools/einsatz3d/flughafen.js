@@ -152,7 +152,7 @@ export function flughafen(s) {
   for (const [x, z] of [[9, -2], [10, -4], [11, -6], [-7.5, 3], [-8, -2]]) huetchen(s, x, z);
   // Flutlichtmasten
   fa.fluter = [];
-  for (const [x, z] of [[-26, 0], [-26, -60], [30, 15], [30, -60]]) {
+  for (const [x, z] of [[-26, 40], [-26, -60], [30, 15], [30, -60]]) {
     s.add(at(cyl(.3, .45, 26, mat(0x8d99ae, { m: .5 }), 10), x, 13, z));
     s.add(at(box(4, 1.2, .8, mat(0x343a40)), x, 26.5, z));
     for (let k = 0; k < 4; k++) s.add(at(box(.8, .8, .1, mat(0xffffff, { e: 0xfff4dd, ei: 3 })), x - 1.5 + k, 26.5, z + (x < 0 ? .45 : .45)));

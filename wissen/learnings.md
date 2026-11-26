@@ -96,3 +96,11 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - POV-Hände am Seil: Greifpunkte auf Schulterhöhe berechnen (immer erreichbar), Kamera 0,35 m vom Seil, Blick ~40° nach unten.
 - Festnahme-Rufe (POLIZEI/ZUGRIFF/Seil frei/Einsteigen) im Mix lauter + leicht übersteuert + kurzer Raumhall; Ducking unter Stimmen 50 %.
 - Kommentar NIE hinter Code in dieselbe Zeile schreiben, wenn danach per Ersetzung Code angehängt wird (Syntaxfehler „Unexpected end of input“).
+- Durchgehende Szenen statt Schnitte: Flug + Anflug + Abseilen = EINE Szene in der Flughafen-Welt (Heli-Bahn als Funktion der Zeit,
+  am Ende exakt auf die Schwebeposition; Team als Kinder des Helis, beim Abseilen Übergabe an die Boden-Figuren an derselben Stelle).
+- Einsteigen/Hinsetzen animieren (Kufe → geduckt zum Platz → drehen → Pose überblenden `mischen()`), nie Figur austauschen.
+- Sturmhaube (`sturmhaube: true`, `maskeHoch(k)`): im Heli unten (Gesicht sichtbar), vor dem Einsatz hochziehen (Hand zum Gesicht).
+- Gewehr sitzend `haltGewehr('sitz')` (Mündung nach unten) – 'hoch' verdeckt das Gesicht.
+- Schild vor die Brust hängen + linke Hand per IK an den Griff – an den Unterarm gehängt dreht es sich falsch.
+- Rotorblätter ohne Schattenwurf (sonst Flackern in der Kabine), Blitzer-Punktlicht aus.
+- Kommentar am Zeilenende kann beim späteren Ersetzen Code verschlucken – immer `node --check` nach Änderungen.

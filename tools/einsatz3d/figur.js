@@ -168,16 +168,17 @@ export class Figur {
       { const wade = sph(1, unten, 12, 10); wade.scale.set(0.05, 0.11, 0.05); kn.add(at(wade, 0, -0.13, -0.018)); }
       if (team) kn.add(at(box(0.1, 0.1, 0.05, mat(0x1d1f22)), 0, -0.03, 0.06));   // Knieschoner
       const an = add(kn, 'an' + name, 0, -0.42, 0);
-      an.add(at(box(0.1, 0.11, 0.2, schuh), 0, -0.045, 0.01));
-      { const kappe = sph(1, schuh, 14, 10); kappe.scale.set(0.05, 0.05, 0.075); an.add(at(kappe, 0, -0.06, 0.11)); }
-      an.add(at(box(0.11, 0.025, 0.28, mat(0x0d0d0f, { r: .9 })), 0, -0.095, 0.05));        // Sohle
-      if (team) an.add(at(cyl(0.05, 0.048, 0.08, schuh, 14), 0, 0.03, 0));                  // Stiefelschaft
+      { const fuss = caps(0.048, 0.16, schuh); fuss.rotation.x = Math.PI / 2; fuss.scale.set(1.05, 1, .95); an.add(at(fuss, 0, -0.05, 0.05)); }   // Schuh-Körper (rund)
+      an.add(at(box(0.09, 0.07, 0.1, schuh), 0, -0.035, -0.035));                                                     // Ferse/Knöchel
+      an.add(at(box(0.104, 0.022, 0.27, mat(0x0d0d0f, { r: .95 })), 0, -0.097, 0.045));                                // Sohle (Unterkante = Marker)
+      for (let k = 0; k < 4; k++) an.add(at(box(0.05, 0.006, 0.008, mat(0x3a3a3a)), 0, -0.004 + k * 0.004, 0.035 + k * 0.03, -0.9));   // Schnürung
+      if (team) an.add(at(cyl(0.05, 0.048, 0.1, schuh, 14), 0, 0.03, -0.005));                                      // Stiefelschaft
     }
     // Marker für Bodenkontakt
     const mk = (p, x, y, z, hand = false) => { const m = new THREE.Object3D(); m.position.set(x, y, z); m.istHand = hand; p.add(m); return m; };
     this.marker = [];
     for (const n of ['L', 'R']) {
-      this.marker.push(mk(j['an' + n], 0, -0.1, 0.19), mk(j['an' + n], 0, -0.1, -0.09), mk(j['kn' + n], 0, 0, 0.09), mk(j['kn' + n], 0, 0, -0.07));
+      this.marker.push(mk(j['an' + n], 0, -0.108, 0.17), mk(j['an' + n], 0, -0.108, -0.085), mk(j['kn' + n], 0, 0, 0.09), mk(j['kn' + n], 0, 0, -0.07));
       this.marker.push(mk(j['ha' + n], 0, -0.1, 0, true), mk(j['el' + n], 0, 0, 0.05, true), mk(j['el' + n], 0, 0, -0.05, true));
     }
     this.marker.push(mk(hips, 0, -0.08, 0.11), mk(hips, 0, -0.08, -0.11), mk(chest, 0, 0.1, 0.15), mk(chest, 0, 0.1, -0.15),
@@ -221,6 +222,16 @@ export class Figur {
         const r = new THREE.Mesh(new THREE.TorusGeometry(0.026, 0.004, 6, 16), mat(0x111111)); r.position.set(s * 0.04, 0.022, 0.118); gesicht.add(r);
       }
       if (o.sonnenbrille) gesicht.add(at(box(0.14, 0.035, 0.02, mat(0x0b0b0d, { r: 0.1, m: 0.6 })), 0, 0.022, 0.118));
+    }
+    if (o.sturmhaube) {
+      const stoff = mat(0x1b1c1f, { r: .98 });
+      const unten = new THREE.Mesh(new THREE.SphereGeometry(0.118, 24, 14, 0, Math.PI * 2, Math.PI * .56, Math.PI * .44), stoff);
+      unten.scale.set(.98, 1.08, 1.12); unten.castShadow = true;
+      const hals = cyl(0.062, 0.07, 0.11, stoff, 16);
+      this.sturmhaube = new THREE.Group(); this.sturmhaube.add(at(unten, 0, 0.128, 0.008)); this.sturmhaube.add(at(hals, 0, 0.0, 0));
+      head.add(this.sturmhaube);
+      const oben = new THREE.Mesh(new THREE.SphereGeometry(0.116, 24, 10, 0, Math.PI * 2, 0, Math.PI * .36), stoff); oben.scale.set(.97, 1.1, 1.04); head.add(at(oben, 0, 0.13, -0.004));
+      this.maskeHoch(o.maskeHoch ?? 1);
     }
     if (o.helm) {
       const hm = mat(0x2c3036, { r: 0.6, m: 0.1 });
@@ -293,6 +304,8 @@ export class Figur {
     }
     for (const [b, sx] of [[this.braueL, 1], [this.braueR, -1]]) if (b) { b.position.y = 0.05 + 0.008 * k; b.rotation.z = sx * (-0.08 + 0.12 * k); }
   }
+  // Sturmhaube: 0 = als Schlauch am Hals, 1 = über Mund und Nase gezogen (Augen bleiben frei)
+  maskeHoch(k) { if (!this.sturmhaube) return; k = clamp(k); this.sturmhaube.position.y = -0.085 * (1 - k); this.sturmhaube.scale.set(1 - .08 * (1 - k), .35 + .65 * k, 1 - .05 * (1 - k)); }
   blinzeln(b) { if (this.lider) for (const l of this.lider) { l.scale.y = 0.55 + 0.95 * b; l.position.y = 0.031 - 0.01 * b; } }
 
   // Root setzen, dann so verschieben, dass der tiefste Körperpunkt genau auf boden liegt.
@@ -332,6 +345,7 @@ export class Figur {
     if (modus === 'tief') { g.position.set(-0.06, -0.06, 0.24); g.rotation.set(0.55, 0.15, 0.1); }
     else if (modus === 'anschlag') { g.position.set(-0.08, 0.17, 0.3); g.rotation.set(0.02, 0.02, 0); }
     else if (modus === 'hoch') { g.position.set(-0.05, 0.05, 0.26); g.rotation.set(-0.9, 0.1, 0.1); }
+    else if (modus === 'sitz') { g.position.set(-0.03, -0.2, 0.27); g.rotation.set(1.2, 0.05, 0.05); }   // sitzend: Mündung nach unten zwischen den Knien (Gesicht frei)
     g.updateMatrixWorld(true);
     const pol = (x, y, z) => this.lokal(x, y, z);
     this.greife('R', weltPos(g.griff), pol(-0.6, 0.6, -0.4));

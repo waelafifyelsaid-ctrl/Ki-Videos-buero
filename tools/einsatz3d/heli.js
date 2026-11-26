@@ -34,12 +34,15 @@ function zeichnePanel(p, t) {
 export function heliModell({ farbe = 0x2c3e50, piloten = true } = {}) {
   const g = new THREE.Group();
   const lack = mat(farbe, { r: .4, m: .25 }), lack2 = mat(0x1d2731, { r: .5, m: .3 }), dunkel = mat(0x121417, { r: .7 });
-  const innen = mat(0x4a5058, { r: .85, side: THREE.DoubleSide }), innenDunkel = mat(0x3d434b, { r: .9, side: THREE.DoubleSide });
+  // Schallschutz-Steppverkleidung + Riffelblech-Boden (wie in echten Einsatzhubschraubern)
+  const stepp = canvasTex('heliStepp', 256, 256, (c, w, h) => { c.fillStyle = '#4a5058'; c.fillRect(0, 0, w, h); for (let y = 0; y < h; y += 32) for (let x = 0; x < w; x += 32) { const gr = c.createRadialGradient(x + 16, y + 16, 2, x + 16, y + 16, 22); gr.addColorStop(0, '#59606a'); gr.addColorStop(1, '#3f454d'); c.fillStyle = gr; c.fillRect(x + 1, y + 1, 30, 30); } }, [3, 2]);
+  const riffel = canvasTex('heliRiffel', 128, 128, (c, w, h) => { c.fillStyle = '#2a2d32'; c.fillRect(0, 0, w, h); c.strokeStyle = '#41454c'; c.lineWidth = 3; for (let y = 0; y < h; y += 16) for (let x = (y / 16 % 2) * 8; x < w; x += 16) { c.beginPath(); c.moveTo(x, y + 4); c.lineTo(x + 6, y + 10); c.stroke(); } }, [6, 12]);
+  const innen = mat(0x8a909a, { r: .9, side: THREE.DoubleSide, map: stepp }), innenDunkel = mat(0x6c727c, { r: .9, side: THREE.DoubleSide, map: stepp });
   const glas = new THREE.MeshStandardMaterial({ color: 0x223344, roughness: .05, metalness: .6, transparent: true, opacity: .28, side: THREE.DoubleSide, depthWrite: false });
   const metall = mat(0x9aa0a6, { r: .3, m: .85 }), gelb = mat(0xffc300, { r: .5 });
   const B = HELI_BODEN;
   // Boden + Unterbau
-  g.add(at(box(2.1, .1, 4.4, mat(0x2a2d32, { r: .95 })), 0, B - .05, -.45));
+  g.add(at(box(2.1, .1, 4.4, mat(0x8a8f96, { r: .7, m: .4, map: riffel })), 0, B - .05, -.45));
   { const bauch = cyl(1.05, 1.05, 4.4, lack, 28); bauch.rotation.x = Math.PI / 2; bauch.scale.set(1, 1, .22); bauch.position.set(0, B - .3, -.45); g.add(bauch); }
   // Rückwand + hintere Seitenwände (hinter den Türen)
   g.add(at(box(2.1, 1.6, .08, innen), 0, B + .8, 1.72));
@@ -114,6 +117,11 @@ export function heliModell({ farbe = 0x2c3e50, piloten = true } = {}) {
   for (const [x, z, f] of [[-.24, 1.15, 0x3a3f2e], [-.15, .9, 0x1d1f22]]) g.add(at(box(.38, .24, .3, mat(f, { r: .95 })), x, B + .12, z));   // Ausrüstungstaschen
   for (const [x, z] of [[-1.02, -.95], [1.02, -.95]]) g.add(at(box(.01, .12, .2, mat(0xffd60a, { e: 0x332a00, ei: .3 })), x, B + 1.2, z));   // Hinweisschilder an der Säule
   g.add(at(cyl(.012, .012, 1.9, mat(0xff6b00), 6), -.95, B + 1.55, -.05, Math.PI / 2));   // Sicherungsleine
+  for (const x of [-.72, .24, .72]) for (const sx of [-.12, .12]) g.add(at(box(.05, .035, .02, mat(0xb0b4ba, { m: .8, r: .3 })), x + sx, B + .52, 1.2));   // Gurtschlösser
+  for (const z of [-.9, .3, 1.2]) g.add(at(box(.02, .04, .2, mat(0x1b1d21)), 1.0, B + 1.25, z));                                        // Kabelkanäle
+  g.add(at(box(.25, .18, .12, mat(0x2b2d31)), .85, B + 1.4, .3)); g.add(at(box(.18, .06, .005, mat(0x000000, { e: 0x80ed99, ei: 1.5 })), .85, B + 1.42, .24));   // Funkgerät-Halterung
+  for (const z of [-.6, .1, .8]) g.add(at(new THREE.Mesh(new THREE.TorusGeometry(.022, .006, 6, 12), mat(0x8a6d1a, { m: .6, r: .4 })), -1.0, B + 1.35, z, 0, Math.PI / 2, 0));   // gelbe Einhängepunkte
+  g.add(at(box(.6, .02, .3, mat(0x1b1d21)), 0, B + 1.57, .9)); for (let k = 0; k < 4; k++) g.add(at(box(.08, .01, .08, mat(0xfff1d6, { e: 0xfff1d6, ei: .6 })), -.21 + k * .14, B + 1.555, .9));   // Deckenpanel mit Leselampen
   // Abseilseil (wird in der Szene gesetzt)
   const seilM = mat(0x2a2116, { r: 1 });
   const seil = cyl(.017, .017, 1, seilM, 8); seil.position.set(-1.6, B + 1.5, -.05); g.add(seil); seil.visible = false;
@@ -147,6 +155,7 @@ export function heliModell({ farbe = 0x2c3e50, piloten = true } = {}) {
   g.add(at(cyl(.09, .12, .55, metall, 12), 0, B + 2.4, .2));
   const rotor = new THREE.Group(); rotor.position.set(0, B + 2.68, .2); g.add(rotor);
   rotor.add(at(cyl(.22, .22, .12, metall, 14), 0, 0, 0));
+  rotor.userData.ohneSchatten = true;
   for (let k = 0; k < 4; k++) { const a = new THREE.Group(); a.rotation.y = k * Math.PI / 2; const b = box(.34, .04, 5.4, dunkel); b.position.z = 2.85; b.rotation.z = .08; a.add(b); a.add(at(box(.36, .045, .3, gelb), 0, 0, 5.4)); rotor.add(a); }
   const scheibe = new THREE.Mesh(new THREE.CircleGeometry(5.6, 48), new THREE.MeshBasicMaterial({ color: 0x15171a, transparent: true, opacity: .12, side: THREE.DoubleSide, depthWrite: false }));
   scheibe.rotation.x = -Math.PI / 2; scheibe.position.set(0, B + 2.68, .2); g.add(scheibe);
@@ -158,6 +167,7 @@ export function heliModell({ farbe = 0x2c3e50, piloten = true } = {}) {
   }
   g.traverse(m => { if (m.isMesh && m.material !== glas) { m.castShadow = true; m.receiveShadow = true; } });
   scheibe.castShadow = false;
+  rotor.traverse(m => { if (m.isMesh) m.castShadow = false; }); heckRotor.traverse(m => { if (m.isMesh) m.castShadow = false; });   // rotierende Blätter werfen keine flackernden Schatten in die Kabine
   return { g, rotor, heckRotor, scheibe, panel, seil, blitz, strobe, pil, kabLicht, balken };
 }
 
@@ -167,7 +177,7 @@ export function heliUpdate(h, t, { rpm = 1, kurve = 0 } = {}) {
   h.heckRotor.rotation.x = t * 23 * rpm;
   h.scheibe.material.opacity = .1 * rpm;
   const an = Math.floor(t * 1.4) % 2 === 0 && (t * 1.4) % 1 < .12;
-  h.blitz[3].emissiveIntensity = an ? 8 : .3; h.strobe.intensity = an ? 6 : 0;
+  h.blitz[3].emissiveIntensity = an ? 8 : .3; h.strobe.intensity = 0;   // kein Flackern im Innenraum
   h.blitz[2].emissiveIntensity = (t * 1.1) % 1 < .08 ? 8 : .5;
   for (const { f, x } of h.pil) {
     f.pose({ beinL: [1.3, 1.2], beinR: [1.3, 1.2], rumpf: [.12, 0, 0], kopf: [.1, Math.sin(t * .4 + x) * .25, 0] });
