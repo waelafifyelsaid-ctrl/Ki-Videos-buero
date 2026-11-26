@@ -41,26 +41,26 @@
   },
   {
    "n": "anflug",
-   "d": 16.0,
+   "d": 15.0,
    "tr": "uhr",
    "trd": 1.0,
    "karte": "20 MINUTEN VORHER"
   },
   {
-   "n": "wand",
-   "d": 12.06
+   "n": "abseilen",
+   "d": 9.8
   },
   {
    "n": "huette",
-   "d": 12.74
+   "d": 12.1
   },
   {
    "n": "innen",
-   "d": 9.6
+   "d": 9.95
   },
   {
    "n": "twist",
-   "d": 10.0
+   "d": 11.0
   }
  ],
  "dialog": [
@@ -68,35 +68,35 @@
    "hook",
    0.15,
    "6",
-   "Klettern stand nicht im Vertrag."
+   "Abseilen stand nicht im Vertrag."
   ],
   [
    "anflug",
    1.4,
    "Zf",
-   "Geisel in der Hütte. Drei Täter."
+   "Geisel in der Hütte. Vier Täter."
   ],
   [
    "anflug",
-   5.6,
+   9.0,
    "1f",
-   "Zu viel Wind zum Landen. Wir springen!"
+   "Kein Platz zum Landen. Wir seilen ab!"
   ],
   [
-   "wand",
-   6.2,
+   "abseilen",
+   4.5,
    "7v",
    "Ich hasse Höhe."
   ],
   [
-   "wand",
-   8.2,
+   "abseilen",
+   6.4,
    "6",
    "Nicht runterschauen, Sieben."
   ],
   [
    "huette",
-   9.94,
+   9.3,
    "1",
    "ZUGRIFF!"
   ],

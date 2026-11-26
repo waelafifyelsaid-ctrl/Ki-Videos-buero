@@ -147,3 +147,10 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Übers Geländer: tiefster Körperpunkt wird während der Überquerung über den Handlauf gelegt (`platziere({boden})`) → nichts geht durchs Geländer.
 - Schneefall nie in der Hütte (Flocken im Hüttenvolumen werden ausgeblendet); Explosionslicht im Toon-Look auf 20 % – sonst ist das ganze Bild orange.
 - Frauenfigur: lange Haare/Pony/Wimpern ergänzen, sonst wirkt sie männlich. `zopf` erwartet eine Farbe, nicht `true`.
+
+### Einsatz 03 – Fassung 2 (Nutzer-Feedback)
+- Nutzer will **Abseilen vom Heli direkt auf die Hütte** statt Klettern; **Berge viel detaillierter** (Kanten, Grate) → einzelne Gipfel-Meshes mit Grat-Armen, Felsbändern (Stufen), flach schattiert, Farbe pro Dreieck aus geglätteter Normale (Schnee / Fels mit Schichten / Gletscher / Wald).
+- **Mehr Gegenwehr**: Wache mit Schneeschaufel, Täter stürmt raus (Beinfeger), Stuhl-Angriff drinnen, Fluchtversuch durchs Fenster – alles ohne Schüsse.
+- **Weiterer POV-Blick** (FOV 88° + Fischauge ≈ 0,5×-Kamera, nicht extrem).
+- Bug-Lehre: `obj.localToWorld(KONSTANTE)` verändert den Vektor! Immer `.clone()` übergeben (sonst wandert die Kamera weg).
+- Name `H` ist in kern.js schon die Bildhöhe – eigene Konstanten anders nennen (`HZ`).

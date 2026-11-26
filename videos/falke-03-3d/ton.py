@@ -126,74 +126,71 @@ E0 = st("anflug")
 def T(E):   # Einsatz-Uhr → Videozeit
     return E0 + E
 
-# ---- Anflug: Rotor laut, Sturm an der offenen Tür, Schweben, Absprung
-add(T(0), rotor(14.5, f=4.6, laut=1.0) * np.concatenate([np.ones(int(13.9 * SR)), np.linspace(1, .5, int(.6 * SR))]))
-add(T(13.9), rotor(7, f=4.3, laut=.5) * np.linspace(1, 0, int(7 * SR)) ** 1.5)          # Heli fliegt weg
-add(T(0), .3 * band(13.9, 180, 2400))
-add(T(9.0), .3 * band(5.0, 150, 2200) * np.sin(np.pi * ts(5.0) / 5.0))                 # Abwind wirbelt Schnee
-for nr, j in {"2": 10.6, "7": 11.1, "4": 11.6, "1": 12.1}.items():
-    add(T(j - .3), whoosh(.3), .25); add(T(j + .55), thud(.5), .6); add(T(j + .6), .3 * rauschen(.25, 1200) * np.exp(-12 * ts(.25)))
-add(T(12.8), whoosh(.5), .5); add(T(13.35), thud(1.0), 1.0); add(T(13.38), .5 * rauschen(.35, 1500) * np.exp(-9 * ts(.35)))   # ICH lande
-for k in range(9):
-    add(T(13.7 + k * .26), .35 * rauschen(.12, 1100) * np.exp(-30 * ts(.12)))          # Schritte im Schnee
-# Polizeisirenen weit unten im Tal
-add(T(1.0), lowpass(sirene(12, .06), 2500))
-# ---- Sturm draußen (bis wir in der Hütte sind), drinnen gedämpft
-add(T(0), sturm(40.8, .22))
-add(T(40.8), lowpass(sturm(25, .12), 500))
-# ---- Wand: Seilwerfer, Haken, Klettern
-for F in (16.6, 17.7):
-    add(T(F), thud(.9), .8); add(T(F), .5 * band(.25, 300, 3000) * np.exp(-14 * ts(.25)))   # Pressluft-Schuss
-    add(T(F + .02), whoosh(.45), .5)
-    add(T(F + .45), metall(1100, .6), .6); add(T(F + .5), metall(700, .4), .3)              # Haken greift ins Geländer
-k = 0
-while 20.6 + k * .24 < 28.0:
-    add(T(20.6 + k * .24), .25 * band(.09, 1500, 5000) * np.exp(-40 * ts(.09)))               # Griff ans Seil
-    if k % 2 == 0: add(T(20.7 + k * .24), .22 * rauschen(.1, 700) * np.exp(-35 * ts(.1)))    # Stiefel an der Wand
-    k += 1
-for k in range(14):
-    add(T(20.8 + k * .55), .08 * band(.35, 300, 1500) * np.sin(np.pi * ts(.35) / .35))       # Atmen
-add(T(25.7), whoosh(.6), .7); add(T(26.4), .3 * rauschen(.3, 900) * np.exp(-10 * ts(.3)))    # Schneebrocken
-add(T(28.1), metall(500, .5), .4); add(T(29.2), thud(.6), .6)                                # übers Geländer, Landung
-# ---- Hütte: Schritte, Wache, Tackle, Countdown, Doppelsprengung, Blendgranate
-for k in range(7):
-    add(T(29.4 + k * .27), holz(), .3)
-add(T(31.25), .2 * np.sin(2 * np.pi * 880 * ts(.1)) * np.exp(-20 * ts(.1)))                  # Handy fällt
-add(T(31.55), thud(1.0), .9); add(T(31.75), thud(.7), .7); add(T(31.8), holz(), .6)
-for z_ in (32.9, 33.25):
-    add(T(z_), klick(3500), .7); add(T(z_ + .03), metall(2600, .2), .4)
-for k in range(6):
-    tt = 35.0 + k * .4
-    add(T(tt), thud(.55), .5 + .08 * k); add(T(tt + .14), thud(.35), .35 + .06 * k)          # Herzschlag beim Countdown
-add(T(37.2), boom(1.0), 1.0); add(T(37.23), boom(.7), .8)                                     # Tür + Fenster
-add(T(37.25), .5 * band(.9, 3000, 9000) * np.exp(-5 * ts(.9)))                                # Glas
-add(T(37.85), thud(.8), .8); add(T(37.88), metall(240, .6), .3)                               # Tür schlägt innen auf
-add(T(37.5), whoosh(.4), .4)
-add(T(37.95), knall(1.0), 1.0)
-add(T(38.0), .07 * np.sin(2 * np.pi * 3900 * ts(1.6)) * np.exp(-1.6 * ts(1.6)))              # Pfeifen im Ohr
-for k in range(12):
-    add(T(38.3 + k * .3), holz(), .35)
-add(T(41.05), thud(1.0), .9); add(T(41.25), thud(.6), .6)                                     # Tackle A
-for z_ in (42.2, 42.5, 44.0, 44.3):
-    add(T(z_), klick(3500), .6); add(T(z_ + .03), metall(2600, .2), .35)
-add(T(45.3), .25 * band(.7, 1500, 5000) * (np.sin(2 * np.pi * 11 * ts(.7)) > 0))              # Messer sägt
-add(T(46.05), .3 * band(.1, 800, 4000) * np.exp(-30 * ts(.1)))                                # Fessel reißt
-add(T(46.3), .15 * rauschen(.2, 800) * np.exp(-15 * ts(.2)))
-# ---- Polizei kommt, Handy vibriert
-add(T(47.5), rotor(18, f=4.8, laut=.45) * np.concatenate([np.linspace(0, 1, int(4 * SR)), np.ones(int(14 * SR))]))
-add(T(48.0), lowpass(sirene(16, .08), 3000))
+HZ = 22.0; INNEN = HZ + 14.9; BOOM = HZ + 11.3; BANG = HZ + 12.05
+SL = {"2": HZ + .8, "4": HZ + 1.9, "1": HZ + 3.0, "6": HZ + 4.1, "7": HZ + 5.3}
+# ---- Anflug: Rotor, Sturm an der offenen Tür, Schweben über der Hütte, Abseilen
+add(T(0), rotor(HZ + 7, f=4.6, laut=1.0) * np.concatenate([np.ones(int((HZ + 6.8) * SR)), np.linspace(1, .5, int(.2 * SR))]))
+add(T(HZ + 6.8), rotor(8, f=4.3, laut=.5) * np.linspace(1, 0, int(8 * SR)) ** 1.5)       # Heli fliegt weg
+add(T(0), .3 * band(HZ + 6.8, 180, 2400))
+add(T(HZ - 2), .3 * band(9.0, 150, 2200) * np.sin(np.pi * ts(9.0) / 9.0))                  # Abwind
+add(T(1.0), lowpass(sirene(14, .06), 2500))                                                 # Sperre unten im Tal
+add(T(HZ + .2), whoosh(.6), .5); add(T(HZ + .8), thud(.35))                                # Seil fällt
+for nr, s0 in SL.items():
+    laut = .9 if nr == "6" else .45
+    add(T(s0), .4 * band(1.25, 1200, 6500) * np.linspace(.3, 1, int(1.25 * SR)) ** 2, laut / .45 * .6)   # Rutschen
+    add(T(s0 + 1.25), thud(1.0 if nr == "6" else .6), laut + .2)
+# Terrasse: Wache mit Schaufel, Tackle, Täter C stürmt raus, Beinfeger
+add(T(HZ + 1.0), metall(600, .4), .4)
+add(T(HZ + 2.5), whoosh(.4), .6); add(T(HZ + 2.9), thud(1.0), .9); add(T(HZ + 3.0), metall(420, .7), .5); add(T(HZ + 3.2), thud(.6), .6)
+add(T(HZ + 4.1), metall(300, .5), .5); add(T(HZ + 4.15), thud(.5), .5)                    # Tür fliegt auf
 for k in range(4):
-    add(T(50.9 + k * .32), .25 * np.sin(2 * np.pi * 160 * ts(.18)) * (np.sin(2 * np.pi * 30 * ts(.18)) > 0))
-add(T(51.0), .25 * np.sin(2 * np.pi * 1320 * ts(.15)) * np.exp(-12 * ts(.15)))
-# ---- Hook: Klettern im Sturm → Schnitt → Doppelsprengung → Freeze → Spulen
-add(0, sturm(2.1, .35)); add(0, rotor(2.1, f=4.4, laut=.3))
+    add(T(HZ + 4.2 + k * .22), holz(), .4)
+add(T(HZ + 5.0), thud(1.0), .9); add(T(HZ + 5.15), holz(), .6)
+add(T(HZ + 5.7), metall(280, .6), .6); add(T(HZ + 5.72), thud(.7), .6)                    # A schlägt die Tür zu
+for z_ in (HZ + 4.0, HZ + 4.3, HZ + 5.9, HZ + 6.2):
+    add(T(z_), klick(3500), .6); add(T(z_ + .03), metall(2600, .2), .35)
+for k in range(10):
+    add(T(HZ + 5.7 + k * .3), holz(), .3)
+# ---- Sturm draußen, drinnen gedämpft
+add(T(0), sturm(INNEN, .22))
+add(T(INNEN), lowpass(sturm(30, .12), 500))
+# ---- Countdown, Doppelsprengung, Blendgranate, Zugriff
+for k in range(6):
+    tt = HZ + 9.0 + k * .4
+    add(T(tt), thud(.55), .5 + .08 * k); add(T(tt + .14), thud(.35), .35 + .06 * k)
+add(T(BOOM), boom(1.0), 1.0); add(T(BOOM + .03), boom(.7), .8)
+add(T(BOOM + .05), .5 * band(.9, 3000, 9000) * np.exp(-5 * ts(.9)))
+add(T(BOOM + .65), thud(.8), .8); add(T(BOOM + .68), metall(240, .6), .3)
+add(T(HZ + 11.6), whoosh(.4), .4)
+add(T(BANG), knall(1.0), 1.0)
+add(T(BANG + .05), .07 * np.sin(2 * np.pi * 3900 * ts(1.6)) * np.exp(-1.6 * ts(1.6)))
+for k in range(12):
+    add(T(HZ + 12.4 + k * .3), holz(), .35)
+# ---- Innen: Stuhl-Angriff, Tackle, Fluchtversuch am Fenster, Handschellen, Messer
+add(T(INNEN - .2), whoosh(.5), .6); add(T(INNEN + .25), metall(320, .5), .7); add(T(INNEN + .35), thud(.8), .7)   # Stuhl
+add(T(INNEN + .9), metall(280, .4), .5); add(T(INNEN + .95), thud(.5), .5)                                          # Stuhl landet
+add(T(INNEN + .45), thud(1.0), .9); add(T(INNEN + .65), thud(.6), .6)                                               # Tackle A
+add(T(INNEN + .2), .25 * band(.8, 800, 4000) * (np.sin(2 * np.pi * 9 * ts(.8)) > 0))                               # B rüttelt am Fenster
+add(T(INNEN + 1.0), thud(.9), .8); add(T(INNEN + 1.5), thud(.6), .6)
+for z_ in (INNEN + 1.5, INNEN + 1.8, INNEN + 2.6, INNEN + 2.9):
+    add(T(z_), klick(3500), .6); add(T(z_ + .03), metall(2600, .2), .35)
+add(T(INNEN + 4.5), .25 * band(.7, 1500, 5000) * (np.sin(2 * np.pi * 11 * ts(.7)) > 0))
+add(T(INNEN + 5.25), .3 * band(.1, 800, 4000) * np.exp(-30 * ts(.1)))
+# ---- Polizei kommt, Handy vibriert
+add(T(INNEN + 6.6), rotor(20, f=4.8, laut=.45) * np.concatenate([np.linspace(0, 1, int(4 * SR)), np.ones(int(16 * SR))]))
+add(T(INNEN + 7.0), lowpass(sirene(18, .08), 3000))
+for k in range(4):
+    add(T(INNEN + 9.9 + k * .32), .25 * np.sin(2 * np.pi * 160 * ts(.18)) * (np.sin(2 * np.pi * 30 * ts(.18)) > 0))
+add(T(INNEN + 10.0), .25 * np.sin(2 * np.pi * 1320 * ts(.15)) * np.exp(-12 * ts(.15)))
+# ---- Hook: Abseilen → Schnitt → Doppelsprengung → Freeze → Spulen
+add(0, rotor(2.1, f=4.6, laut=.8)); add(0, sturm(2.1, .3)); add(0, .55 * band(1.9, 1200, 6500) * np.linspace(.5, 1, int(1.9 * SR)) ** 2)
 add(2.0, whoosh(.3), .6)
 add(2.6, boom(1.1), 1.0); add(2.63, boom(.7), .8); add(2.65, .5 * band(.8, 3000, 9000) * np.exp(-5 * ts(.8)))
 add(3.3, whoosh(.6), .45)
 t = ts(.6)
 add(4.0, .12 * np.sign(np.sin(2 * np.pi * np.cumsum(500 + 2500 * (t * 10 % 1)) / SR)))
 for k in range(12):
-    add(st("anflug") + k * .08, klick(2000), .25)                                             # Uhr-Zeitsprung
+    add(st("anflug") + k * .08, klick(2000), .25)
 for z in TL["dialog"]:
     if z["funk"]:
         add(st(z["szene"]) + z["start"] - .15, funk(), .55)
@@ -203,42 +200,36 @@ DM, BB, CD, GM = [("D", 3), ("F", 3), ("A", 3)], [("A#", 2), ("D", 3), ("F", 3)]
 DUNKEL = [("D", 3), ("F", 3), ("G#", 3)]
 OST = [("D", 4), ("D", 4), ("F", 4), ("D", 4), ("G#", 4), ("D", 4), ("F", 4), ("A", 4)]
 M = Musik(DAUER)
-# Hook
 M.braam(0, 2.0, .9); M.taiko(0, 2.6, 150, .9); M.ostinato(0, 2.6, OST, 150, .45)
 M.impact(2.6, 1.1); M.braam(2.6, 2.6, 1.3, ("D", 1)); M.braam(3.3, 2.0, .7, ("A#", 0))
-# Anflug: großer, weiter Klang + Taiko, beim Schweben Riser, Absprung Impact
-M.impact(T(0), .8); M.pad(T(0), DM, 4.8, .3, cutoff=900); M.pad(T(4.8), BB, 4.8, .3, cutoff=900)
-M.groove(T(0), T(9.6), 132, 3, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=650)
-M.taiko(T(0), T(13.5), 132, .8); M.ostinato(T(2), T(9.6), OST, 132, .32)
-M.riser(T(7.6), 2.0, .55); M.braam(T(9.6), 2.4, 1.0, ("D", 1)); M.impact(T(9.6), .8)
-M.arp(T(9.8), [("D", 4), ("A", 4), ("D#", 5), ("A", 4)], .2, 17, .13)
-M.impact(T(13.35), .9); M.braam(T(13.35), 2.2, .9, ("F", 1))
-# Wand: Spannung, nervöses Ostinato, zwei Impacts für die Haken
-M.pad(T(14), [("D", 2), ("A", 2), ("D#", 3)], 14, .3, cutoff=700)
-M.ostinato(T(14.5), T(28), [("D", 4), ("D#", 4)] * 4, 140, .35)
-M.taiko(T(18.5), T(28), 140, .7)
-M.impact(T(17.05), .6); M.impact(T(18.15), .6)
-M.riser(T(26.0), 2.1, .55); M.braam(T(28.06), 2.2, .9, ("A#", 0))
-# Hütte: Groove beim Anschleichen, Tackle, Countdown nur Herzschlag + Halbton, dann Explosion
-M.groove(T(29), T(34.6), 128, 2, [DM, CD, BB, CD], ["D", "C", "A#", "C"], cutoff_bass=600)
-M.braam(T(31.6), 2.0, .9, ("F", 1)); M.impact(T(31.6), .7)
-M.pad(T(34.6), DUNKEL, 2.6, .3, cutoff=600); M.ostinato(T(34.6), T(37.2), [("D", 4), ("D#", 4)] * 4, 150, .45)
-M.riser(T(35.0), 2.2, .7)
-M.impact(T(37.2), 1.2); M.braam(T(37.2), 3.0, 1.3, ("D", 1))
-M.taiko(T(38.0), T(44.5), 150, 1.0); M.groove(T(38.0), T(44.5), 150, 3, [DM, BB, CD, DM], ["D", "A#", "C", "D"], cutoff_bass=700)
-M.braam(T(41.05), 2.0, .9, ("A#", 0))
-# Befreiung: ruhiger, dann Twist dunkel
-M.pad(T(44.5), DM, 4.0, .28, cutoff=900); M.arp(T(44.6), [("D", 5), ("A", 4), ("F", 4), ("A", 4)], .25, 15, .1)
-M.pad(T(48.5), DUNKEL, 8, .32, cutoff=800)
-M.stab(T(51.0), DUNKEL, .6, d=.6); M.braam(T(51.0), 2.6, 1.0, ("C#", 1)); M.impact(T(51.0), .6)
-M.braam(T(53.7), 2.4, 1.0, ("D", 1))
+# Anflug: weit und episch über den Gipfeln
+M.impact(T(0), .8)
+for k, ch in enumerate([DM, BB, GM, CD, DM]):
+    M.pad(T(k * 4.4), ch, 4.6, .3, cutoff=1000)
+M.groove(T(2), T(HZ - 2), 120, 2, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=600)
+M.taiko(T(6), T(HZ + 6), 132, .8); M.ostinato(T(8), T(HZ), OST, 132, .3)
+M.riser(T(HZ - 2.2), 2.2, .55); M.braam(T(HZ), 2.4, 1.0, ("D", 1)); M.impact(T(HZ), .8)
+M.arp(T(HZ + .2), [("D", 4), ("A", 4), ("D#", 5), ("A", 4)], .2, 30, .13)
+M.braam(T(HZ + 2.9), 2.0, .9, ("F", 1)); M.impact(T(HZ + 2.9), .7)
+M.braam(T(HZ + 5.0), 2.0, .9, ("A#", 0)); M.impact(T(HZ + 5.0), .7)
+M.impact(T(HZ + 5.35), .8)
+M.groove(T(HZ + 6), T(HZ + 9), 128, 2, [DM, CD, BB, CD], ["D", "C", "A#", "C"], cutoff_bass=600)
+M.pad(T(HZ + 9), DUNKEL, 2.4, .3, cutoff=600); M.ostinato(T(HZ + 9), T(BOOM), [("D", 4), ("D#", 4)] * 4, 150, .45)
+M.riser(T(HZ + 9.1), 2.2, .7)
+M.impact(T(BOOM), 1.2); M.braam(T(BOOM), 3.0, 1.3, ("D", 1))
+M.taiko(T(HZ + 12.1), T(INNEN + 3.5), 150, 1.0); M.groove(T(HZ + 12.1), T(INNEN + 3.5), 150, 3, [DM, BB, CD, DM], ["D", "A#", "C", "D"], cutoff_bass=700)
+M.braam(T(INNEN + .4), 2.0, .9, ("A#", 0)); M.braam(T(INNEN + 1.0), 2.0, .8, ("F", 1))
+M.pad(T(INNEN + 3.5), DM, 3.6, .28, cutoff=900); M.arp(T(INNEN + 3.6), [("D", 5), ("A", 4), ("F", 4), ("A", 4)], .25, 13, .1)
+M.pad(T(INNEN + 7), DUNKEL, 9, .32, cutoff=800)
+M.stab(T(INNEN + 10.0), DUNKEL, .6, d=.6); M.braam(T(INNEN + 10.0), 2.6, 1.0, ("C#", 1)); M.impact(T(INNEN + 10.0), .6)
+M.braam(T(INNEN + 12.7), 2.4, 1.0, ("D", 1))
 w0, wd = st("twist"), SZ["twist"]["d"]
 e = w0 + wd - 3.0
 M.impact(e, .9); M.stab(e, DM, .7, d=.9); M.pad(e, DM + [("A", 4)], 3.0, .35, cutoff=1800, attack=.05)
 M.groove(e + .2, e + 2.9, 140, 2, [DM, BB], ["D", "A#"], cutoff_bass=700); M.taiko(e + .2, e + 2.9, 150, .9)
 M.arp(e + .2, [("D", 5), ("F", 5), ("A", 5), ("D", 6)], .12, 12, .15)
 for z_ in (.7, 1.1):
-    add(e + z_ + .05, .3 * np.sin(2 * np.pi * 1200 * ts(.15)) * np.exp(-18 * ts(.15)))   # Like-/Folgen-Pop
+    add(e + z_ + .05, .3 * np.sin(2 * np.pi * 1200 * ts(.15)) * np.exp(-18 * ts(.15)))
 a = a / max(1e-9, np.max(np.abs(a))) * .55 + M.fertig(1.0) * 2.0
 
 
@@ -268,7 +259,7 @@ for z in TL["dialog"]:
         continue
     gef += 1
     x = x / max(1e-9, np.max(np.abs(x))) * .9
-    if z["text"].startswith(("POLIZEI", "ZUGRIFF", "Einsteigen", "Seil frei", "Raus")):   # Festnahme-Gebrüll: lauter, leicht übersteuert, mit Raumhall
+    if z["text"].startswith(("POLIZEI", "ZUGRIFF", "Einsteigen", "Seil frei", "Raus", "Kein Platz")):   # Festnahme-Gebrüll: lauter, leicht übersteuert, mit Raumhall
         x = np.tanh(x * 2.2) / np.tanh(2.2) * 1.25   # laut gebrüllt, ohne Hall
     if z["funk"]:
         x = np.concatenate([funkfilter(x) * .9, .4 * funk()[:int(.12 * SR)]])

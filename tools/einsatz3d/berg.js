@@ -20,9 +20,57 @@ function fbm(x, z, o = 5) { let s = 0, a = 1, f = 1, n = 0; for (let k = 0; k < 
 const sm = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * (3 - 2 * k); };
 // Gelände außerhalb der Felsnadel: Talboden −280, ringsum Bergketten bis gut +400
 export function talHoehe(x, z) {
-  const r = Math.hypot(x * .75, z), m = sm(230, 720, r);
-  const rid = 1 - Math.abs(2 * fbm(x / 420 + 3, z / 420 - 2, 4) - 1);
-  return -280 + m * (380 * (.45 + .7 * fbm(x / 800, z / 800, 3)) + 300 * Math.pow(rid, 2.4)) + 14 * fbm(x / 70, z / 70, 3) * m;
+  const r = Math.hypot(x * .8, z), m = sm(300, 1500, r);
+  return -280 + m * (260 + 200 * fbm(x / 900, z / 900, 3)) + 12 * fbm(x / 90, z / 90, 3) * (.2 + m);
+}
+// Flugroute des Hubschraubers (Welt) – die Gipfel halten Abstand davon
+export const FLUGPFAD = [[-1500, 170, 1000], [-1050, 130, 700], [-640, 90, 430], [-300, 50, 200], [-80, 24, 60]];
+function abstandPfad(x, z) { let d = 1e9; for (let i = 0; i < FLUGPFAD.length - 1; i++) { const [ax, , az] = FLUGPFAD[i], [bx, , bz] = FLUGPFAD[i + 1]; const vx = bx - ax, vz = bz - az, l = vx * vx + vz * vz, k = clamp(((x - ax) * vx + (z - az) * vz) / l); d = Math.min(d, Math.hypot(x - ax - vx * k, z - az - vz * k)); } return d; }
+// Detaillierter Gipfel: Grate (Arme), Felsbänder (Terrassen), Rinnen; flach schattiert → klare Kanten.
+// Farbe pro Dreieck: Schnee auf flachen Stellen, Fels mit Schichtbändern an steilen, Gletscher, Wald unten.
+function gipfel(s, cx, cz, R, Hg, seed) {
+  const N = 96, g = new THREE.PlaneGeometry(2 * R, 2 * R, N, N); g.rotateX(-Math.PI / 2);
+  const p = g.attributes.position, r = rng(seed), arme = Array.from({ length: 3 + Math.floor(r() * 3) }, () => r() * Math.PI * 2), y0 = -330;
+  for (let i = 0; i < p.count; i++) {
+    const lx = p.getX(i), lz = p.getZ(i), d = Math.hypot(lx, lz) / R, th = Math.atan2(lz, lx);
+    let arm = 0; for (const a of arme) arm = Math.max(arm, Math.pow(Math.max(0, Math.cos(th - a)), 5));
+    const basis = Math.pow(clamp(1 - d * d), 1.4);
+    const rn = 1 - Math.abs(2 * fbm(lx / (R * .3) + seed, lz / (R * .3) - seed, 5) - 1);
+    let h = Hg * basis * (.7 + .3 * arm) * (.78 + .32 * rn);
+    h -= ((h % 26) + 26) % 26 * .4;                                         // Felsbänder → Stufen/Kanten
+    p.setY(i, y0 + h - (d > .98 ? 40 : 0));
+  }
+  g.computeVertexNormals(); const ng = g.toNonIndexed(); const q = ng.attributes.position, nn = ng.attributes.normal, col = [];
+  const v0 = new THREE.Vector3(), v1 = new THREE.Vector3(), v2 = new THREE.Vector3(), n = new THREE.Vector3();
+  for (let i = 0; i < q.count; i += 3) {
+    v0.fromBufferAttribute(q, i); v1.fromBufferAttribute(q, i + 1); v2.fromBufferAttribute(q, i + 2);
+    n.set(0, 0, 0); for (let k = 0; k < 3; k++) n.add(new THREE.Vector3().fromBufferAttribute(nn, i + k)); n.normalize();   // geglättete Normale → zusammenhängende Schneefelder statt Flecken
+    const y = (v0.y + v1.y + v2.y) / 3, ny = n.y, wx = cx + v0.x, wz = cz + v0.z, nz = fbm(wx / 140, wz / 140, 3);
+    let c;
+    if (y < -215 && ny > .72) c = [.2, .3, .24];                                              // verschneiter Wald (dunkel)
+    else if (ny > .52 || (ny > .36 && y > 260)) c = (y > 120 && y < 520 && ny > .74 && nz > .56) ? [.7, .84, .95] : [.93, .95, .99];   // Gletscher / Schnee
+    else { const band = Math.sin(y / 7 + nz * 6) > .2 ? 1 : .78; c = [.36 * band, .37 * band, .41 * band]; if (ny < .25) c = c.map(v => v * .75); }   // Fels mit Schichten, Wände dunkler
+    for (let k = 0; k < 3; k++) col.push(...c);
+  }
+  ng.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  ng.computeVertexNormals(); const m = new THREE.Mesh(ng, new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true })); m.position.set(cx, 0, cz); s.add(m);
+}
+function gebirge(s) {
+  const r = rng(404); let n = 0;
+  for (let i = 0; i < 400 && n < 22; i++) {
+    const a = r() * Math.PI * 2, rad = 650 + r() * 1700, x = Math.cos(a) * rad, z = Math.sin(a) * rad;
+    const R = 480 + r() * 420, Hg = 600 + r() * 550;
+    if (abstandPfad(x, z) < R * .75 + 160 || Math.hypot(x, z) < R * .7 + 260) continue;
+    gipfel(s, x, z, R, Hg, 11 + i * 7); n++;
+  }
+  // Dorf im Tal (unter der Flugroute), zugefrorener See
+  const hr = rng(71), haus = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), mat(0xd9c7a8, { r: .9 }), 60), dach = new THREE.InstancedMesh(new THREE.ConeGeometry(.75, 1, 4), mat(0xf2f6fa, { r: .9 }), 60);
+  const m4 = new THREE.Matrix4(), qq = new THREE.Quaternion(), sc = new THREE.Vector3(), ps = new THREE.Vector3();
+  for (let i = 0; i < 60; i++) { const x = -760 + (hr() - .5) * 220, z = 470 + (hr() - .5) * 200, w = 9 + hr() * 8, hh = 6 + hr() * 5, y = talHoehe(x, z);
+    qq.setFromAxisAngle(new THREE.Vector3(0, 1, 0), hr() * 3); haus.setMatrixAt(i, m4.compose(ps.set(x, y + hh / 2 - 1, z), qq, sc.set(w, hh, w * .8)));
+    const q2 = qq.clone().multiply(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 4)); dach.setMatrixAt(i, m4.compose(ps.set(x, y + hh - 1 + 2.5, z), q2, sc.set(w * 1.05, 5, w * .9))); }
+  s.add(haus, dach);
+  { const x = -380, z = 640, see = new THREE.Mesh(new THREE.CircleGeometry(130, 40), new THREE.MeshLambertMaterial({ color: 0xa9d4ee })); see.rotation.x = -Math.PI / 2; see.scale.set(1, 1.6, 1); see.position.set(x, talHoehe(x, z) + 1.5, z); s.add(see); }
 }
 
 // ---------------------------------------------------------------- Texturen
@@ -70,8 +118,8 @@ export function bergWelt(s) {
   const b = { s };
   // ----- Himmel + Licht (Sturm: grau, kühl)
   const himmel = canvasTex('sturmhimmel', 64, 512, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#6b7a8c'); gr.addColorStop(.45, '#a9b6c4'); gr.addColorStop(.52, '#cdd6df'); gr.addColorStop(1, '#8e9aa8'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
-  b.kugel = new THREE.Mesh(new THREE.SphereGeometry(3800, 32, 16), new THREE.MeshBasicMaterial({ map: himmel, side: THREE.BackSide, fog: false })); s.add(b.kugel);
-  s.fog = new THREE.Fog(0xb9c4d1, 120, 2400);
+  b.kugel = new THREE.Mesh(new THREE.SphereGeometry(6000, 32, 16), new THREE.MeshBasicMaterial({ map: himmel, side: THREE.BackSide, fog: false })); s.add(b.kugel);
+  s.fog = new THREE.Fog(0xb9c4d1, 700, 5200);
   s.add(new THREE.HemisphereLight(0xeef3f8, 0x7d8896, 1.55));
   const sonne = new THREE.DirectionalLight(0xf4f7ff, 1.5); sonne.position.set(-30, 50, 40); sonne.castShadow = true; sonne.shadow.mapSize.set(2048, 2048); sonne.shadow.bias = -.0006;
   Object.assign(sonne.shadow.camera, { left: -22, right: 22, top: 22, bottom: -22, near: 1, far: 160 }); s.add(sonne); s.add(sonne.target); b.sonne = sonne;
@@ -89,7 +137,7 @@ export function bergWelt(s) {
     const g = new THREE.CylinderGeometry(50, 160, 250, 48, 10, true); const p = g.attributes.position;
     for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i), a = Math.atan2(z, x), k = (y + 125) / 250;
       const d = 1 + .22 * (fbm(a * 3 + 5, y / 40) - .5) * 2 * (1 - k * .6) + .08 * Math.sin(a * 9 + y / 30); p.setXYZ(i, x * d, y, z * d); }
-    g.computeVertexNormals(); const m = new THREE.Mesh(g, mat(0xffffff, { r: .95, map: felsTex('a', [10, 4]) })); m.position.set(0, -55 - 125, -4); s.add(m);
+    g.computeVertexNormals(); const m = new THREE.Mesh(g, mat(0xffffff, { r: .95, map: felsTex('a', [10, 4]), noCache: true })); m.material.flatShading = true; m.position.set(0, -55 - 125, -4); s.add(m);
     const kranz = new THREE.Mesh(new THREE.CircleGeometry(52, 48), schneeGlatt); kranz.rotation.x = -Math.PI / 2; kranz.position.set(0, -55, -4); s.add(kranz); }
   // Felsbrocken an Kanten (brechen die Kastenform; nie im Laufbereich)
   { const r = rng(77); const geo = new THREE.DodecahedronGeometry(1, 0);
@@ -106,13 +154,8 @@ export function bergWelt(s) {
     for (const [x, z, sx, sz] of [[-15, 15, 4, 3], [16, 17, 4, 3], [-11, 22, 3, 2], [12, 23, 3, 2]]) { const m = sph(1, schneeGlatt, 16, 8); m.scale.set(sx, .9, sz); m.position.set(x, SY - .35, z); s.add(m); } }
   // Schneewechte an der Kante (nur außerhalb des Decks)
   for (const sx of [-1, 1]) { const w = cyl(.45, .45, 20, schneeGlatt, 12); w.rotation.z = Math.PI / 2; w.scale.set(1, 1, .7); w.position.set(sx * 17.2, -.05, WZ - .2); s.add(w); }
-  // Hoher Gipfel hinter der Hütte (mit Schneefeldern)
-  { const g = new THREE.ConeGeometry(420, 950, 40, 16); const p = g.attributes.position; const col = [];
-    for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i); const a = Math.atan2(z, x), d = 1 + .25 * (fbm(a * 2.5, y / 60, 4) - .5) * 2; p.setXYZ(i, x * d, y, z * d); }
-    g.computeVertexNormals(); const n = g.attributes.normal;
-    for (let i = 0; i < p.count; i++) { const sn = n.getY(i) > .5 || p.getY(i) > 120; col.push(...(sn ? [.9, .93, .98] : [.36, .38, .43])); }
-    g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
-    const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true })); m.position.set(-150, 120, -1250); s.add(m); }
+  // Detaillierte Gipfel rundum, Dorf, See
+  gebirge(s);
   // ----- Tal + Bergketten (Höhenfeld, Schnee auf flachen/hohen Stellen, Fels an steilen Hängen)
   { const g = new THREE.PlaneGeometry(9000, 9000, 220, 220); g.rotateX(-Math.PI / 2); const p = g.attributes.position;
     for (let i = 0; i < p.count; i++) p.setY(i, talHoehe(p.getX(i), p.getZ(i)));
@@ -120,7 +163,7 @@ export function bergWelt(s) {
     for (let i = 0; i < p.count; i++) { const ny = n.getY(i), y = p.getY(i), k = sm(.62, .8, ny) * .85 + sm(150, 320, y) * .4 + (y < -250 ? .3 : 0);
       const f = clamp(k); col.push(lerp(.3, .9, f), lerp(.32, .93, f), lerp(.37, .98, f)); }
     g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
-    b.tal = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true })); b.tal.receiveShadow = false; s.add(b.tal); }
+    b.tal = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true })); b.tal.receiveShadow = false; s.add(b.tal); }
   // Wald: verschneite Tannen im Tal und an den unteren Hängen
   { const r = rng(91), N = 1600; const geo = new THREE.ConeGeometry(1, 1, 7); geo.translate(0, .5, 0);
     const tanne = new THREE.InstancedMesh(geo, mat(0x23422f, { r: 1 }), N), kappe = new THREE.InstancedMesh(geo, mat(0xeef3f8, { r: 1 }), N);
@@ -165,7 +208,7 @@ export function bergWelt(s) {
   for (let k = 0; k < 3; k++) s.add(bx(-7.4 + k * .3, -7.1 + k * .3 + .3, 0, DY * (k + 1) / 4 + .02, 2.1, 3.9, gelM));   // Treppe links
   // Schnee auf dem Handlauf + Bank + Tisch auf der Terrasse (außerhalb der Laufwege)
   s.add(bx(-6.45, 6.45, RAIL_Y + .04, RAIL_Y + .1, RAIL_Z - .05, RAIL_Z + .05, schneeGlatt, false));
-  { const bank = new THREE.Group(); bank.add(at(box(1.6, .06, .42, gelM), 0, .46, 0)); bank.add(at(box(1.6, .45, .06, gelM), 0, .72, -.22)); for (const x of [-.7, .7]) bank.add(at(box(.06, .46, .4, balkenM), x, .23, 0)); bank.position.set(-5.4, DY, 5.4); bank.rotation.y = Math.PI / 2; s.add(bank); bank.add(at(box(1.5, .08, .38, schneeGlatt), 0, .53, 0)); }
+  if (false) { const bank = new THREE.Group(); bank.add(at(box(1.6, .06, .42, gelM), 0, .46, 0)); bank.add(at(box(1.6, .45, .06, gelM), 0, .72, -.22)); for (const x of [-.7, .7]) bank.add(at(box(.06, .46, .4, balkenM), x, .23, 0)); bank.position.set(-5.4, DY, 5.4); bank.rotation.y = Math.PI / 2; s.add(bank); bank.add(at(box(1.5, .08, .38, schneeGlatt), 0, .53, 0)); }
   // ----- Hütte: Blockbau x −5..5, z −7..0, Boden = Deck, Wände bis 2,85, Satteldach (First bei z −3,5)
   const Y0 = DY, Y1 = 2.85, F = FENSTER, T = TUER;
   // Vorderwand mit Tür- und Fensteröffnung
@@ -271,6 +314,49 @@ export function bergWelt(s) {
   b.lampe = mat(0xfff1c9, { e: 0xffd88a, ei: 2.2, noCache: true });
   s.add(at(cyl(.01, .01, .3, mat(0x111111), 4), 0, Y1 - .15, -3.5)); s.add(at(cyl(.12, .2, .16, mat(0x2b2d31), 14, false), 0, Y1 - .36, -3.5)); s.add(at(sph(.07, b.lampe, 10, 8, false), 0, Y1 - .45, -3.5));
   b.innenLicht = new THREE.PointLight(0xffd9a0, 6, 10, 1.4); b.innenLicht.position.set(0, Y1 - .6, -3.5); s.add(b.innenLicht);
+  // ----- Mehr Details: Fensterläden, Blumenkästen, Dachrinne, Geweih, Glocke, Wimpel, Terrassentische, Laternen, Schlitten, Fässer, Kisten …
+  { const lad = mat(0x2d6a4f, { r: .8 }), weissL = mat(0xf1f3f5, { r: .8 });
+    const laden = (g, x, yM, h2) => { const l = new THREE.Group(); l.position.set(x, yM, 0); g.add(l); l.add(at(box(.5, h2, .04, lad), 0, 0, 0));
+      for (const yy of [-h2 / 4, h2 / 4]) l.add(at(box(.44, .05, .05, weissL), 0, yy, .01)); l.add(at(box(.06, h2 * .9, .05, weissL), 0, 0, .012, 0, 0, .45)); };
+    const fl = (x, z, ry, b2, y0, y1) => { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; s.add(g);
+      for (const sx of [-1, 1]) laden(g, sx * (b2 / 2 + .3), (y0 + y1) / 2, y1 - y0 + .08);
+      g.add(at(box(b2 + .1, .2, .2, mat(0x6b4426)), 0, y0 - .2, .14)); g.add(at(box(b2 + .1, .1, .2, schneeGlatt), 0, y0 - .06, .14));
+      for (let k = 0; k < 4; k++) g.add(at(sph(.05, mat([0xd62828, 0x2d6a4f][k % 2]), 6, 4), -b2 / 2 + .2 + k * (b2 - .4) / 3, y0 - .02, .2)); };
+    fl(F.x, .02, 0, F.b, F.y0, F.y1); fl(-5.02, (SF.z0 + SF.z1) / 2, -Math.PI / 2, SF.z1 - SF.z0, SF.y0, SF.y1); fl(5.02, (SF.z0 + SF.z1) / 2, Math.PI / 2, SF.z1 - SF.z0, SF.y0, SF.y1);
+    // Dachrinne + Stirnbrett mit Zackenmuster
+    s.add(at(cyl(.06, .06, 11.6, mat(0x8d99ae, { m: .6 }), 10), 0, 2.38, .86, 0, 0, Math.PI / 2));
+    for (let x = -5.6; x < 5.7; x += .3) s.add(at(box(.18, .16, .04, mat(0x5a3a22)), x, 2.3, .9, 0, 0, Math.PI / 4));
+    // Geweih über der Tür
+    { const gw = new THREE.Group(); gw.position.set(TUER.x, 2.66, .07); s.add(gw); const hm = mat(0xe9dcc3, { r: .8 }); gw.add(at(box(.18, .12, .05, mat(0x5a3a22)), 0, 0, 0));
+      for (const sx of [-1, 1]) { gw.add(at(cyl(.015, .02, .3, hm, 6), sx * .12, .1, 0, 0, 0, -sx * .7)); for (let k = 0; k < 3; k++) gw.add(at(cyl(.01, .012, .1, hm, 5), sx * (.15 + k * .04), .16 + k * .03, 0, 0, 0, -sx * .2)); } }
+    // Glocke am Pfosten, Wimpel am Mast
+    { const gp = new THREE.Group(); gp.position.set(-6.05, DY, 5.0); s.add(gp); gp.add(at(box(.1, 2.1, .1, gelM), 0, 1.05, 0)); gp.add(at(box(.5, .08, .08, gelM), .2, 2.05, 0));
+      gp.add(at(cyl(.06, .12, .16, mat(0xb08d57, { m: .8, r: .3 }), 12), .38, 1.9, 0)); gp.add(at(cyl(.006, .006, .7, mat(0xc9a66b), 4), .38, 1.5, 0)); }
+    { const fm = new THREE.Group(); fm.position.set(-8.5, 0, -2.5); s.add(fm); fm.add(at(cyl(.05, .06, 6, mat(0xdee2e6, { m: .4 }), 8), 0, 3, 0));
+      const sh = new THREE.Shape(); sh.moveTo(0, 0); sh.lineTo(1.4, -.3); sh.lineTo(0, -.6); sh.closePath(); const w = new THREE.Mesh(new THREE.ShapeGeometry(sh), mat(0xf77f00, { side: THREE.DoubleSide })); w.position.set(.05, 5.9, 0); fm.add(w); b.wimpel = w; }
+    // Terrassentisch mit Bänken, Laterne, Tassen (links hinten + rechts hinten – abseits aller Laufwege)
+    for (const [x, z] of [[-3.6, 6.7], [4.6, 6.1]]) { const t2 = new THREE.Group(); t2.position.set(x, DY, z); s.add(t2);
+      t2.add(at(box(1.6, .06, .7, gelM), 0, .74, 0)); t2.add(at(box(1.62, .05, .72, schneeGlatt), 0, .79, 0)); for (const sx of [-.7, .7]) t2.add(at(box(.07, .72, .6, balkenM), sx, .36, 0));
+      for (const sz of [-.55, .55]) { t2.add(at(box(1.6, .05, .28, gelM), 0, .44, sz)); for (const sx of [-.65, .65]) t2.add(at(box(.06, .42, .24, balkenM), sx, .21, sz)); }
+      t2.add(at(box(.16, .24, .16, mat(0x1d1f22)), .3, .94, 0)); t2.add(at(box(.1, .14, .1, mat(0xffd27a, { e: 0xffb347, ei: 2 })), .3, .93, 0));
+      for (const tx of [-.4, -.1]) t2.add(at(cyl(.04, .035, .1, mat(0xf1f3f5), 10), tx, .87, .1)); }
+    // Schlitten, Fässer, Kisten, Schneeschuhe, Gasflasche
+    { const sl = new THREE.Group(); sl.position.set(-5.75, DY, 1.4); sl.rotation.y = .1; s.add(sl); sl.add(at(box(.45, .05, 1.0, mat(0x9d0208)), 0, .25, 0)); for (const sx of [-.2, .2]) { sl.add(at(box(.04, .04, 1.15, mat(0x6c757d, { m: .6 })), sx, .04, .02)); sl.add(at(box(.04, .22, .04, mat(0x6c757d)), sx, .14, .35)); sl.add(at(box(.04, .22, .04, mat(0x6c757d)), sx, .14, -.35)); } }
+    for (const [x, z] of [[5.9, 7.15], [5.25, 7.25]]) { s.add(at(cyl(.3, .3, .85, mat(0x7a4e2d, { r: .8 }), 14), x, DY + .43, z)); for (const y of [.15, .7]) s.add(at(cyl(.31, .31, .05, mat(0x343a40, { m: .6 }), 14), x, DY + y, z)); s.add(at(cyl(.29, .29, .06, schneeGlatt, 14), x, DY + .88, z)); }
+    for (const [x, z, y] of [[-6.0, 7.1, 0], [-6.0, 7.1, .4], [-5.45, 7.2, 0]]) { s.add(at(box(.5, .4, .4, mat(0x8b5a2b)), x, DY + y + .2, z)); for (let k = 0; k < 3; k++) s.add(at(cyl(.03, .03, .2, mat(0x2d6a4f, { r: .2 }), 6), x - .15 + k * .15, DY + y + .5, z)); }
+    for (const x of [4.15, 4.45]) { const sw = new THREE.Group(); sw.position.set(x, DY + .45, .1); sw.rotation.x = -.12; s.add(sw); sw.add(at(box(.24, .7, .02, mat(0x343a40)), 0, 0, 0)); for (let k = 0; k < 4; k++) sw.add(at(box(.22, .015, .025, mat(0xadb5bd)), 0, -.25 + k * .17, .01)); }
+    s.add(at(cyl(.15, .15, .7, mat(0xd62828, { r: .4 }), 12), 5.4, DY + .35, -6.7));
+    // Innen: Regal mit Büchern + Gläsern, Kräuterbündel, Gitarre, Stiefel, Bilder, Kerzen, Getränkekiste
+    { const rg = new THREE.Group(); rg.position.set(-2.75, Y0, -6.62); s.add(rg); for (const y of [.4, .9, 1.4, 1.85]) rg.add(at(box(1.8, .04, .3, dunkelHolz), 0, y, 0)); for (const sx of [-.9, .9]) rg.add(at(box(.04, 1.9, .3, dunkelHolz), sx, .95, 0));
+      const r2 = rng(66); for (const y of [.42, .92]) for (let k = 0; k < 14; k++) rg.add(at(box(.05 + r2() * .04, .22 + r2() * .1, .2, mat([0x9d0208, 0x1d3557, 0x2d6a4f, 0xe9c46a, 0x6d597a][k % 5])), -.8 + k * .115, y + .14, 0));
+      for (let k = 0; k < 6; k++) rg.add(at(cyl(.06, .06, .16, mat(0xcfe8ff, { transparent: true, opacity: .6 }), 10), -.7 + k * .28, 1.5, 0)); }
+    for (let k = 0; k < 5; k++) { const kb = new THREE.Group(); kb.position.set(-1.0 + k * .5, Y1 - .3, -5.6); s.add(kb); kb.add(at(cyl(.005, .005, .2, mat(0x5c3a20), 4), 0, .1, 0)); kb.add(at(cyl(.06, .01, .22, mat(0x6a994e, { r: 1 }), 7), 0, -.1, 0)); }
+    { const gt = new THREE.Group(); gt.position.set(4.76, 1.5, -5.25); gt.rotation.set(0, -Math.PI / 2, .25); s.add(gt); const gk = sph(1, mat(0xbc6c25, { r: .5 }), 14, 10); gk.scale.set(.2, .26, .05); gt.add(gk); gt.add(at(box(.05, .45, .03, dunkelHolz), 0, .38, 0)); gt.add(at(cyl(.05, .05, .01, mat(0x111111), 12), 0, .02, .05, Math.PI / 2)); }
+    for (let k = 0; k < 4; k++) { const st2 = new THREE.Group(); st2.position.set(-1.0 + k * .32, Y0, -.4); s.add(st2); for (const sx of [-.06, .06]) { st2.add(at(box(.09, .26, .12, mat(0x3e2414)), sx, .13, 0)); st2.add(at(box(.09, .06, .24, mat(0x3e2414)), sx, .03, .06)); } }
+    for (const [x, c] of [[.7, '#7a9e9f'], [1.3, '#b5838d']]) { const tx = canvasTex('bild' + c, 64, 64, (g2, w, h) => { g2.fillStyle = c; g2.fillRect(0, 0, w, h); g2.fillStyle = '#f1f3f5'; g2.beginPath(); g2.moveTo(0, h); g2.lineTo(w * .45, h * .3); g2.lineTo(w, h); g2.fill(); });
+      s.add(at(box(.42, .34, .03, [rahmenM, rahmenM, rahmenM, rahmenM, rahmenM, new THREE.MeshLambertMaterial({ map: tx })]), x, 1.85, -.22)); }
+    s.add(bx(-4.6, -4.0, Y0, Y0 + .3, -1.0, -.55, mat(0x2d6a4f))); for (let k = 0; k < 6; k++) s.add(at(cyl(.035, .035, .22, mat(0x6a4c2a, { r: .2 }), 6), -4.5 + (k % 3) * .2, Y0 + .4, -.9 + Math.floor(k / 3) * .2));
+  }
   // ----- Schneefall (Punkte rund um die Kamera, Wind von links)
   { const N = 2600, pos = new Float32Array(N * 3), r = rng(3); b.flocken = Array.from({ length: N }, () => [r(), r(), r(), .7 + r() * .6]);
     const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));

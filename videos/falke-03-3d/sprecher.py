@@ -9,8 +9,9 @@ TL = json.loads((HIER / "timeline_fertig.json").read_text())
 ROLLE = {"6": "6", "1": "1", "1f": "1", "2": "2", "4": "4", "7v": "7", "Zf": "Z", "G": "G"}
 # Text wie gesprochen (Zahlen ausgeschrieben) + Regie-Tag
 ZEILEN = {
-    "Klettern stand nicht im Vertrag.": ("[trocken]", "Klettern stand nicht im Vertrag."),
-    "Geisel in der Hütte. Drei Täter.": ("[ernst]", "Geisel in der Hütte. Drei Täter."),
+    "Abseilen stand nicht im Vertrag.": ("[trocken]", "Abseilen stand nicht im Vertrag."),
+    "Kein Platz zum Landen. Wir seilen ab!": ("[ruft]", "Kein Platz zum Landen. Wir seilen ab!"),
+    "Geisel in der Hütte. Vier Täter.": ("[ernst]", "Geisel in der Hütte. Vier Täter."),
     "Zu viel Wind zum Landen. Wir springen!": ("[ruft]", "Zu viel Wind zum Landen. Wir springen!"),
     "Ich hasse Höhe.": ("[nervös]", "Ich hasse Höhe."),
     "Nicht runterschauen, Sieben.": ("[spöttisch]", "Nicht runterschauen, Sieben."),

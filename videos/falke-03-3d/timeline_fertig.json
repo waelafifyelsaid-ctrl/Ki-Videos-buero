@@ -43,7 +43,7 @@
   },
   {
    "n": "anflug",
-   "d": 16.0,
+   "d": 15.0,
    "tr": "uhr",
    "trd": 1.0,
    "karte": "20 MINUTEN VORHER",
@@ -51,28 +51,28 @@
    "start": 4.6
   },
   {
-   "n": "wand",
-   "d": 12.06,
+   "n": "abseilen",
+   "d": 9.8,
    "verzug": 0.0,
-   "start": 20.6
+   "start": 19.6
   },
   {
    "n": "huette",
-   "d": 12.74,
+   "d": 12.1,
    "verzug": 0.0,
-   "start": 32.66
+   "start": 29.4
   },
   {
    "n": "innen",
-   "d": 9.948,
+   "d": 9.95,
    "verzug": 0.0,
-   "start": 45.4
+   "start": 41.5
   },
   {
    "n": "twist",
-   "d": 10.0,
+   "d": 11.0,
    "verzug": 0.0,
-   "start": 55.348
+   "start": 51.45
   }
  ],
  "dialog": [
@@ -80,9 +80,9 @@
    "id": "01_hook_6",
    "szene": "hook",
    "start": 0.15,
-   "ende": 2.436,
+   "ende": 2.723,
    "wer": "6",
-   "text": "Klettern stand nicht im Vertrag.",
+   "text": "Abseilen stand nicht im Vertrag.",
    "funk": false,
    "lautsprecher": false,
    "datei": "01_hook_6.mp3",
@@ -94,7 +94,7 @@
    "start": 1.4,
    "ende": 4.391,
    "wer": "Zf",
-   "text": "Geisel in der Hütte. Drei Täter.",
+   "text": "Geisel in der Hütte. Vier Täter.",
    "funk": true,
    "lautsprecher": false,
    "datei": "02_anflug_Zf.mp3",
@@ -103,20 +103,20 @@
   {
    "id": "03_anflug_1f",
    "szene": "anflug",
-   "start": 5.6,
-   "ende": 8.174,
+   "start": 9.0,
+   "ende": 11.526,
    "wer": "1f",
-   "text": "Zu viel Wind zum Landen. Wir springen!",
+   "text": "Kein Platz zum Landen. Wir seilen ab!",
    "funk": true,
    "lautsprecher": false,
-   "datei": "03_anflug_1f.mp3",
+   "datei": "seilen_1f.mp3",
    "verschoben": 0.0
   },
   {
-   "id": "04_wand_7v",
-   "szene": "wand",
-   "start": 6.2,
-   "ende": 7.78,
+   "id": "04_abseilen_7v",
+   "szene": "abseilen",
+   "start": 4.5,
+   "ende": 6.08,
    "wer": "7v",
    "text": "Ich hasse Höhe.",
    "funk": false,
@@ -125,22 +125,22 @@
    "verschoben": 0.0
   },
   {
-   "id": "05_wand_6",
-   "szene": "wand",
-   "start": 8.2,
-   "ende": 10.294,
+   "id": "05_abseilen_6",
+   "szene": "abseilen",
+   "start": 6.4,
+   "ende": 8.494,
    "wer": "6",
    "text": "Nicht runterschauen, Sieben.",
    "funk": false,
    "lautsprecher": false,
-   "datei": "05_wand_6.mp3",
+   "datei": "05_abseilen_6.mp3",
    "verschoben": 0.0
   },
   {
    "id": "06_huette_1",
    "szene": "huette",
-   "start": 9.94,
-   "ende": 11.24,
+   "start": 9.3,
+   "ende": 10.6,
    "wer": "1",
    "text": "ZUGRIFF!",
    "funk": false,
@@ -185,5 +185,5 @@
    "verschoben": 0.0
   }
  ],
- "dauer": 65.348
+ "dauer": 62.45
 }
