@@ -39,7 +39,7 @@ export class Pov {
   }
 
   // modus: 'gewehr' | 'tasse' | 'frei' | 'aus'
-  setze({ modus = 'gewehr', t = 0, lauf = 0, zielen = 0, senken = 0, lampe = 0, ruck = 0, zielL = null, zielR = null, schellen = false }) {
+  setze({ modus = 'gewehr', t = 0, lauf = 0, zielen = 0, senken = 0, lampe = 0, ruck = 0, zielL = null, zielR = null, schellen = false, geste = 0 }) {
     this.g.visible = modus !== 'aus';
     this.gewehr.visible = modus === 'gewehr';
     this.tasse.visible = modus === 'tasse';
@@ -56,7 +56,11 @@ export class Pov {
       this.gewehr.rotation.set(.08 * (1 - z) + ruck * .2, Math.PI + .06 * (1 - z), .05);
       this.gewehr.updateMatrixWorld(true);
       ik(this.arme.R.sh, this.arme.R.el, this.arme.R.ha, weltPos(this.gewehr.griff), pol(.6, -.6, .2));
-      ik(this.arme.L.sh, this.arme.L.el, this.arme.L.ha, weltPos(this.gewehr.vorne), pol(-.5, -.7, .1));
+      // geste > 0: linke Hand löst sich vom Handschutz und gestikuliert beim Reden (man sieht: ICH rede)
+      const zielHand = weltPos(this.gewehr.vorne);
+      if (geste > 0) zielHand.lerp(this.kam.localToWorld(new THREE.Vector3(-.2 + .04 * Math.sin(t * 7), -.2 + .05 * Math.sin(t * 9.3), -.42)), geste);
+      ik(this.arme.L.sh, this.arme.L.el, this.arme.L.ha, zielHand, pol(-.5, -.7, .1));
+      this.fingerSpreiz = geste;
     } else if (modus === 'tasse') {
       this.tasse.position.set(.15, -.25 + .01 * Math.sin(t * 1.3), -.45);
       this.tasse.updateMatrixWorld(true);

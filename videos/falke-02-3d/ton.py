@@ -167,16 +167,24 @@ for s in TL["szenen"]:
     tr = s.get("tr")
     if s["n"] == "hq":
         add(s["start"] + s["d"] - 1.6, .25 * np.sign(np.sin(2 * np.pi * 700 * ts(1.6))) * (np.sin(2 * np.pi * 4 * ts(1.6)) > 0))   # Alarm
-    if tr in ("whip", "zoom", "mix", "glitch"):
+    if tr in ("whip", "zoom", "mix", "glitch", "weiss"):
         add(s["start"], whoosh(.45), .3)
     elif tr == "uhr":
         for k in range(12):
             add(s["start"] + k * .08, klick(2000), .25)
-add(.3, boom(.8), .9)
-add(1.05, metall(260, .9), .7)
-add(2.4, whoosh(.6), .45)
-t = ts(.8)
-add(3.2, .12 * np.sign(np.sin(2 * np.pi * np.cumsum(500 + 2500 * (t * 10 % 1)) / SR)))
+# Hook: Seil-Rutschen im Rotorlärm → Blitz-Schnitt → Sprengung → Freeze → Zurückspulen
+add(0, rotor(1.4, f=4.6, laut=.9))
+add(0, .55 * band(1.3, 1200, 6500) * np.linspace(.5, 1, int(1.3 * SR)) ** 2)
+add(1.25, whoosh(.3), .6)
+add(1.45, boom(1.0), 1.0)
+add(2.2, metall(260, .9), .7)
+add(2.9, whoosh(.6), .45)
+t = ts(.9)
+add(3.7, .12 * np.sign(np.sin(2 * np.pi * np.cumsum(500 + 2500 * (t * 10 % 1)) / SR)))
+# Countdown: Herzschlag + Atmen werden lauter
+for k in range(int((spreng - t0 - 2.0) / .62)):
+    tt = t0 + 2.0 + k * .62
+    add(tt, thud(.55), .5 + .4 * k / 6); add(tt + .16, thud(.35), .35 + .3 * k / 6)
 for z in TL["dialog"]:
     if z["funk"]:
         add(st(z["szene"]) + z["start"] - .15, funk(), .55)
@@ -185,8 +193,10 @@ for z in TL["dialog"]:
 DM, BB, FD, CD = [("D", 3), ("F", 3), ("A", 3)], [("A#", 2), ("D", 3), ("F", 3)], [("F", 3), ("A", 3), ("C", 4)], [("C", 3), ("E", 3), ("G", 3)]
 GM, DUNKEL = [("G", 2), ("A#", 2), ("D", 3)], [("D", 3), ("F", 3), ("G#", 3)]
 M = Musik(DAUER)
-M.pad(0, DM, 2.4, .35, cutoff=600, attack=.05)
-M.impact(.3, .9)
+M.riser(0, 1.4, .8)
+M.impact(1.45, 1.1)
+M.pad(1.45, DM, 1.5, .35, cutoff=600, attack=.05)
+M.groove(0, 1.4, 140, 3, [DM, CD], ["D", "C"], cutoff_bass=700)
 h0, hd = st("hq"), SZ["hq"]["d"]
 M.pad(h0, DM, hd / 2, .28, cutoff=900); M.pad(h0 + hd / 2, BB, hd / 2 + .4, .28, cutoff=900)
 for k in range(int(hd / .5)):
@@ -221,7 +231,7 @@ for s_ in TL["szenen"][1:]:
 M.arp(e + .2, [("D", 5), ("F", 5), ("A", 5), ("D", 6)], .12, 12, .15)
 for z_ in (.7, 1.1):
     add(e + z_ + .05, .3 * np.sin(2 * np.pi * 1200 * ts(.15)) * np.exp(-18 * ts(.15)))   # Like-/Folgen-Pop
-a = a / max(1e-9, np.max(np.abs(a))) * .5 + M.fertig(1.0) * 1.25
+a = a / max(1e-9, np.max(np.abs(a))) * .45 + M.fertig(1.0) * 1.55
 
 
 # ---------------------------------------------------------------- Stimmen

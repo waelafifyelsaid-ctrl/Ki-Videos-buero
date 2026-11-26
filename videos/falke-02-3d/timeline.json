@@ -49,7 +49,7 @@
  "szenen": [
   {
    "n": "hook",
-   "d": 4.0
+   "d": 4.6
   },
   {
    "n": "hq",
@@ -62,25 +62,25 @@
    "n": "dach",
    "d": 9.0,
    "tr": "whip",
-   "trd": 0.45
+   "trd": 0.4
   },
   {
    "n": "flug",
    "d": 9.5,
-   "tr": "mix",
-   "trd": 0.5
+   "tr": "weiss",
+   "trd": 0.6
   },
   {
    "n": "abseilen",
    "d": 9.0,
-   "tr": "glitch",
-   "trd": 0.45
+   "tr": "zoom",
+   "trd": 0.5
   },
   {
    "n": "tuer",
    "d": 10.4,
-   "tr": "mix",
-   "trd": 0.5,
+   "tr": "glitch",
+   "trd": 0.45,
    "sync": {
     "zeile": "Drei",
     "ereignis": 4.9,
@@ -100,14 +100,14 @@
   {
    "n": "twist",
    "d": 10.5,
-   "tr": "zoom",
-   "trd": 0.6
+   "tr": "mix",
+   "trd": 0.7
   }
  ],
  "dialog": [
   [
    "hook",
-   0.7,
+   2.95,
    "6",
    "Tja. Die Tür war mal zu."
   ],

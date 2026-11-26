@@ -82,3 +82,9 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Kamera im Jet immer im Gang lassen (x ≈ 0…0,1); für den Blick auf die Festnahme den Kollegen seitlich in den Beinraum knien lassen.
 - Neue Zeile für 6 mit v3 klang höher (147 Hz statt ~105 Hz) → mit `NUR_V2=1 python3 stimmen_erzeugen.py` neu: 111 Hz, passt.
 - Mehr Leben im Bild: Einweiser mit Warnweste + Leuchtkellen, Crew-Chief an der Heli-Tür, Flughafenfeuerwehr mit Blaulicht, Seilhaufen am Boden.
+- Gespräche lesbar machen: `schaueAn()` dreht den Kopf (im Halsraum gerechnet) zum Angesprochenen, `nicken()` beim Reden,
+  Zuhörer schauen zum Sprecher, Funk = Hand ans Headset, eigene Zeilen (6) = linke POV-Hand gestikuliert (`pov.setze({geste})`),
+  Kamera schwenkt kurz zum Sprecher. Dazu Bodycam-Mikropegel im HUD (voll bei 6, Funk-Lampe bei Funksprüchen).
+- Laufwege vor dem Rendern numerisch prüfen (Abstand ≥ 1,2 m zwischen allen Figuren und der Kamera) – Skript-Idee: pfad() abtasten.
+- Countdown spektakulär: Kamera weiter weg (Tür + Rumpf + Heli mit Suchscheinwerfer-Kegel + Morgensonne im Bild), Push-in, Herzschlag.
+- Hook: 1,3 s POV-Abseilen auf den Jet → Weißblitz-Schnitt → Sprengung → Freeze → Zurückspulen.

@@ -49,7 +49,7 @@
  "szenen": [
   {
    "n": "hook",
-   "d": 4.0,
+   "d": 5.611,
    "verzug": 0.0,
    "start": 0.0
   },
@@ -60,37 +60,37 @@
    "trd": 1.0,
    "karte": "2 STUNDEN VORHER",
    "verzug": 0.0,
-   "start": 4.0
+   "start": 5.611
   },
   {
    "n": "dach",
    "d": 9.414,
    "tr": "whip",
-   "trd": 0.45,
+   "trd": 0.4,
    "verzug": 0.0,
-   "start": 13.263
+   "start": 14.874
   },
   {
    "n": "flug",
    "d": 12.094,
-   "tr": "mix",
-   "trd": 0.5,
+   "tr": "weiss",
+   "trd": 0.6,
    "verzug": 0.0,
-   "start": 22.677
+   "start": 24.288
   },
   {
    "n": "abseilen",
    "d": 9.0,
-   "tr": "glitch",
-   "trd": 0.45,
+   "tr": "zoom",
+   "trd": 0.5,
    "verzug": 0.0,
-   "start": 34.771
+   "start": 36.382
   },
   {
    "n": "tuer",
    "d": 10.915,
-   "tr": "mix",
-   "trd": 0.5,
+   "tr": "glitch",
+   "trd": 0.45,
    "sync": {
     "zeile": "Drei",
     "ereignis": 4.9,
@@ -108,29 +108,29 @@
     3.63,
     4.75
    ],
-   "start": 43.771
+   "start": 45.382
   },
   {
    "n": "kabine",
    "d": 16.059,
    "verzug": 0.0,
-   "start": 54.686
+   "start": 56.297
   },
   {
    "n": "twist",
    "d": 12.434,
-   "tr": "zoom",
-   "trd": 0.6,
+   "tr": "mix",
+   "trd": 0.7,
    "verzug": 0.0,
-   "start": 70.745
+   "start": 72.356
   }
  ],
  "dialog": [
   {
    "id": "01_hook_6",
    "szene": "hook",
-   "start": 0.7,
-   "ende": 3.011,
+   "start": 2.95,
+   "ende": 5.261,
    "wer": "6",
    "text": "Tja. Die Tür war mal zu.",
    "funk": false,
@@ -439,5 +439,5 @@
    "verschoben": 0.57
   }
  ],
- "dauer": 83.179
+ "dauer": 84.79
 }

@@ -5,6 +5,10 @@ canvas{position:absolute;left:0;top:0;z-index:0}
 .ov{position:absolute;pointer-events:none;transition:none;z-index:10}
 #rec{left:64px;top:300px;width:22px;height:22px;border-radius:50%;background:#ff2a3d;box-shadow:0 0 12px #ff2a3d}
 #hud{left:100px;top:292px;color:#fff;font-size:30px;font-weight:bold;text-shadow:0 2px 6px #000;letter-spacing:1px}
+#mic{left:100px;top:372px;display:flex;align-items:flex-end;gap:5px;color:#fff;font:bold 20px 'DejaVu Sans',sans-serif;text-shadow:0 2px 6px #000}
+#mic i{display:block;width:9px;height:6px;background:#80ed99;border-radius:2px;box-shadow:0 0 4px #000}
+#mic b{margin-left:10px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,.35);opacity:.35}
+#mic b.an{opacity:1;background:#2d6a4f}
 #hud small{display:block;font-size:20px;opacity:.7;font-weight:normal;margin-top:4px}
 #sub{left:60px;width:800px;top:1330px;opacity:0;background:rgba(6,10,18,.62);border-radius:22px;padding:22px 30px 26px;box-sizing:border-box;border-left:8px solid rgba(255,255,255,.35)}
 #wer{font-size:30px;font-weight:bold;letter-spacing:2px;margin-bottom:8px}
@@ -35,6 +39,7 @@ canvas{position:absolute;left:0;top:0;z-index:0}
 </style></head><body>
 <script type="importmap">{"imports":{"three":"/three/build/three.module.js"}}</script>
 <div id="rec" class="ov"></div>
+<div id="mic" class="ov"><span>MIC</span><i></i><i></i><i></i><i></i><i></i><i></i><b>FUNK</b></div>
 <div id="hud" class="ov">REC · FALKE 6 · <span id="uhr">00:00:00</span><small>BODYCAM</small></div>
 <div id="titel" class="ov">EINSATZ 02</div>
 <div id="karte" class="ov"><b></b><span></span></div>
