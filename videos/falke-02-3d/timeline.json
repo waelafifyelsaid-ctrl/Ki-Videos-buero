@@ -60,15 +60,21 @@
   },
   {
    "n": "dach",
-   "d": 11.6,
+   "d": 10.6,
    "tr": "mix",
    "trd": 0.8
   },
   {
-   "n": "anflug",
-   "d": 22.0,
+   "n": "flug",
+   "d": 6.4,
    "tr": "weiss",
    "trd": 0.8
+  },
+  {
+   "n": "anflug",
+   "d": 19.2,
+   "tr": "weiss",
+   "trd": 0.9
   },
   {
    "n": "tuer",
@@ -123,49 +129,49 @@
   ],
   [
    "dach",
-   7.3,
+   6.9,
    "2",
    "Gibt's im Hubschrauber Frühstück?"
   ],
   [
    "dach",
-   9.6,
+   9.05,
    "4",
    "Nein."
   ],
   [
-   "anflug",
+   "flug",
    0.6,
    "7v",
    "Ich hasse Höhe."
   ],
   [
-   "anflug",
+   "flug",
    2.3,
    "6",
    "Sieben, du hasst ALLES."
   ],
   [
-   "anflug",
-   4.8,
+   "flug",
+   4.6,
    "7v",
    "Dich zum Beispiel."
   ],
   [
    "anflug",
-   6.7,
+   1.6,
    "4f",
    "Jet rollt! Er will zur Startbahn!"
   ],
   [
    "anflug",
-   8.9,
+   5.0,
    "1f",
    "Kein Platz zum Landen. Wir seilen ab!"
   ],
   [
    "anflug",
-   13.4,
+   11.4,
    "1",
    "Seil frei!"
   ],
@@ -254,5 +260,5 @@
    "Gibt's da Frühstück?"
   ]
  ],
- "ende": 3.0
+ "ende": 2.6
 }

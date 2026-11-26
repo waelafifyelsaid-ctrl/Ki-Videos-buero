@@ -104,3 +104,9 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Schild vor die Brust hängen + linke Hand per IK an den Griff – an den Unterarm gehängt dreht es sich falsch.
 - Rotorblätter ohne Schattenwurf (sonst Flackern in der Kabine), Blitzer-Punktlicht aus.
 - Kommentar am Zeilenende kann beim späteren Ersetzen Code verschlucken – immer `node --check` nach Änderungen.
+- Helm-Rand muss ÜBER den Augenbrauen sitzen (Kugelabschnitt ~0,44π, höher gesetzt) – sonst sieht man keine Augen.
+- Seil als Kind des Helis immer in Weltkoordinaten senkrecht ausrichten (inverse Heli-Drehung), sonst kippt es bei Nick/Roll um 30 cm weg und die Hände greifen ins Leere.
+- In der Kabine (Dach 1,6 m über Boden): drin nur tief geduckt bewegen, an der Tür auf einem Knie knien (`KNIEPOSE`) – sonst Kopf im Dach.
+- Unter der hochgezogenen Maske Nase/Mund ausblenden, sonst sticht die Nase durch den Stoff.
+- Deckenteile nie bündig mit der Deckenplatte (Z-Fighting = Flackern oben).
+- Vom Flug aus sieht man weit: riesige Grundfläche bis zum Horizont + Nebelweite abhängig von der Flughöhe.

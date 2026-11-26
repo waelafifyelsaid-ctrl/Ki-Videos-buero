@@ -64,19 +64,27 @@
   },
   {
    "n": "dach",
-   "d": 11.714,
+   "d": 11.314,
    "tr": "mix",
    "trd": 0.8,
    "verzug": 0.0,
    "start": 14.324
   },
   {
-   "n": "anflug",
-   "d": 22.0,
+   "n": "flug",
+   "d": 6.878,
    "tr": "weiss",
    "trd": 0.8,
    "verzug": 0.0,
-   "start": 26.038
+   "start": 25.638
+  },
+  {
+   "n": "anflug",
+   "d": 19.2,
+   "tr": "weiss",
+   "trd": 0.9,
+   "verzug": 0.0,
+   "start": 32.516
   },
   {
    "n": "tuer",
@@ -100,19 +108,19 @@
     3.63,
     4.75
    ],
-   "start": 48.038
+   "start": 51.716
   },
   {
    "n": "kabine",
    "d": 16.059,
    "verzug": 0.0,
-   "start": 58.953
+   "start": 62.631
   },
   {
    "n": "twist",
-   "d": 12.434,
+   "d": 12.034,
    "verzug": 0.0,
-   "start": 75.012
+   "start": 78.69
   }
  ],
  "dialog": [
@@ -167,8 +175,8 @@
   {
    "id": "05_dach_2",
    "szene": "dach",
-   "start": 7.3,
-   "ende": 9.634,
+   "start": 6.9,
+   "ende": 9.234,
    "wer": "2",
    "text": "Gibt's im Hubschrauber Frühstück?",
    "funk": false,
@@ -179,18 +187,18 @@
   {
    "id": "06_dach_4",
    "szene": "dach",
-   "start": 9.784,
-   "ende": 11.364,
+   "start": 9.384,
+   "ende": 10.964,
    "wer": "4",
    "text": "Nein.",
    "funk": false,
    "lautsprecher": false,
    "datei": "05_hq_4.mp3",
-   "verschoben": 0.18
+   "verschoben": 0.33
   },
   {
-   "id": "07_anflug_7v",
-   "szene": "anflug",
+   "id": "07_flug_7v",
+   "szene": "flug",
    "start": 0.6,
    "ende": 2.18,
    "wer": "7v",
@@ -201,8 +209,8 @@
    "verschoben": 0.0
   },
   {
-   "id": "08_anflug_6",
-   "szene": "anflug",
+   "id": "08_flug_6",
+   "szene": "flug",
    "start": 2.33,
    "ende": 4.615,
    "wer": "6",
@@ -213,46 +221,46 @@
    "verschoben": 0.03
   },
   {
-   "id": "09_anflug_7v",
-   "szene": "anflug",
-   "start": 4.8,
-   "ende": 6.563,
+   "id": "09_flug_7v",
+   "szene": "flug",
+   "start": 4.765,
+   "ende": 6.528,
    "wer": "7v",
    "text": "Dich zum Beispiel.",
    "funk": false,
    "lautsprecher": false,
    "datei": "08_heli_7v.mp3",
-   "verschoben": 0.0
+   "verschoben": 0.17
   },
   {
    "id": "10_anflug_4f",
    "szene": "anflug",
-   "start": 6.713,
-   "ende": 9.103,
+   "start": 1.6,
+   "ende": 3.99,
    "wer": "4f",
    "text": "Jet rollt! Er will zur Startbahn!",
    "funk": true,
    "lautsprecher": false,
    "datei": "09_heli_4f.mp3",
-   "verschoben": 0.01
+   "verschoben": 0.0
   },
   {
    "id": "11_anflug_1f",
    "szene": "anflug",
-   "start": 9.253,
-   "ende": 11.779,
+   "start": 5.0,
+   "ende": 7.526,
    "wer": "1f",
    "text": "Kein Platz zum Landen. Wir seilen ab!",
    "funk": true,
    "lautsprecher": false,
    "datei": "11_flug_1f.mp3",
-   "verschoben": 0.35
+   "verschoben": 0.0
   },
   {
    "id": "12_anflug_1",
    "szene": "anflug",
-   "start": 13.4,
-   "ende": 14.7,
+   "start": 11.4,
+   "ende": 12.7,
    "wer": "1",
    "text": "Seil frei!",
    "funk": false,
@@ -429,5 +437,5 @@
    "verschoben": 0.57
   }
  ],
- "dauer": 87.446
+ "dauer": 90.724
 }

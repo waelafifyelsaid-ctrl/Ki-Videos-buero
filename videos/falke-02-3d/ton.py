@@ -108,7 +108,7 @@ add(st("hq") + 1.0, .15 * band(1.2, 400, 3000) * np.exp(-1.5 * ts(1.2)))        
 d0, dd = st("dach"), SZ["dach"]["d"]
 add(d0 + .15, metall(300, .6), .5); add(d0 + .2, thud(.6))
 hoch = np.clip(np.linspace(.55, 1.15, int(dd * SR)), 0, 1.2)
-add(d0, rotor(dd, f=4.2, laut=.75) * hoch)
+add(d0, rotor(dd, f=4.2, laut=.95) * hoch)
 add(d0, .3 * band(dd, 150, 2200) * np.linspace(.6, 1, int(dd * SR)))                    # Abwind
 for k in range(int(3.2 / .28)):
     add(d0 + .45 + k * .28, schritt(), .4)
@@ -116,22 +116,25 @@ add(d0 + 3.9, schritt(True), .5); add(d0 + 4.3, thud(.4))
 add(d0 + 4.9, turbine(dd - 4.9, 500, 900, .25))
 # Flug: Rotor + Wind an der offenen Tür
 # Anflug ohne Schnitt (0–13 s Flug, danach Schweben + Abseilen ab AB0)
-AB0 = 13.0
+AB0 = 11.0
+# Flug-Gespräch: Rotor + Wind
+l0, ld = st("flug"), SZ["flug"]["d"]
+add(l0, rotor(ld, f=4.6, laut=.8)); add(l0, .26 * band(ld, 180, 2400))
 f0, fd = st("anflug"), SZ["anflug"]["d"]
 a0, ad = f0 + AB0, fd - AB0
-add(f0, rotor(fd + 2, f=4.5, laut=.62) * np.concatenate([np.ones(int((fd - 2) * SR)), np.linspace(1, .3, int(4 * SR))]))
+add(f0, rotor(fd + 2, f=4.5, laut=.9) * np.concatenate([np.ones(int((fd - 2) * SR)), np.linspace(1, .3, int(4 * SR))]))
 add(f0, .22 * band(fd, 180, 2400))                                                    # Fahrtwind an der offenen Tür
 # Jet: Triebwerke laufen hoch (ab 4 s), rollt, Vollbremsung vor den Streifenwagen (12,75 s), Reifen quietschen
-add(f0 + 3.0, turbine(fd - 3.0, 250, 900, .38) * np.concatenate([np.linspace(.1, 1, int(3 * SR)), np.ones(int((fd - 6.0) * SR)), np.linspace(1, .5, int(3 * SR))])[:int((fd - 3.0) * SR)])
-add(f0 + 12.75, .3 * band(2.0, 2500, 7500) * np.exp(-.9 * ts(2.0)))
+add(f0 + .3, turbine(fd - .3, 250, 900, .45) * np.concatenate([np.linspace(.1, 1, int(3 * SR)), np.ones(int((fd - 6.3) * SR)), np.linspace(1, .5, int(3 * SR))])[:int((fd - .3) * SR)])
+add(f0 + 9.55, .3 * band(2.0, 2500, 7500) * np.exp(-.9 * ts(2.0)))
 # Polizeisirenen (Zweiklang) nähern sich ab 8 s
 def sirene(d, laut=1.0):
     t = ts(d); f = np.where((t * 1.4) % 1 < .5, 466, 622)
     return laut * np.sign(np.sin(2 * np.pi * np.cumsum(f) / SR)) * .5
-for k, t0 in enumerate((8.0, 8.4, 8.9)):
+for k, t0 in enumerate((3.6, 4.0, 4.5)):
     d = fd - t0 + 2
-    add(f0 + t0, lowpass(sirene(d, .09), 3500) * np.concatenate([np.linspace(.2, 1, int(3 * SR)), np.ones(int((d - 3) * SR))])[:int(d * SR)])
-for t0 in (11.2, 11.5, 11.9):
+    add(f0 + t0, lowpass(sirene(d, .17), 3800) * np.concatenate([np.linspace(.2, 1, int(3 * SR)), np.ones(int((d - 3) * SR))])[:int(d * SR)])
+for t0 in (7.0, 7.3, 7.7):
     add(f0 + t0, .25 * band(.6, 300, 2000) * np.exp(-4 * ts(.6)))                    # Bremsen der Autos
     add(f0 + t0 + .3, metall(500, .3), .3)                                                  # Autotür
 # Abseilen
@@ -217,8 +220,10 @@ M.riser(h0 + hd - 2.0, 2.0, .45)
 M.groove(d0 + .2, d0 + dd, 124, 2, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=550)
 M.impact(d0 + .2, .7)
 M.riser(d0 + 3.0, 1.8, .45); M.impact(d0 + 4.9, .7)
-M.groove(f0, f0 + 8.0, 118, 2, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=500)
-M.groove(f0 + 8.0, a0, 128, 3, [DM, CD, BB, CD], ["D", "C", "A#", "C"], cutoff_bass=600)
+M.groove(l0, l0 + ld, 118, 2, [DM, BB, GM, CD], ["D", "A#", "G", "C"], cutoff_bass=500)
+M.impact(f0, .8)
+M.groove(f0, a0, 132, 3, [DM, CD, BB, CD], ["D", "C", "A#", "C"], cutoff_bass=650)
+M.impact(f0 + 7.0, .7); M.impact(f0 + 11.0, .8); M.stab(f0 + 7.0, DM, .5, d=.5)
 M.riser(a0 - 2.4, 2.4, .65)
 M.impact(a0, 1.0)
 M.pad(a0, [("D", 2), ("A", 2), ("D#", 3)], 3.4, .32, cutoff=700)
@@ -244,7 +249,7 @@ for s_ in TL["szenen"][1:]:
 M.arp(e + .2, [("D", 5), ("F", 5), ("A", 5), ("D", 6)], .12, 12, .15)
 for z_ in (.7, 1.1):
     add(e + z_ + .05, .3 * np.sin(2 * np.pi * 1200 * ts(.15)) * np.exp(-18 * ts(.15)))   # Like-/Folgen-Pop
-a = a / max(1e-9, np.max(np.abs(a))) * .45 + M.fertig(1.0) * 1.55
+a = a / max(1e-9, np.max(np.abs(a))) * .55 + M.fertig(1.0) * 1.7
 
 
 # ---------------------------------------------------------------- Stimmen

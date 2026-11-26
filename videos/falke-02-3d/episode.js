@@ -63,7 +63,7 @@ function sitz(f, x, z, yaw, hoehe, extra = {}) {
 }
 const SITZ_H = HELI_BODEN + .48;
 // Sitzplätze im Hubschrauber (lokal): 6 hinten links an der Tür, 1+4 hinten rechts, 2+7 gegenüber (Blick zu uns)
-const PLATZ = { 6: [-.72, 1.42, Math.PI], 1: [.24, 1.42, Math.PI], 4: [.72, 1.42, Math.PI], 2: [-.5, -.82, 0], 7: [.5, -.82, 0] };
+const PLATZ = { 6: [-.72, 1.42, Math.PI], 4: [.24, 1.42, Math.PI], 1: [.72, 1.42, Math.PI], 2: [-.5, -.82, 0], 7: [.5, -.82, 0] };   // 4 direkt neben mir
 function heliTeam(h, tm, n, lt, extra = {}, nur = [1, 2, 4, 7]) {
   for (const nr of nur) {
     const f = tm[nr]; if (!f.root.visible) continue;
@@ -72,6 +72,7 @@ function heliTeam(h, tm, n, lt, extra = {}, nur = [1, 2, 4, 7]) {
     if (nr === 7) f.ohneGewehr(); else f.haltGewehr('sitz');
   }
 }
+const KNIEPOSE = { beinL: [.15, 2.35], beinR: [1.55, 1.65], rumpf: [.3, 0, 0], kopf: [-.1, 0, 0] };
 const SITZPOSE = { beinL: [1.5, 1.55], beinR: [1.42, 1.5], rumpf: [.08, 0, 0] };
 function mischen(a, b, k) {   // zwei Posen weich ineinander überblenden
   const o = {}; for (const key of new Set([...Object.keys(a), ...Object.keys(b)])) {
@@ -90,16 +91,16 @@ function steigtEin(h, f, nr, lt, lauf, tAn, tSitz) {
   }
   if (lt < tAn + .5) {
     const k = easeInOut((lt - tAn) / .5), q = aussen.clone().lerp(innen, k);
-    f.pose(mischen({ ...hockPose(.3), beinL: [1.3, 1.5], beinR: [.2, .4] }, hockPose(.5), k)); f.platziere(q.x, q.z, Math.PI / 2, { boden: B * smooth(0, .6, k) }); f.haltGewehr('tief'); return;
+    f.pose(mischen({ ...hockPose(.3), beinL: [1.3, 1.5], beinR: [.2, .4], rumpf: [.6, 0, 0] }, { ...hockPose(.8), rumpf: [.65, 0, 0] }, k)); f.platziere(q.x, q.z, Math.PI / 2, { boden: B * smooth(0, .6, k) }); f.haltGewehr('tief'); return;
   }
   if (lt < tSitz) {
     const p = pfad([[tAn + .5, innen.x, innen.z], [tSitz, sx, vz]], lt);
-    f.pose({ ...gehPose(p.dist / .5 * Math.PI, { hocke: .55, arme: false }), kopf: [.25, 0, 0] }); f.platziere(p.x, p.z, richtung(p.vx, p.vz, Math.PI / 2), { boden: B }); f.haltGewehr('tief'); return;
+    f.pose({ ...gehPose(p.dist / .5 * Math.PI, { hocke: .85, arme: false }), rumpf: [.65, 0, 0], kopf: [-.3, 0, 0] });   // tief geduckt unter dem Kabinendach f.platziere(p.x, p.z, richtung(p.vx, p.vz, Math.PI / 2), { boden: B }); f.haltGewehr('tief'); return;
   }
   const k = easeInOut((lt - tSitz) / .75);
   const yaw0 = richtung(sx - innen.x, vz - innen.z, Math.PI / 2);
   let dy = syaw - yaw0; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
-  f.pose(mischen(hockPose(.5), SITZPOSE, k)); f.platziere(lerp(sx, sx, k), lerp(vz, sz, k), yaw0 + dy * smooth(0, .6, k), { boden: B });
+  f.pose(mischen({ ...hockPose(.8), rumpf: [.65, 0, 0] }, SITZPOSE, k)); f.platziere(lerp(sx, sx, k), lerp(vz, sz, k), yaw0 + dy * smooth(0, .6, k), { boden: B });
   const ySitz = SITZ_H - .98 * f.root.scale.x + .04; f.root.position.y = lerp(f.root.position.y, ySitz, k); f.root.updateMatrixWorld(true);
   f.haltGewehr(k < .7 ? 'tief' : 'sitz');
 }
@@ -244,7 +245,7 @@ function s_dach(lt, t) {
     const zu2 = smooth(z2.start - .3, z2.start + .2, lt) * (1 - smooth(z4.start - .2, z4.start + .2, lt));
     const zu4 = smooth(z4.start - .2, z4.start + .2, lt);
     let zl = V3(-3, .6 - .35 * ab, -2.2);
-    zl.lerp(V3(-.5, 1.5, -.82), zu2).lerp(V3(.72, 1.5, .9), zu4 * .8);
+    zl.lerp(h.g.worldToLocal(kopfW(sitzer[2])), zu2).lerp(h.g.worldToLocal(kopfW(sitzer[4])), zu4);   // Blick genau in die Gesichter (nicht auf den Boden)
     pos = sitzW.clone().add(wackel(t, .006 + .01 * ab)); ziel = h.g.localToWorld(zl);
   }
   schau(k, pos, ziel, lt > 5.6 ? h.g.rotation.z * .6 : 0);
@@ -254,7 +255,7 @@ function s_dach(lt, t) {
 
 // ======================================================================= WELT 3: Flug (Innenraum, Tür offen, Landschaft unten)
 const FLUG = (() => {
-  const s = new THREE.Scene(); s.background = new THREE.Color(0xb9c3d0); s.fog = new THREE.Fog(0xb9c3d0, 260, 1700);
+  const s = new THREE.Scene(); s.background = new THREE.Color(0xb9c3d0); s.fog = new THREE.Fog(0xb9c3d0, 220, 950);   // Kachel-Ränder verschwinden im Dunst
   s.add(new THREE.HemisphereLight(0xe8eefc, 0x40444c, 1.3));
   const sonne = new THREE.DirectionalLight(0xffd2a6, 2.0); sonne.position.set(-6, 3, 1); s.add(sonne); s.add(sonne.target);
   const h = heliModell(); s.add(h.g); h.g.rotation.order = 'YXZ';
@@ -293,43 +294,23 @@ const FLUG = (() => {
   return { s, h, k, pov, t, feld, sonne, wolken, land, KACHEL };
 })();
 function s_flug(lt, t) {
-  const { h, k, pov, t: tm, feld, sonne, wolken } = FLUG;
-  const d = SZ('flug').d;
+  const { h, k, pov, t: tm, sonne } = FLUG;
   FLUG.land.position.x = ((t * 48) % FLUG.KACHEL);   // wir fliegen nach −x (Nase), der Boden zieht nach +x
   for (const w of FLUG.wolken) { const u = w.userData; w.position.set(u.x, u.y, ((u.z - t * 60) % 400 + 400) % 400 - 200); w.scale.set(u.s, u.s * .5, 1); }
-  const kurve = smooth(d - 3.2, d - .4, lt);
-  h.g.position.set(0, 0, 0); h.g.rotation.set(-.08 + .02 * Math.sin(t * 1.7), Math.PI / 2, -.03 * Math.sin(t * .9) - .22 * kurve);
+  h.g.position.set(0, 0, 0); h.g.rotation.set(-.08 + .02 * Math.sin(t * 1.7), Math.PI / 2, -.03 * Math.sin(t * .9));
   h.g.updateMatrixWorld(true);
-  heliUpdate(h, t, { kurve });
-  sonne.intensity = 1.7 + .4 * (Math.sin(t * 2 * Math.PI * 4.6) > .6 ? -1 : 0);
-  const z7a = L('flug', 'Ich hasse'), z6 = L('flug', 'Sieben'), z7b = L('flug', 'Dich'), z4 = L('flug', 'Jet'), z1 = L('flug', 'Kein');
-  const r7 = redet('flug', lt, '7');
-  heliTeam(h, tm, 'flug', lt, {
-    7: { kopf: [r7 ? -.05 : .35, r7 ? .25 : -.5, 0], armL: [2.9, .1], ellL: .3, armR: lt > z7b.start ? [1.2, .2] : [.4, .1], ellR: 1.2 },
-    4: { kopf: [.1, lt > z4.start - .2 ? .5 : .2, 0], armL: lt > z4.start && lt < z4.ende ? [1.9, .2, .3] : [0, .1], ellL: 1.5 },
-    1: { kopf: [0, lt > z1.start - .2 ? .6 : 0, 0], armR: lt > z1.start ? [1.6 + .3 * Math.sin(t * 5), .4] : [.3, .1], ellR: .6 },
-  });
-  const auge = h.g.localToWorld(AUGE6.clone()), k7 = kopfW(tm[7]), k4 = kopfW(tm[4]), k1 = kopfW(tm[1]);
+  heliUpdate(h, t);
+  sonne.intensity = 1.8;
+  const z6 = L('flug', 'Sieben'), z7b = L('flug', 'Dich');
+  heliTeam(h, tm, 'flug', lt, { 7: { armL: [2.9, .1], ellL: .3, armR: [.4, .1], ellR: 1.2 } });
+  const auge = h.g.localToWorld(AUGE6.clone()), k7 = kopfW(tm[7]);
   schaueAn(tm[7], lt < z6.start - .1 ? h.g.localToWorld(V3(-3, .6, -1)) : auge, 1); nicken(tm[7], 'flug', lt, '7');
   if (lt > z7b.start && lt < z7b.ende + .2) tm[7].greife('R', auge.clone().lerp(weltPos(tm[7].j.chest), .55), tm[7].lokal(-.6, .6, .4));   // zeigt auf mich
-  schaueAn(tm[2], fenster(z6, lt) + fenster(z7b, lt) > 0 ? auge : (fenster(z4, lt) > 0 ? k4 : (fenster(z1, lt) > 0 ? k1 : k7)), .8);
-  if (fenster(z4, lt, 0, .2) > 0) handAmOhr(tm[4]);
-  schaueAn(tm[4], fenster(z1, lt) > 0 ? k1 : h.g.localToWorld(V3(-3, -1, -1.5)), .7);
-  if (fenster(z1, lt, 0, .2) > 0) { handAmOhr(tm[1]); }
-  schaueAn(tm[1], fenster(z4, lt) > 0 ? k4 : h.g.localToWorld(V3(-3, -1, -1.5)), .8);
-  schaueAn(tm[7], fenster(z4, lt) > 0 ? k4 : (fenster(z1, lt) > 0 ? k1 : k7), fenster(z4, lt) + fenster(z1, lt));
-  // Kamera sitzt an der offenen Tür: Blick zu 7 (gegenüber), kurz zu 4 und 1 beim Funk, raus, nach unten in der Kurve
-  const sitzW = h.g.localToWorld(AUGE6.clone());
-  let zl = V3(.5, 1.6, -.82);
-  const raus = smooth(z4.start - .3, z4.start + .4, lt);
-  zl.lerp(V3(.72, 1.45, 1.0), .75 * smooth(z4.start - .2, z4.start + .1, lt) * (1 - smooth(z4.start + .7, z4.start + 1.0, lt)));
-  // ruhige Blickführung: 7 → (Funk) kurz zu 4 → raus auf den Horizont → (Funk) zu 1 → raus. Alles weich, nie steil nach unten.
-  const draussen = V3(-3.4, 1.15, -1.7);
-  zl.lerp(draussen, smooth(z4.start + .9, z4.start + 1.5, lt) * (1 - smooth(z1.start - .3, z1.start + .2, lt)));
-  zl.lerp(V3(.24, 1.55, .9), .65 * fenster(z1, lt, .3, .4));
-  zl.lerp(draussen, smooth(z1.ende - .2, z1.ende + .5, lt));
-  schau(k, sitzW.add(wackel(t, .01)), h.g.localToWorld(zl), h.g.rotation.z * .7);
-  pov.setze({ modus: 'gewehr', t, senken: .4, zielen: -.25, geste: 0 });
+  schaueAn(tm[2], fenster(z6, lt) + fenster(z7b, lt) > 0 ? auge : k7, .8);
+  schaueAn(tm[1], k7, .5); schaueAn(tm[4], k7, .6);
+  // Kamera sitzt an der Tür und schaut 7 an (gegenüber) – ruhig, immer auf Augenhöhe
+  schau(k, auge.clone().add(wackel(t, .008)), k7.clone().add(V3(0, -.05, 0)), h.g.rotation.z * .7);
+  pov.setze({ modus: 'gewehr', t, senken: .4, zielen: -.25 });
   return { welt: FLUG, uhr: '05:24' };
 }
 
@@ -522,6 +503,7 @@ const VF = (() => {
   Object.assign(sonne.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 90 }); s.add(sonne); s.add(sonne.target);
   s.add(bodenPlatte(700, 700, mat(0x8e9298, { r: .6, map: betonTex('#8e9298', [80, 80], 'vorfeld') }), 0, -60));
   for (let z = 20; z > -180; z -= 6) s.add(at(box(.18, .01, 3.6, mat(0xf2c14e, { e: 0x4a3a10, ei: .3 })), 0, .006, z));   // Mittellinie
+  s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), mat(0x66744a, { r: 1 })), 0, -.03, 0, -Math.PI / 2));   // Land bis zum Horizont (keine Kante von oben)
   const fa = flughafen(s);
   const jet = jetDetails(bauJet(s));
   const expl = new Explosion(s, V3(0, 0, 0), { groesse: .85, richtung: V3(1, .3, 0), seed: 9, truemmer: 28, farbe: 0xdee2e6 });
@@ -598,8 +580,8 @@ const RAMPE_X = TUER_X + .9;    // Ende der Treppe auf dem Boden
 const rampeH = x => clamp((RAMPE_X - x) / (RAMPE_X - TUER_X)) * 1.5;
 const JB = { tb: 5.0, v0: 11, ab: 5.5 };
 // Durchgehender Anflug: Flug (0–13 s) → Schweben → Abseilen (ab AB0). Jet rollt los und wird von der Polizei gestoppt.
-const AB0 = 13.0;
-const JA = { los: 4.0, z0: -80, a: 4, v: 8, tb: 12.75, ab: 4 };
+const AB0 = 11.0;
+const JA = { los: .3, z0: -80, a: 4, v: 8, tb: 9.55, ab: 4 };
 function jetAnflug(T) {
   if (T < JA.los) return JA.z0;
   const ta = JA.v / JA.a;                               // Beschleunigen auf 8 m/s
@@ -611,9 +593,9 @@ function jetAnflug(T) {
 }
 // Streifenwagen fahren rein, Polizisten steigen aus und umstellen den Jet von vorne (T = Anflug-Zeit; Infinity = Endstand)
 const AUTOS = [
-  { von: V3(75, 0, -5.5), nach: V3(0, 0, -5.5), r: Math.PI / 2 + .08, t0: 8.4, t1: 11.2 },
-  { von: V3(-75, 0, -4.2), nach: V3(-5.6, 0, -4.2), r: -Math.PI / 2 + .5, t0: 8.8, t1: 11.5 },
-  { von: V3(75, 0, -3.2), nach: V3(6.9, 0, -3.2), r: Math.PI / 2 - .45, t0: 9.2, t1: 11.9 },
+  { von: V3(75, 0, -5.5), nach: V3(0, 0, -5.5), r: Math.PI / 2 + .08, t0: 4.2, t1: 7.0 },
+  { von: V3(-75, 0, -4.2), nach: V3(-5.6, 0, -4.2), r: -Math.PI / 2 + .5, t0: 4.6, t1: 7.3 },
+  { von: V3(75, 0, -3.2), nach: V3(6.9, 0, -3.2), r: Math.PI / 2 - .45, t0: 5.0, t1: 7.7 },
 ];
 const POLIZISTEN = [[0, V3(-1.0, 0, -3.5)], [0, V3(1.6, 0, -3.6)], [1, V3(-4.4, 0, -6.7)], [2, V3(6.3, 0, -5.7)]];
 function stellePolizei(T, t) {
@@ -654,6 +636,7 @@ function tuerWinkel(d) {        // Tür klappt nach der Sprengung nach außen un
   return th;
 }
 function vfStandard(t) {
+  VF.s.fog.far = 340;
   VF.jet.cockpitTuer.rotation.y = 0;
   VF.schildAb.visible = false;
   VF.schild2.visible = true;
@@ -715,10 +698,10 @@ function s_abseilen(lt, t, ausAnflug = false) {
   wind.update(t, 1 - weg * .7, V3(fuss.x, 0, fuss.z + 1.5), 0, k);
   // Seil fällt
   const raus = easeOut(clamp((lt - .25) / .6));
-  const seil = setzeSeil(h, lerp(HH + 1.5, 0, raus), .02 * Math.sin(t * 2));
+  const seil = setzeSeil(h, lerp(HH + 1.5, 0, raus), 0);
   VF.seilHaufen.visible = raus > .98; VF.seilHaufen.position.set(seil.oben.x, 0, seil.oben.z);
   // Crew-Chief kniet an der Tür, sichert das Seil und gibt Zeichen
-  { const c = VF.crew; c.root.visible = true; c.pose({ ...hockPose(.7), armL: [1.3, .1], ellL: .7, armR: lt < 1.2 ? [2.6, .3] : [1.5, .2], ellR: .4, kopf: [.5, -.4, 0] });
+  { const c = VF.crew; c.root.visible = true; c.pose({ ...KNIEPOSE, armL: [1.3, .1], ellL: .7, armR: lt < 1.2 ? [2.6, .3] : [1.5, .2], ellR: .4, kopf: [.5, -.4, 0] });
     c.platziere(-.95, -.8, -Math.PI / 2, { boden: h.g.localToWorld(V3(-.95, HELI_BODEN, -.8)).y });
     c.greife('L', h.g.localToWorld(V3(-1.55, HELI_BODEN + 1.2, -.05)), c.lokal(.5, 1.2, .3)); }
   // Jet rollt heran, bremst, Reifenqualm
@@ -740,7 +723,7 @@ function s_abseilen(lt, t, ausAnflug = false) {
   for (const nr of [1, 4, 7]) tm[nr].root.visible = false;
   // 1 kniet im Heli hinter der Tür und gibt das Seil frei (ruft, zeigt runter)
   if (lt < 3.2) { const f = tm[1]; f.root.visible = true; const w = h.g.localToWorld(V3(-.3, 0, .05));
-    f.pose({ ...hockPose(.55), mund: redet('anflug', AB0 + lt, '1'), armR: lt < 1.9 ? [2.4 + .3 * Math.sin(t * 8), .3] : [1.2, .2], ellR: .4 });
+    f.pose({ ...KNIEPOSE, mund: redet('anflug', AB0 + lt, '1'), armR: lt < 1.9 ? [2.4 + .3 * Math.sin(t * 8), .3] : [1.2, .2], ellR: .4 });
     f.platziere(w.x, w.z, Math.PI * .75, { boden: h.g.localToWorld(V3(-.3, HELI_BODEN, .05)).y }); f.haltGewehr('tief');
     schaueAn(f, k.position, 1); nicken(f, 'anflug', AB0 + lt, '1'); }
   {
@@ -805,13 +788,13 @@ function s_abseilen(lt, t, ausAnflug = false) {
 // ---------------------------------------------------------------- Anflug (ohne Schnitt): über Felder + Dörfer → Flughafen → Polizei stoppt den Jet → Schweben → Abseilen
 function zweiAnDerTuer(h, f, kk) {   // 2 rutscht vom Sitz zur Tür und hockt sprungbereit am Seil
   const q = V3(-.5, 0, -.32).lerp(V3(-1.15, 0, -.25), kk);
-  f.pose(mischen(SITZPOSE, hockPose(.6), kk)); f.platziere(q.x, q.z, lerp(0, -Math.PI / 2, kk), { boden: h.g.localToWorld(V3(q.x, HELI_BODEN, q.z)).y }); f.ohneGewehr(); f.maskeHoch(1);
+  f.pose(mischen(SITZPOSE, KNIEPOSE, kk)); f.platziere(q.x, q.z, lerp(0, -Math.PI / 2, kk), { boden: h.g.localToWorld(V3(q.x, HELI_BODEN, q.z)).y }); f.ohneGewehr(); f.maskeHoch(1);
 }
 function heliAnflug(T, t) {                 // Position/Lage des Helis bis AB0 (danach übernimmt s_abseilen)
   const u = clamp(T / AB0), r = (1 - u) * (1 - u), ruhig = smooth(.8, 1, u);
   const h = VF.heli;
-  h.g.position.set(HELI_AB.x - 380 * r + .25 * Math.sin(t * .8) * ruhig, HELI_AB.y + 62 * r + .2 * Math.sin(t * 1.1) * ruhig, HELI_AB.z + 34 * r + .15 * Math.cos(t * .7) * ruhig);
-  const nick = -.13 * (1 - smooth(.55, .8, u)) + .14 * smooth(.62, .85, u) * (1 - smooth(.9, 1, u));   // Nase unten im Reiseflug, Abfangen vor dem Schweben
+  h.g.position.set(HELI_AB.x - 170 * r + .25 * Math.sin(t * .8) * ruhig, HELI_AB.y + 135 * r + .2 * Math.sin(t * 1.1) * ruhig, HELI_AB.z + 70 * r + .15 * Math.cos(t * .7) * ruhig);   // hoch über dem Platz → Sinkflug
+  const nick = -.2 * (1 - smooth(.55, .8, u)) + .14 * smooth(.62, .85, u) * (1 - smooth(.9, 1, u));   // Nase unten im Reiseflug, Abfangen vor dem Schweben
   h.g.rotation.set(nick + .03 * Math.sin(t * .9) * ruhig, -Math.PI / 2 - .12 * r, .04 * Math.sin(t * .6) * ruhig - .06 * (1 - u));
   h.g.updateMatrixWorld(true); heliUpdate(h, t);
 }
@@ -829,6 +812,7 @@ function s_anflug(lt, t) {
     return r;
   }
   heliAnflug(lt, t);
+  VF.s.fog.far = 340 + 5 * Math.max(0, h.g.position.y - 12);   // von oben sieht man weiter
   // Jet rollt los (Landelichter), wird von den Streifenwagen gestoppt
   const nz = jetAnflug(lt), brems = lt > JA.tb ? Math.sin(clamp((lt - JA.tb) / 2) * Math.PI) * .035 : 0;
   stelleJet(nz, brems); VF.jet.licht.forEach(l => { l.intensity = lt > JA.los - 1 ? 160 : 40; }); VF.jet.pivot.rotation.z = 0;
@@ -837,39 +821,35 @@ function s_anflug(lt, t) {
   for (const nr of [1, 2, 4, 7]) VF.t[nr].root.visible = false;
   h.seil.visible = false;
   VF.crew.root.visible = true;
-  { const c = VF.crew; c.pose({ ...hockPose(.7), armL: [1.3, .1], ellL: .7, armR: [1.0, .2], ellR: .8 }); c.platziere(-.95, -.8, -Math.PI / 2, { boden: h.g.localToWorld(V3(-.95, HELI_BODEN, -.8)).y }); schaueAn(c, h.g.localToWorld(V3(-6, -3, -1)), 1); }
+  { const c = VF.crew; c.pose({ ...KNIEPOSE, armL: [1.3, .1], ellL: .7, armR: [1.0, .2], ellR: .8 }); c.platziere(-.95, -.8, -Math.PI / 2, { boden: h.g.localToWorld(V3(-.95, HELI_BODEN, -.8)).y }); schaueAn(c, h.g.localToWorld(V3(-6, -3, -1)), 1); }
   // Team sitzt; nach „Wir seilen ab!“ ziehen alle die Sturmhaube hoch (Augen frei), 1 geht zur Tür, 2 macht sich bereit
-  const z7a = L('anflug', 'Ich hasse'), z6 = L('anflug', 'Sieben'), z7b = L('anflug', 'Dich'), z4 = L('anflug', 'Jet'), z1 = L('anflug', 'Kein');
+  const z4 = L('anflug', 'Jet'), z1 = L('anflug', 'Kein');
   const maskeT = { 7: z1.ende - .1, 2: z1.ende + .15, 4: z1.ende + .35, 1: z1.ende + .55 };
-  const r7 = redet('anflug', lt, '7');
-  heliTeam(h, st, 'anflug', lt, {
+    heliTeam(h, st, 'anflug', lt, {
     7: { armL: [2.9, .1], ellL: .3, armR: [.4, .1], ellR: 1.2 },
     4: {}, 2: {}, 1: {},
-  }, [2, 4, 7, ...(lt < 11.9 ? [1] : [])]);
+  }, [2, 4, 7, ...(lt < AB0 - 1.1 ? [1] : [])]);
   const auge = h.g.localToWorld(AUGE6.clone()), k7 = kopfW(st[7]), k4 = kopfW(st[4]), k1 = kopfW(st[1]), k2 = kopfW(st[2]);
   // 1 steht auf und geht geduckt zur Tür (kniet dort wie beim Abseilen)
-  if (lt >= 11.9) { const f = st[1], kk = easeInOut(clamp((lt - 11.9) / 1.0)), a = V3(.24, 0, .92), b = V3(-.3, 0, .05), q = a.clone().lerp(b, kk);
-    f.pose(kk < 1 ? { ...gehPose(kk * 5, { hocke: .55, arme: false }) } : { ...hockPose(.55), armR: [1.2, .2], ellR: .4 }); f.platziere(q.x, q.z, lerp(Math.PI, Math.PI * 1.25, kk), { boden: h.g.localToWorld(V3(q.x, HELI_BODEN, q.z)).y }); f.haltGewehr('tief'); f.maskeHoch(1); }
+  if (lt >= AB0 - 1.1) { const f = st[1], kk = easeInOut(clamp((lt - (AB0 - 1.1)) / 1.0)), a = V3(.72, 0, .92), b = V3(-.3, 0, .05), q = a.clone().lerp(b, kk);
+    f.pose(kk < 1 ? { ...gehPose(kk * 5, { hocke: .8, arme: false }), rumpf: [.6, 0, 0] } : { ...KNIEPOSE, armR: [1.2, .2], ellR: .4 }); f.platziere(q.x, q.z, lerp(Math.PI, Math.PI * 1.25, kk), { boden: h.g.localToWorld(V3(q.x, HELI_BODEN, q.z)).y }); f.haltGewehr('tief'); f.maskeHoch(1); }
   // 2 rutscht zur Tür vor (gleich als Erster am Seil)
-  if (lt > 12.4) zweiAnDerTuer(h, st[2], easeInOut(clamp((lt - 12.4) / .6)));
+  if (lt > AB0 - .6) zweiAnDerTuer(h, st[2], easeInOut(clamp((lt - (AB0 - .6)) / .6)));
   for (const nr of [1, 2, 4, 7]) { const f = st[nr], m = smooth(maskeT[nr], maskeT[nr] + .6, lt); f.maskeHoch(m);
-    if (m > 0 && m < 1 && !(nr === 1 && lt >= 11.9)) f.greife('L', f.j.head.localToWorld(V3(0, .02 + .1 * m, .12)), f.lokal(.4, 1.2, .5)); }   // Hand zieht die Maske hoch
+    if (m > 0 && m < 1 && !(nr === 1 && lt >= AB0 - 1.1)) f.greife('L', f.j.head.localToWorld(V3(0, .02 + .1 * m, .12)), f.lokal(.4, 1.2, .5)); }   // Hand zieht die Maske hoch
   // Blicke + Funk-Gesten
-  schaueAn(st[7], lt < z6.start - .1 ? h.g.localToWorld(V3(-3, .6, -1)) : auge, 1); nicken(st[7], 'anflug', lt, '7');
-  if (lt > z7b.start && lt < z7b.ende + .2) st[7].greife('R', auge.clone().lerp(weltPos(st[7].j.chest), .55), st[7].lokal(-.6, .6, .4));
-  schaueAn(st[2], fenster(z6, lt) + fenster(z7b, lt) > 0 ? auge : (fenster(z4, lt) > 0 ? k4 : (fenster(z1, lt) > 0 ? k1 : k7)), .8);
+  schaueAn(st[7], fenster(z4, lt) > 0 ? k4 : (fenster(z1, lt) > 0 ? k1 : h.g.localToWorld(V3(-3, -1, -1))), .9);
+  schaueAn(st[2], fenster(z4, lt) > 0 ? k4 : (fenster(z1, lt) > 0 ? k1 : h.g.localToWorld(V3(-3, -1.5, -1))), .8);
   if (fenster(z4, lt, 0, .2) > 0) handAmOhr(st[4]);
   schaueAn(st[4], fenster(z1, lt) > 0 ? k1 : h.g.localToWorld(V3(-3, -1, -1.5)), .7);
-  if (fenster(z1, lt, 0, .2) > 0 && lt < 11.9) handAmOhr(st[1]);
+  if (fenster(z1, lt, 0, .2) > 0 && lt < AB0 - 1.1) handAmOhr(st[1]);
   // Kamera: sitzt an der Tür – 7 → (Funk) 4 → raus: Flughafen, Jet rollt, Polizei → (Funk) 1 → Masken → zur Tür
-  const draussen = h.g.worldToLocal(V3(0, 1.5, jetAnflug(lt) + 2)).lerp(V3(-3.4, .4, -1.7), .3);
-  let zl = h.g.worldToLocal(k7.clone());
-  zl.lerp(h.g.worldToLocal(k4.clone()), .75 * smooth(z4.start - .2, z4.start + .2, lt) * (1 - smooth(z4.start + .7, z4.start + 1.1, lt)));
-  zl.lerp(draussen, smooth(z4.start + .8, z4.start + 1.5, lt));
+  const draussen = h.g.worldToLocal(V3(0, 1.5, jetAnflug(lt) + 6));
+  let zl = draussen.clone();   // von hoch oben: Blick raus und runter auf Flughafen + Jet
   zl.lerp(h.g.worldToLocal(k1.clone()), .6 * fenster(z1, lt, .3, .3));
-  zl.lerp(h.g.worldToLocal(k2.clone()), .7 * smooth(z1.ende - .1, z1.ende + .4, lt) * (1 - smooth(11.6, 12.1, lt)));   // 2 zieht die Maske hoch
-  zl.lerp(h.g.worldToLocal(kopfW(st[1])), smooth(12.0, 12.9, lt));                                                   // zu 1 an der Tür
-  const pl = AUGE6.clone().lerp(V3(-1.22, HELI_BODEN + .95, .35), easeInOut(clamp((lt - 12.0) / .95)));
+  zl.lerp(h.g.worldToLocal(k2.clone()), .7 * smooth(z1.ende - .1, z1.ende + .4, lt) * (1 - smooth(AB0 - 1.4, AB0 - .9, lt)));   // 2 zieht die Maske hoch
+  zl.lerp(h.g.worldToLocal(kopfW(st[1])), smooth(AB0 - 1.0, AB0 - .1, lt));                                                   // zu 1 an der Tür
+  const pl = AUGE6.clone().lerp(V3(-1.22, HELI_BODEN + .95, .35), easeInOut(clamp((lt - (AB0 - 1.0)) / .95)));
   schau(k, h.g.localToWorld(pl).add(wackel(t, .008)), h.g.localToWorld(zl), h.g.rotation.z * .6);
   // eigene Maske: linke Hand kurz zum Gesicht
   const ich = smooth(z1.ende + .7, z1.ende + 1.0, lt) * (1 - smooth(z1.ende + 1.3, z1.ende + 1.6, lt));
@@ -1138,7 +1118,7 @@ function zeigeUI(n, lt, r, t) {
     ui.ende.querySelector('.like').classList.toggle('an', r.ende > 1.0); ui.ende.querySelector('.folgen').classList.toggle('an', r.ende > 1.5); }
   else ui.ende.style.opacity = 0;
 }
-const SZENEN = { hook: s_hook, hq: s_hq, dach: s_dach, anflug: s_anflug, tuer: s_tuer, kabine: s_kabine, twist: s_twist };
+const SZENEN = { hook: s_hook, hq: s_hq, dach: s_dach, flug: s_flug, anflug: s_anflug, tuer: s_tuer, kabine: s_kabine, twist: s_twist };
 const KARTE = { anflug: ['05:27 · ANFLUG', 'Flughafen · Vorfeld Ost'], dach: ['05:16 · ABFLUG', 'Hauptquartier · Dach'] };
 function szeneRendern(i, lt, ziel) {
   const s = TL.szenen[i]; const r = SZENEN[s.n](lt, s.start + lt);

@@ -210,9 +210,9 @@ export class Figur {
     }
     if (!maske) {
       { const nase = new THREE.Mesh(new THREE.ConeGeometry(0.017, 0.05, 10), haut); nase.rotation.x = Math.PI / 2 - 0.35; nase.position.set(0, -0.005, 0.118); gesicht.add(nase);
-        gesicht.add(at(sph(0.012, haut, 10, 8), 0, -0.02, 0.122)); }
-      { const lippe = mat(o.lippen ?? 0xb5686b, { r: .5 }); const ol = sph(1, lippe, 12, 8); ol.scale.set(0.026, 0.006, 0.01); gesicht.add(at(ol, 0, -0.04, 0.106));
-        const ul = sph(1, lippe, 12, 8); ul.scale.set(0.022, 0.007, 0.01); gesicht.add(at(ul, 0, -0.06, 0.104)); this.unterlippe = ul;
+        const spitze = at(sph(0.012, haut, 10, 8), 0, -0.02, 0.122); gesicht.add(spitze); this.unterGesicht = [nase, spitze]; }
+      { const lippe = mat(o.lippen ?? 0xb5686b, { r: .5 }); const ol = sph(1, lippe, 12, 8); ol.scale.set(0.026, 0.006, 0.01); gesicht.add(at(ol, 0, -0.04, 0.106)); this.unterGesicht?.push(ol);
+        const ul = sph(1, lippe, 12, 8); ul.scale.set(0.022, 0.007, 0.01); gesicht.add(at(ul, 0, -0.06, 0.104)); this.unterlippe = ul; this.unterGesicht?.push(ul);
         this.zaehne = box(0.03, 0.008, 0.006, mat(0xf4f1ea, { r: .3 })); this.zaehne.position.set(0, -0.046, 0.101); gesicht.add(this.zaehne);
         for (const sx of [1, -1]) { const fal = box(0.003, 0.02, 0.004, mat(new THREE.Color(o.haut ?? 0xd9a77a).multiplyScalar(.82))); fal.position.set(sx * 0.034, -0.035, 0.1); fal.rotation.z = sx * .4; gesicht.add(fal); } }   // Lachfalten
       this.mundMesh = sph(0.02, mat(0x2a0f10, { r: 0.5 }), 12, 8); this.mundMesh.scale.set(1.1, 0.25, 0.5);
@@ -226,7 +226,7 @@ export class Figur {
     if (o.sturmhaube) {
       const stoff = mat(0x1b1c1f, { r: .98 });
       const unten = new THREE.Mesh(new THREE.SphereGeometry(0.118, 24, 14, 0, Math.PI * 2, Math.PI * .56, Math.PI * .44), stoff);
-      unten.scale.set(.98, 1.08, 1.12); unten.castShadow = true;
+      unten.scale.set(.98, 1.06, 1.1); unten.castShadow = true;
       const hals = cyl(0.062, 0.07, 0.11, stoff, 16);
       this.sturmhaube = new THREE.Group(); this.sturmhaube.add(at(unten, 0, 0.128, 0.008)); this.sturmhaube.add(at(hals, 0, 0.0, 0));
       head.add(this.sturmhaube);
@@ -235,18 +235,19 @@ export class Figur {
     }
     if (o.helm) {
       const hm = mat(0x2c3036, { r: 0.6, m: 0.1 });
-      const helm = new THREE.Mesh(new THREE.SphereGeometry(0.138, 24, 14, 0, Math.PI * 2, 0, Math.PI * 0.52), hm);
-      helm.position.y = 0.135; helm.castShadow = true; head.add(helm);
-      head.add(at(new THREE.Mesh(new THREE.TorusGeometry(0.133, 0.012, 8, 28), hm), 0, 0.133, 0, Math.PI / 2));
-      for (const s of [1, -1]) head.add(at(box(0.012, 0.035, 0.12, mat(0x1d1f22)), s * 0.137, 0.17, 0));
-      head.add(at(box(0.06, 0.04, 0.03, mat(0x1d1f22)), 0, 0.235, 0.115, -0.5));
+      // Helm sitzt höher (Rand über den Augenbrauen) → Augen bleiben sichtbar
+      const helm = new THREE.Mesh(new THREE.SphereGeometry(0.138, 24, 14, 0, Math.PI * 2, 0, Math.PI * 0.44), hm);
+      helm.position.y = 0.162; helm.castShadow = true; head.add(helm);
+      head.add(at(new THREE.Mesh(new THREE.TorusGeometry(0.136, 0.011, 8, 28), hm), 0, 0.187, 0, Math.PI / 2));
+      for (const s of [1, -1]) head.add(at(box(0.012, 0.035, 0.12, mat(0x1d1f22)), s * 0.137, 0.2, 0));
+      head.add(at(box(0.06, 0.04, 0.03, mat(0x1d1f22)), 0, 0.262, 0.112, -0.5));
       if (o.headset) for (const s of [1, -1]) head.add(at(cyl(0.045, 0.045, 0.04, mat(0x1d1f22), 14), s * 0.12, 0.11, 0, 0, 0, Math.PI / 2));
-      if (o.visier) head.add(at(box(0.2, 0.06, 0.04, mat(0x22272e, { r: 0.1, m: 0.5 })), 0, 0.215, 0.1, -0.3));
+      if (o.visier) head.add(at(box(0.2, 0.06, 0.04, mat(0x22272e, { r: 0.1, m: 0.5 })), 0, 0.25, 0.1, -0.45));   // Schutzbrille hochgeschoben auf dem Helm
       for (const s of [1, -1]) head.add(at(box(0.012, 0.12, 0.012, mat(0x15171a)), s * 0.1, 0.05, 0.02, 0, 0, s * .15));            // Kinnriemen
       head.add(at(box(0.07, 0.012, 0.03, mat(0x15171a)), 0, -0.005, 0.07));
-      head.add(at(box(0.07, 0.05, 0.01, mat(0x3a3d35, { r: 1 })), 0, 0.2, -0.13, 0.4));                                                // Klett-Patch hinten
-      head.add(at(sph(0.012, mat(0x300000, { e: 0xff2030, ei: 1.5 }), 6, 4), 0, 0.26, -0.09));                                            // Markierungslicht
-      if (o.nummer) { const nh = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.05), new THREE.MeshStandardMaterial({ map: nummerTex(o.nummer), roughness: .8 })); nh.position.set(0, 0.2, -0.137); nh.rotation.set(-0.4, Math.PI, 0); head.add(nh); }
+      head.add(at(box(0.07, 0.05, 0.01, mat(0x3a3d35, { r: 1 })), 0, 0.225, -0.13, 0.4));                                                // Klett-Patch hinten
+      head.add(at(sph(0.012, mat(0x300000, { e: 0xff2030, ei: 1.5 }), 6, 4), 0, 0.29, -0.09));                                            // Markierungslicht
+      if (o.nummer) { const nh = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.05), new THREE.MeshStandardMaterial({ map: nummerTex(o.nummer), roughness: .8 })); nh.position.set(0, 0.225, -0.137); nh.rotation.set(-0.4, Math.PI, 0); head.add(nh); }
     } else if (o.kappe) {
       const km = mat(o.kappe, { r: 0.85 });
       head.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.122, 20, 12, 0, Math.PI * 2, 0, Math.PI * 0.5), km), 0, 0.14, 0));
@@ -299,13 +300,15 @@ export class Figur {
     if (this.mundMesh) {
       this.mundMesh.scale.y = 0.2 + 1.05 * k; this.mundMesh.position.y = -0.05 - 0.006 * k;
       if (this.unterlippe) this.unterlippe.position.y = -0.06 - 0.016 * k;
-      if (this.zaehne) this.zaehne.visible = k > .15;
+      if (this.zaehne) this.zaehne.visible = k > .15 && !this.maskeOben;
       if (this.kiefer) this.kiefer.position.y = 0.06 - 0.012 * k;
     }
     for (const [b, sx] of [[this.braueL, 1], [this.braueR, -1]]) if (b) { b.position.y = 0.05 + 0.008 * k; b.rotation.z = sx * (-0.08 + 0.12 * k); }
   }
   // Sturmhaube: 0 = als Schlauch am Hals, 1 = über Mund und Nase gezogen (Augen bleiben frei)
-  maskeHoch(k) { if (!this.sturmhaube) return; k = clamp(k); this.sturmhaube.position.y = -0.085 * (1 - k); this.sturmhaube.scale.set(1 - .08 * (1 - k), .35 + .65 * k, 1 - .05 * (1 - k)); }
+  maskeHoch(k) { if (!this.sturmhaube) return; k = clamp(k); this.maskeOben = k > .8;
+    for (const m of [...(this.unterGesicht ?? []), this.zaehne, this.mundMesh]) if (m) m.visible = !this.maskeOben;   // unter der Maske verschwinden Nase/Mund (nichts sticht durch)
+    this.sturmhaube.position.y = -0.085 * (1 - k); this.sturmhaube.scale.set(1 - .08 * (1 - k), .35 + .65 * k, 1 - .05 * (1 - k)); }
   blinzeln(b) { if (this.lider) for (const l of this.lider) { l.scale.y = 0.55 + 0.95 * b; l.position.y = 0.031 - 0.01 * b; } }
 
   // Root setzen, dann so verschieben, dass der tiefste Körperpunkt genau auf boden liegt.

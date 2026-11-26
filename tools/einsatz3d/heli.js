@@ -116,12 +116,12 @@ export function heliModell({ farbe = 0x2c3e50, piloten = true } = {}) {
     const kab = new THREE.Mesh(new THREE.TorusGeometry(.025, .006, 5, 10), mat(0x111111)); for (let k = 0; k < 6; k++) { const c = kab.clone(); c.position.set(x, B + 1.5 - k * .04, z); c.rotation.x = Math.PI / 2; g.add(c); } }
   for (const [x, z, f] of [[-.24, 1.15, 0x3a3f2e], [-.15, .9, 0x1d1f22]]) g.add(at(box(.38, .24, .3, mat(f, { r: .95 })), x, B + .12, z));   // Ausrüstungstaschen
   for (const [x, z] of [[-1.02, -.95], [1.02, -.95]]) g.add(at(box(.01, .12, .2, mat(0xffd60a, { e: 0x332a00, ei: .3 })), x, B + 1.2, z));   // Hinweisschilder an der Säule
-  g.add(at(cyl(.012, .012, 1.9, mat(0xff6b00), 6), -.95, B + 1.55, -.05, Math.PI / 2));   // Sicherungsleine
+  g.add(at(cyl(.012, .012, 1.9, mat(0x4b5320), 6), -.95, B + 1.55, -.05, Math.PI / 2));   // Sicherungsleine
   for (const x of [-.72, .24, .72]) for (const sx of [-.12, .12]) g.add(at(box(.05, .035, .02, mat(0xb0b4ba, { m: .8, r: .3 })), x + sx, B + .52, 1.2));   // Gurtschlösser
   for (const z of [-.9, .3, 1.2]) g.add(at(box(.02, .04, .2, mat(0x1b1d21)), 1.0, B + 1.25, z));                                        // Kabelkanäle
   g.add(at(box(.25, .18, .12, mat(0x2b2d31)), .85, B + 1.4, .3)); g.add(at(box(.18, .06, .005, mat(0x000000, { e: 0x80ed99, ei: 1.5 })), .85, B + 1.42, .24));   // Funkgerät-Halterung
   for (const z of [-.6, .1, .8]) g.add(at(new THREE.Mesh(new THREE.TorusGeometry(.022, .006, 6, 12), mat(0x8a6d1a, { m: .6, r: .4 })), -1.0, B + 1.35, z, 0, Math.PI / 2, 0));   // gelbe Einhängepunkte
-  g.add(at(box(.6, .02, .3, mat(0x1b1d21)), 0, B + 1.57, .9)); for (let k = 0; k < 4; k++) g.add(at(box(.08, .01, .08, mat(0xfff1d6, { e: 0xfff1d6, ei: .6 })), -.21 + k * .14, B + 1.555, .9));   // Deckenpanel mit Leselampen
+  g.add(at(box(.6, .02, .3, mat(0x1b1d21)), 0, B + 1.54, .9)); for (let k = 0; k < 4; k++) g.add(at(box(.08, .01, .08, mat(0xfff1d6, { e: 0xfff1d6, ei: .6 })), -.21 + k * .14, B + 1.525, .9));   // nicht bündig mit der Decke (kein Z-Flackern)   // Deckenpanel mit Leselampen
   // Abseilseil (wird in der Szene gesetzt)
   const seilM = mat(0x2a2116, { r: 1 });
   const seil = cyl(.017, .017, 1, seilM, 8); seil.position.set(-1.6, B + 1.5, -.05); g.add(seil); seil.visible = false;
@@ -191,11 +191,14 @@ export function heliUpdate(h, t, { rpm = 1, kurve = 0 } = {}) {
 
 // Seil vom Abseilbalken bis zum Boden (Welt-y bodenY)
 export function setzeSeil(h, bodenY, schwing = 0) {
+  // Seil hängt in WELT-Koordinaten senkrecht nach unten (unabhängig von Nick/Roll des Helis) → Hände greifen es exakt
+  h.g.updateMatrixWorld(true);
   const oben = h.g.localToWorld(new THREE.Vector3(-1.6, HELI_BODEN + 1.5, -.05));
   const len = Math.max(.1, oben.y - bodenY);
-  h.seil.visible = true; h.seil.scale.y = len / h.g.scale.y;
-  h.seil.position.set(-1.6, HELI_BODEN + 1.5 - len / 2, -.05);
-  h.seil.rotation.z = schwing;
+  const mitte = oben.clone(); mitte.y -= len / 2; mitte.x += Math.sin(schwing) * len / 2;
+  h.seil.visible = true; h.seil.position.copy(h.g.worldToLocal(mitte));
+  h.seil.quaternion.copy(h.g.getWorldQuaternion(new THREE.Quaternion()).invert());
+  h.seil.scale.set(1, len, 1);
   return { oben, len };
 }
 
