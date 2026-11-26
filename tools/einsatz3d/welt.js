@@ -6,8 +6,8 @@ import {
 } from './kern.js';
 
 // ---------------------------------------------------------------- Renderer + Nachbearbeitung
-export function renderer() {
-  const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+export function renderer({ logDepth = false } = {}) {
+  const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, logarithmicDepthBuffer: logDepth });   // logDepth: kein Flackern weit entfernter Flächen
   r.setPixelRatio(1); r.setSize(W, H);
   r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
   r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.35;
@@ -17,8 +17,8 @@ export function renderer() {
 }
 
 export class Post {
-  constructor(r) {
-    this.r = r;
+  constructor(r, { cartoon = false } = {}) {
+    this.r = r; this.cartoon = cartoon;
     const opt = { type: THREE.HalfFloatType, samples: 4 };
     this.a = new THREE.WebGLRenderTarget(W, H, opt);
     this.b = new THREE.WebGLRenderTarget(W, H, opt);
@@ -26,13 +26,13 @@ export class Post {
     this.u = {
       tA: { value: this.a.texture }, tB: { value: this.b.texture }, modus: { value: 0 }, p: { value: 0 },
       zeit: { value: 0 }, blitz: { value: 0 }, sat: { value: 1 }, korn: { value: 0.045 }, wolb: { value: 0.09 },
-      vign: { value: 0.55 }, spulen: { value: 0 }, schwarz: { value: 0 }, rot: { value: 0 }, fokus: { value: new THREE.Vector2(0.5, 0.5) },
+      vign: { value: 0.55 }, spulen: { value: 0 }, schwarz: { value: 0 }, rot: { value: 0 }, fokus: { value: new THREE.Vector2(0.5, 0.5) }, kontur: { value: cartoon ? 1 : 0 },
     };
     const m = new THREE.ShaderMaterial({
       uniforms: this.u, depthTest: false,
       vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
       fragmentShader: `
-        varying vec2 vUv; uniform sampler2D tA, tB; uniform int modus; uniform float p, zeit, blitz, sat, korn, wolb, vign, spulen, schwarz, rot;
+        varying vec2 vUv; uniform sampler2D tA, tB; uniform int modus; uniform float p, zeit, blitz, sat, korn, wolb, vign, spulen, schwarz, rot, kontur;
         uniform vec2 fokus;
         float h(vec2 c){ return fract(sin(dot(c, vec2(12.9898, 78.233))) * 43758.5453); }
         vec2 linse(vec2 uv){ vec2 c = uv - .5; c.x *= ${(W / H).toFixed(4)}; float r2 = dot(c,c); vec2 d = c * (1. + wolb * r2) / (1. + wolb * .35); d.x /= ${(W / H).toFixed(4)}; return d + .5; }
@@ -53,6 +53,13 @@ export class Post {
           else if (modus == 4) { float zeile = floor(uv.y * 40.); float r = h(vec2(zeile, floor(zeit * 30.)));
             vec2 u2 = uv + vec2((r - .5) * .15 * sin(3.14159 * p), 0.); c = (r < p) ? lese(tB, u2) : lese(tA, u2);
             c.r = (r < p ? lese(tB, u2 + vec2(.01, 0.)) : lese(tA, u2 + vec2(.01, 0.))).r; }
+          if (kontur > 0.) {   // Comic-Konturen: Kanten im Bild (Sobel auf Helligkeit) werden zu schwarzen Linien
+            vec2 px = vec2(1. / ${W}., 1. / ${H}.) * 1.4; float L[9]; int n = 0;
+            for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) { vec3 s = hol(tA, uv + vec2(float(i), float(j)) * px); L[n] = dot(s, vec3(.299, .587, .114)); n++; }
+            float gx = L[2] + 2. * L[5] + L[8] - L[0] - 2. * L[3] - L[6], gy = L[6] + 2. * L[7] + L[8] - L[0] - 2. * L[1] - L[2];
+            float kante = smoothstep(.22, .45, sqrt(gx * gx + gy * gy));
+            if (modus == 0) c = mix(c, c * .12, kante * kontur);
+          }
           float g = dot(c, vec3(.299, .587, .114)); c = mix(vec3(g), c, sat);
           c += vec3(rot, 0., 0.) * .5;
           c = mix(c, vec3(1.), clamp(blitz, 0., 1.));
@@ -71,7 +78,8 @@ export class Post {
   rendere(szene, kamera, ziel) { this.r.setRenderTarget(ziel); this.r.render(szene, kamera); this.r.setRenderTarget(null); }
   fertig(einstellungen = {}) {
     const u = this.u;
-    const def = { modus: 0, p: 0, blitz: 0, sat: 1, korn: 0.045, wolb: 0.09, vign: 0.55, spulen: 0, schwarz: 0, rot: 0 };
+    const def = this.cartoon ? { modus: 0, p: 0, blitz: 0, sat: 1.25, korn: 0.02, wolb: 0.3, vign: 0.35, spulen: 0, schwarz: 0, rot: 0 } : { modus: 0, p: 0, blitz: 0, sat: 1, korn: 0.045, wolb: 0.09, vign: 0.55, spulen: 0, schwarz: 0, rot: 0 };
+    if (this.cartoon && einstellungen.sat !== undefined) einstellungen = { ...einstellungen, sat: einstellungen.sat * 1.25 };
     for (const [k, v] of Object.entries({ ...def, ...einstellungen })) if (u[k] && k !== 'fokus') u[k].value = v;
     if (einstellungen.fokus) u.fokus.value.set(einstellungen.fokus[0], einstellungen.fokus[1]);
     this.r.setRenderTarget(null);

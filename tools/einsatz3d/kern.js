@@ -21,9 +21,25 @@ export function hash(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; re
 
 // ---------------------------------------------------------------- Materialien
 const matCache = new Map();
+// Cartoon-Modus (Mix aus Comic-Stil und 3D): Toon-Shading mit 3 Helligkeitsstufen statt realistischem PBR
+let TOON = false, toonVerlauf = null;
+export function setzeToon(an = true) { TOON = an; }
+function verlauf() {
+  if (toonVerlauf) return toonVerlauf;
+  const d = new Uint8Array([90, 90, 90, 255, 175, 175, 175, 255, 255, 255, 255, 255]);
+  toonVerlauf = new THREE.DataTexture(d, 3, 1, THREE.RGBAFormat); toonVerlauf.minFilter = toonVerlauf.magFilter = THREE.NearestFilter; toonVerlauf.needsUpdate = true;
+  return toonVerlauf;
+}
 export function mat(color, o = {}) {
-  const key = JSON.stringify([color, o.r, o.m, o.e, o.ei, o.map?.uuid, o.transparent, o.opacity, o.side, o.flat, o.envI]);
+  const key = JSON.stringify([TOON, color, o.r, o.m, o.e, o.ei, o.map?.uuid, o.transparent, o.opacity, o.side, o.flat, o.envI]);
   if (!o.noCache && matCache.has(key)) return matCache.get(key);
+  if (TOON) {
+    const m = new THREE.MeshToonMaterial({ color, gradientMap: verlauf(), emissive: o.e ?? 0x000000, emissiveIntensity: o.ei ?? 1, map: o.map ?? null,
+      transparent: o.transparent ?? false, opacity: o.opacity ?? 1, side: o.side ?? THREE.FrontSide });
+    if ((o.m ?? 0) > .5 && !o.map) m.color.multiplyScalar(.85);
+    if (!o.noCache) matCache.set(key, m);
+    return m;
+  }
   const m = new THREE.MeshStandardMaterial({
     color, roughness: o.r ?? 0.75, metalness: o.m ?? 0.0,
     emissive: o.e ?? 0x000000, emissiveIntensity: o.ei ?? 1, map: o.map ?? null,

@@ -94,7 +94,7 @@ export function heliModell({ farbe = 0x2c3e50, piloten = true } = {}) {
   for (const x of [-.72, -.24, .24, .72]) kabinenSitz(x, 1.42, 1);
   for (const x of [-.5, .5]) kabinenSitz(x, -.82, -1);
   // Haltegriffe, Headsets, Licht
-  for (const x of [-.55, 0, .55]) for (const z of [-.3, .6]) g.add(at(new THREE.Mesh(new THREE.TorusGeometry(.06, .012, 6, 12, Math.PI), mat(0xd8d8d8)), x, B + 1.53, z, Math.PI, 0, 0));
+  for (const x of [-.55, 0, .55]) for (const z of [-.3, .6]) g.add(at(new THREE.Mesh(new THREE.TorusGeometry(.045, .009, 6, 12, Math.PI), mat(0x2b2d31)), x, B + 1.53, z, Math.PI, 0, 0));
   for (const x of [-.72, -.24, .24, .72]) g.add(at(new THREE.Mesh(new THREE.TorusGeometry(.07, .015, 6, 12, Math.PI), dunkel), x, B + 1.38, 1.66, 0, 0, 0));
   const tag = new THREE.PointLight(0xdfe6f2, 5, 6, 1.2); tag.position.set(0, B + 1.3, .2); g.add(tag);
   const kabLicht = new THREE.PointLight(0xff4050, 1.2, 4.5, 1.5); kabLicht.position.set(0, B + 1.45, .3); g.add(kabLicht);
@@ -103,7 +103,7 @@ export function heliModell({ farbe = 0x2c3e50, piloten = true } = {}) {
   const balken = new THREE.Group(); g.add(balken);
   balken.add(at(box(.08, .08, 1.8, metall), -1.6, B + 1.55, -.05));
   for (const z of [-.8, .7]) balken.add(at(box(.6, .06, .06, metall), -1.3, B + 1.55, z));
-  balken.add(at(box(.12, .12, .12, gelb), -1.6, B + 1.48, -.05));
+  balken.add(at(box(.12, .12, .12, mat(0x3a3d42, { m: .6 })), -1.6, B + 1.48, -.05));
   // Seilsäcke am Boden
   g.add(at(cyl(.13, .15, .26, mat(0x3a3f2e, { r: .95 }), 12), .05, B + .13, .55));
   // Kleinkram wie im echten Einsatzhubschrauber

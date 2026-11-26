@@ -149,7 +149,7 @@ export function flughafen(s) {
     fm.add(at(box(1.2, .25, .4, mat(0x111111)), 0, 1.95, .2)); fa.followMe = mat(0xffa500, { e: 0xffa500, ei: 3, noCache: true }); fm.add(at(box(.3, .15, .3, fa.followMe), 0, 2.1, .2));
     for (const sx of [-.85, .85]) for (const zz of [-1.3, 1.3]) fm.add(at(cyl(.33, .33, .22, mat(0x111111), 12), sx, .33, zz, 0, 0, Math.PI / 2));
     fm.position.set(-9.5, 0, -8); fm.rotation.y = .3; s.add(fm); }
-  for (const [x, z] of [[9, -2], [10, -4], [11, -6], [-7.5, 3], [-8, -2]]) huetchen(s, x, z);
+  for (const [x, z] of [[9, 7], [10, 9], [11, 11], [-8.5, 9], [-9, 12]]) huetchen(s, x, z);
   // Flutlichtmasten
   fa.fluter = [];
   for (const [x, z] of [[-26, 40], [-26, -60], [30, 15], [30, -60]]) {
@@ -189,6 +189,25 @@ export function flughafen(s) {
   tankwagen(s, 18, -38, .2);
   { const sl = new THREE.Group(); sl.add(at(box(2.6, 1.1, 5.5, mat(0xe9ecef)), 0, .8, 0)); sl.add(at(box(1.6, .9, 1.4, mat(0x223344, { r: .1, m: .5 })), 0, 1.75, -1.8));
     for (const sx of [-1.2, 1.2]) for (const zz of [-1.8, 1.8]) sl.add(at(cyl(.5, .5, .4, mat(0x111111), 14), sx, .5, zz, 0, 0, Math.PI / 2)); sl.position.set(-16, 0, -58); sl.rotation.y = .5; s.add(sl); }
+  s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(190, 330), mat(0x8e9298, { r: .6 })), 160, .01, -120, -Math.PI / 2));   // Vorfeld Ost (Beton)
+  // ---- Erweiterung: viel größerer Flughafen (Pier mit 6 Gates, Frachtvorfeld, Parkhaus + Parkplätze, 2. Startbahn, mehr Masten)
+  { const pier = new THREE.Group(); s.add(pier);
+    pier.add(at(box(14, 10, 240, mat(0xa3acb6, { r: .6 })), 118, 5, -140));
+    const fp = fensterTex('pier', { reihen: 2, spalten: 48, hell: .6 });
+    pier.add(at(new THREE.Mesh(new THREE.PlaneGeometry(240, 6), new THREE.MeshStandardMaterial({ map: fp, emissive: 0xffe2b0, emissiveMap: fp, emissiveIntensity: .45 })), 110.9, 5.5, -140, 0, -Math.PI / 2));
+    pier.add(at(box(16, .8, 242, mat(0xced4da)), 118, 10.4, -140));
+    for (let k = 0; k < 6; k++) { const z = -40 - k * 40;
+      pier.add(at(box(14, 2.6, 2.4, mat(0xb0b8c1, { r: .5, m: .3 })), 104, 4.6, z)); pier.add(at(cyl(.3, .3, 3.4, mat(0x6c757d), 10), 98, 1.7, z));
+      verkehrsflugzeug(s, 84, z - 4, -Math.PI / 2, { akzent: [0x0b5394, 0x9d0208, 0x2d6a4f, 0xe85d04, 0x6a4c93, 0x1d3557][k], skala: .72 }); } }
+  for (const [x, z] of [[160, -60], [165, -130]]) verkehrsflugzeug(s, x, z, -Math.PI / 2 + .2, { farbe: 0xe9ecef, akzent: 0xffb703, skala: 1.1 });   // Frachter
+  s.add(at(box(40, 14, 60, mat(0x8d99ae, { r: .7 })), 200, 7, -100));                                                                      // Frachthalle
+  { const r = rng(91), autoGeo = new THREE.BoxGeometry(1.8, 1.3, 4.2), autos = new THREE.InstancedMesh(autoGeo, mat(0xffffff), 180), m4 = new THREE.Matrix4(), c = new THREE.Color();
+    for (let i = 0; i < 180; i++) { const x = -110 - (i % 12) * 3.2, z = -40 - Math.floor(i / 12) * 6.5; m4.makeTranslation(x, .65, z); autos.setMatrixAt(i, m4); autos.setColorAt(i, c.setHSL(r(), .5, .25 + r() * .5)); }
+    s.add(autos); s.add(at(box(40, .05, 100, mat(0x4a4f57)), -128, .02, -85)); }
+  s.add(at(box(45, 16, 35, mat(0x9aa3ad, { r: .8 })), -130, 8, -175));                                                                      // Parkhaus
+  s.add(at(box(900, .02, 45, mat(0x3d4047, { r: .8 })), 0, .012, -330));                                                                    // 2. Startbahn
+  for (let x = -400; x < 400; x += 30) s.add(at(box(18, .01, .9, mat(0xf1f3f5)), x, .025, -330));
+  for (const [x, z] of [[70, -150], [-26, -150], [70, 20], [140, -20]]) { s.add(at(cyl(.3, .45, 26, mat(0x8d99ae, { m: .5 }), 10), x, 13, z)); s.add(at(box(4, 1.2, .8, mat(0x343a40)), x, 26.5, z)); }
   return fa;
 }
 

@@ -1,7 +1,7 @@
 // EINHEIT FALKE – Einsatz 02: Das Flugzeug (3D, nur POV, Morgennebel).
 import {
   THREE, W, H, mat, box, cyl, sph, caps, at, bodenPlatte, clamp, lerp, easeOut, easeIn, easeInOut, easeBack, smooth,
-  betonTex, holzTex, liveTex, weltPos, rng, radialTex, rauchTex, textTex, canvasTex as canvasTexEp,
+  betonTex, holzTex, liveTex, weltPos, rng, radialTex, rauchTex, textTex, canvasTex as canvasTexEp, setzeToon,
 } from '/tools/einsatz3d/kern.js';
 import { Figur, gehPose, rennPose, hockPose, stehPose, schildModell, handschellenModell } from '/tools/einsatz3d/figur.js';
 import { renderer, Post, UEBERGANG, Explosion, Schwaden, schild, hauptquartier, hqDetails } from '/tools/einsatz3d/welt.js';
@@ -11,8 +11,10 @@ import { flughafen, flughafenUpdate } from '/tools/einsatz3d/flughafen.js';
 import { dachWelt, dachUpdate } from '/tools/einsatz3d/dach.js';
 
 const TL = await (await fetch('./timeline_fertig.json')).json();
-const R = renderer();
-const POST = new Post(R);
+// Stil: Mix aus Comic (Toon-Shading, Konturen, Fischauge, große Augen) und 3D
+setzeToon(true); Figur.augen = 1.45;
+const R = renderer({ logDepth: true }); R.toneMappingExposure = 1.12;
+const POST = new Post(R, { cartoon: true });
 const V3 = (x, y, z) => new THREE.Vector3(x, y, z);
 const SZ = n => TL.szenen.find(s => s.n === n);
 const L = (n, anfang) => TL.dialog.find(z => z.szene === n && z.text.startsWith(anfang));
@@ -48,7 +50,7 @@ function pfad(keys, t) {
   const l = keys[keys.length - 1]; return { x: l[1], z: l[2], vx: 0, vz: 0, s: 0, dist };
 }
 const richtung = (vx, vz, sonst) => (Math.hypot(vx, vz) > 0.05 ? Math.atan2(vx, vz) : sonst);
-const wackel = (t, st) => { const r = rng(Math.floor(t * 30)); return V3((r() - .5) * st, (r() - .5) * st, 0); };
+const wackel = (t, st) => V3((Math.sin(t * 5.3) + .5 * Math.sin(t * 11.7 + 1.3)) * st * .4, (Math.sin(t * 6.1 + .7) + .5 * Math.sin(t * 13.3)) * st * .4, 0);   // weich, kein Bild-zu-Bild-Ruckeln
 
 const OPS = { 1: { headset: true, groesse: 1.86 }, 2: { groesse: 1.98, visier: true }, 4: { groesse: 1.72, visier: true }, 7: { groesse: 1.76, headset: true } };
 const teamOps = (s, nr, maskeHoch = 0) => { const f = new Figur({ art: 'team', nummer: nr, maske: false, sturmhaube: true, maskeHoch, helm: true, ...OPS[nr] }); s.add(f.root); return f; };
@@ -593,17 +595,19 @@ function jetAnflug(T) {
 }
 // Streifenwagen fahren rein, Polizisten steigen aus und umstellen den Jet von vorne (T = Anflug-Zeit; Infinity = Endstand)
 const AUTOS = [
-  { von: V3(75, 0, -5.5), nach: V3(0, 0, -5.5), r: Math.PI / 2 + .08, t0: 4.2, t1: 7.0 },
-  { von: V3(-75, 0, -4.2), nach: V3(-5.6, 0, -4.2), r: -Math.PI / 2 + .5, t0: 4.6, t1: 7.3 },
-  { von: V3(75, 0, -3.2), nach: V3(6.9, 0, -3.2), r: Math.PI / 2 - .45, t0: 5.0, t1: 7.7 },
+  { von: V3(170, 0, -5.5), nach: V3(0, 0, -5.5), r: Math.PI / 2 + .08, t0: 1.0, t1: 7.0 },     // kommen von weit her (sichtbar), bremsen vor dem Jet
+  { von: V3(-5.6, 0, 170), nach: V3(-5.6, 0, -4.2), r: -Math.PI / 2 + .5, t0: 1.4, t1: 7.3 },
+  { von: V3(170, 0, -3.2), nach: V3(6.9, 0, -3.2), r: Math.PI / 2 - .45, t0: 1.8, t1: 7.7 },
 ];
 const POLIZISTEN = [[0, V3(-1.0, 0, -3.5)], [0, V3(1.6, 0, -3.6)], [1, V3(-4.4, 0, -6.7)], [2, V3(6.3, 0, -5.7)]];
 function stellePolizei(T, t) {
   const ziel = V3(0, 2.2, -11);
   AUTOS.forEach((a, i) => {
     const k = easeOut(clamp((T - a.t0) / (a.t1 - a.t0)));
-    const car = VF.autos[i]; car.visible = T > a.t0 - .1;
-    car.position.copy(a.von).lerp(a.nach, k); car.rotation.set(0, (a.von.x > 0 ? Math.PI / 2 : -Math.PI / 2) + (a.r - (a.von.x > 0 ? Math.PI / 2 : -Math.PI / 2)) * smooth(.8, 1, k), 0);
+    const car = VF.autos[i]; car.visible = true;
+    const dir = a.nach.clone().sub(a.von), fahrt = Math.atan2(-dir.x, -dir.z);
+    let dr = a.r - fahrt; dr = Math.atan2(Math.sin(dr), Math.cos(dr));
+    car.position.copy(a.von).lerp(a.nach, k); car.rotation.set(0, fahrt + dr * smooth(.85, 1, k), 0);
     car.tuer.rotation.y = -1.1 * smooth(a.t1 + .2, a.t1 + .6, T);
   });
   VF.autoBlau.forEach((m, i) => { m.emissiveIntensity = Math.floor(t * 7 + i * .5) % 2 ? 7 : .3; });
@@ -1095,15 +1099,17 @@ function s_hook(lt, t) {
 // ======================================================================= UI + Hauptschleife
 const ui = {
   sub: document.getElementById('sub'), wer: document.getElementById('wer'), txt: document.getElementById('txt'),
-  rec: document.getElementById('rec'), mic: document.getElementById('mic'), uhr: document.getElementById('uhr'), karte: document.getElementById('karte'),
+  rec: document.getElementById('rec'), mic: document.getElementById('mic'), nachricht: document.getElementById('nachricht'), uhr: document.getElementById('uhr'), karte: document.getElementById('karte'),
   mitte: document.getElementById('mitte'), ende: document.getElementById('ende'), zeit: document.getElementById('zeitsprung'), titel: document.getElementById('titel'),
 };
 function zeigeUI(n, lt, r, t) {
   const z = zeile(n, lt);
-  if (z) { const [name, farbe] = TL.sprecher[z.wer]; ui.sub.style.opacity = clamp((lt - z.start) / .12) * clamp((z.ende - lt) / .12); ui.wer.textContent = name; ui.wer.style.color = farbe; ui.txt.textContent = z.text; }
+  if (z) { const [name, farbe] = TL.sprecher[z.wer]; ui.sub.style.opacity = clamp((lt - z.start) / .12) * clamp((z.ende - lt) / .12); ui.wer.textContent = name; ui.wer.style.color = farbe; ui.txt.textContent = z.text; ui.txt.style.color = z.wer === '6' ? '#80ed99' : (z.funk ? '#ffd166' : '#ffffff'); }
   else ui.sub.style.opacity = 0;
   ui.uhr.textContent = `${r.uhr ?? '05:30'}:${String(Math.floor(lt) % 60).padStart(2, '0')}`;
   ui.rec.style.opacity = Math.floor(t * 2) % 2 ? 1 : .25;
+  { const N = NACHRICHT[n]; const k = N ? clamp((lt - N[0]) / .3) * clamp((N[1] - lt) / .3) : 0;   // Handy-/Eilmeldungs-Karte oben (wie im Referenz-Stil)
+    ui.nachricht.style.opacity = k; if (N) { ui.nachricht.querySelector('em').textContent = N[2]; ui.nachricht.querySelector('span').textContent = N[3]; ui.nachricht.style.transform = `translateY(${(1 - easeOut(clamp((lt - N[0]) / .4))) * -140}px)`; } }
   // Bodycam-Mikro: Pegel springt, wenn geredet wird – bei MIR (6) voll, bei anderen schwächer; Funk-Lampe bei Funksprüchen
   { const ich = z && z.wer === '6', pegel = z ? (ich ? 1 : z.funk ? .75 : .5) * (0.35 + .65 * Math.abs(Math.sin(lt * 13 + 1.3 * Math.sin(lt * 5)))) : .08 + .05 * Math.abs(Math.sin(t * 3));
     ui.mic.querySelectorAll('i').forEach((b, i) => { const an = pegel * 6 > i; b.style.height = (6 + i * 5) + 'px'; b.style.opacity = an ? 1 : .25; b.style.background = i > 4 ? '#ff4d6d' : i > 3 ? '#ffd166' : '#80ed99'; });
@@ -1119,7 +1125,8 @@ function zeigeUI(n, lt, r, t) {
   else ui.ende.style.opacity = 0;
 }
 const SZENEN = { hook: s_hook, hq: s_hq, dach: s_dach, flug: s_flug, anflug: s_anflug, tuer: s_tuer, kabine: s_kabine, twist: s_twist };
-const KARTE = { anflug: ['05:27 · ANFLUG', 'Flughafen · Vorfeld Ost'], dach: ['05:16 · ABFLUG', 'Hauptquartier · Dach'] };
+const KARTE = {};
+const NACHRICHT = { dach: [.3, 3.6, 'ZENTRALE → FALKE · 05:16', 'Sofort aufs Dach. Der Heli wartet.'], anflug: [.5, 4.4, 'EILMELDUNG · Flughafen Ost', 'Privatjet rollt ohne Startfreigabe – Polizei ist unterwegs!'] };
 function szeneRendern(i, lt, ziel) {
   const s = TL.szenen[i]; const r = SZENEN[s.n](lt, s.start + lt);
   if (KARTE[s.n] && lt < 4) r.karte = { o: KARTE[s.n][0], u: KARTE[s.n][1], k: lt };

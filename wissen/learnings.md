@@ -110,3 +110,10 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Unter der hochgezogenen Maske Nase/Mund ausblenden, sonst sticht die Nase durch den Stoff.
 - Deckenteile nie bündig mit der Deckenplatte (Z-Fighting = Flackern oben).
 - Vom Flug aus sieht man weit: riesige Grundfläche bis zum Horizont + Nebelweite abhängig von der Flughöhe.
+- Referenz-Stil (TikTok-Cartoon-POV): Toon-Shading, schwarze Konturen, starkes Fischauge, große Augen mit Pupille,
+  Untertitel ohne Kasten (weiß/gelb mit dicker schwarzer Kontur), Handy-/Eilmeldungs-Karten oben.
+  Umsetzung als Mix: `setzeToon(true)` (kern.js) + `new Post(R, { cartoon: true })` (Sobel-Konturen, Fischauge .3, Sättigung) + `Figur.augen = 1.45`.
+- `renderer({ logDepth: true })`: logarithmischer Tiefenpuffer → kein Flackern von Boden/Markierungen aus großer Höhe.
+- Kamera-Wackeln immer weich (Sinus-Mix), nie Zufall pro Bild → sonst „ruckelt der Kopf“.
+- Fahrzeuge nie aufpoppen lassen: von weit außerhalb losfahren (≥150 m), Fahrtrichtung aus dem Weg berechnen.
+- Sturmhaube bis knapp unter die Augen (Kugelabschnitt ab Äquator), sonst wirkt sie „halb im Gesicht“.
