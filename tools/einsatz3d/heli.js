@@ -116,7 +116,7 @@ export function heliModell({ farbe = 0x2c3e50, piloten = true } = {}) {
   g.add(at(cyl(.012, .012, 1.9, mat(0xff6b00), 6), -.95, B + 1.55, -.05, Math.PI / 2));   // Sicherungsleine
   // Abseilseil (wird in der Szene gesetzt)
   const seilM = mat(0x2a2116, { r: 1 });
-  const seil = cyl(.022, .022, 1, seilM, 8); seil.position.set(-1.6, B + 1.5, -.05); g.add(seil); seil.visible = false;
+  const seil = cyl(.017, .017, 1, seilM, 8); seil.position.set(-1.6, B + 1.5, -.05); g.add(seil); seil.visible = false;
   // Heckausleger, Leitwerk, Heckrotor
   { const hb = cyl(.42, .16, 6.2, lack, 18); hb.rotation.x = -Math.PI / 2; hb.position.set(0, B + 1.25, 4.8); g.add(hb); }
   g.add(at(box(.1, 1.3, .9, lack), 0, B + 1.85, 7.9, -.35));

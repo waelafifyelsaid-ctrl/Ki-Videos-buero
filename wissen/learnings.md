@@ -88,3 +88,11 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Laufwege vor dem Rendern numerisch prüfen (Abstand ≥ 1,2 m zwischen allen Figuren und der Kamera) – Skript-Idee: pfad() abtasten.
 - Countdown spektakulär: Kamera weiter weg (Tür + Rumpf + Heli mit Suchscheinwerfer-Kegel + Morgensonne im Bild), Push-in, Herzschlag.
 - Hook: 1,3 s POV-Abseilen auf den Jet → Weißblitz-Schnitt → Sprengung → Freeze → Zurückspulen.
+- Mimik: Mund mit Unterlippe/Kiefer/Zähnen, Brauen heben sich beim Reden, automatisches Blinzeln (`Figur.zeit` pro Bild setzen).
+  Team ohne Sturmhaube im Heli/Einsatz, damit man sieht, WER redet.
+- Kamera nie per `if (...) ziel = …` umschalten – immer gewichtete `lerp` mit `smooth()`-Fenstern (sonst „springt“ das Bild).
+  Szenen, die räumlich zusammenhängen (Tür → Kabine → Tablet/Twist), ohne Übergang mit identischer End-/Startkamera verbinden.
+- Einsteigen in den Heli in Phasen (Trittstufe → geduckt rein → umdrehen → hinsetzen), Abheben erst danach.
+- POV-Hände am Seil: Greifpunkte auf Schulterhöhe berechnen (immer erreichbar), Kamera 0,35 m vom Seil, Blick ~40° nach unten.
+- Festnahme-Rufe (POLIZEI/ZUGRIFF/Seil frei/Einsteigen) im Mix lauter + leicht übersteuert + kurzer Raumhall; Ducking unter Stimmen 50 %.
+- Kommentar NIE hinter Code in dieselbe Zeile schreiben, wenn danach per Ersetzung Code angehängt wird (Syntaxfehler „Unexpected end of input“).

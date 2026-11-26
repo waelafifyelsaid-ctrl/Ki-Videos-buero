@@ -77,6 +77,7 @@ export function handschellenModell() {
 
 // ---------------------------------------------------------------- Figur
 export class Figur {
+  static zeit = 0;   // globale Zeit fürs Blinzeln (setzt die Episode pro Bild)
   constructor(o = {}) {
     this.o = o;
     const haut = mat(o.haut ?? 0xd9a77a, { r: 0.6 });
@@ -191,7 +192,7 @@ export class Figur {
     const maske = team && o.maske;
     const kopfMat = maske ? mat(0x1b1c1f, { r: 0.95 }) : haut;
     const k = sph(0.108, kopfMat, 28, 20); k.scale.set(0.93, 1.12, 1.02); k.position.y = 0.125; head.add(k);
-    { const kiefer = sph(0.08, kopfMat, 20, 14); kiefer.scale.set(1.0, 0.8, 0.95); kiefer.position.set(0, 0.06, 0.025); head.add(kiefer); }
+    { const kiefer = sph(0.08, kopfMat, 20, 14); kiefer.scale.set(1.0, 0.8, 0.95); kiefer.position.set(0, 0.06, 0.025); head.add(kiefer); this.kiefer = kiefer; }
     if (!maske) { for (const s of [1, -1]) { const ohr = sph(1, haut, 12, 10); ohr.scale.set(0.012, 0.03, 0.02); ohr.position.set(s * 0.104, 0.12, -0.005); ohr.rotation.y = s * .3; head.add(ohr);
       const innen = sph(1, mat(new THREE.Color(o.haut ?? 0xd9a77a).multiplyScalar(.8), { r: .7 }), 10, 8); innen.scale.set(0.006, 0.02, 0.012); innen.position.set(s * 0.112, 0.12, -0.002); head.add(innen); } }
     if (o.ohrstoepsel) { head.add(at(sph(0.01, mat(0x111111), 8, 6), 0.11, 0.12, 0.0)); head.add(at(cyl(0.003, 0.003, 0.2, mat(0xdee2e6), 5), 0.1, 0.02, -0.02, .3)); }
@@ -202,7 +203,7 @@ export class Figur {
     for (const s of [1, -1]) {
       const a = sph(0.0145, weiss, 14, 10); a.position.set(s * 0.036, 0.022, 0.093); a.scale.z = 0.7; gesicht.add(a);
       const p = sph(0.0075, iris, 12, 8); p.position.set(s * 0.036, 0.022, 0.103); gesicht.add(p); this.augen.push(p);
-      if (!maske) { const lid = sph(0.0155, haut, 12, 8, false); lid.scale.set(1.05, 0.55, 0.75); lid.position.set(s * 0.036, 0.031, 0.094); gesicht.add(lid); }
+      if (!maske) { const lid = sph(0.0155, haut, 12, 8, false); lid.scale.set(1.05, 0.55, 0.75); lid.position.set(s * 0.036, 0.031, 0.094); gesicht.add(lid); (this.lider ??= []).push(lid); }
       const b = box(0.042, 0.009, 0.012, maske ? kopfMat : mat(o.haarfarbe ?? 0x2b2118)); b.position.set(s * 0.04, 0.05, 0.103); b.rotation.z = s * -0.08; gesicht.add(b);
       this['braue' + (s > 0 ? 'L' : 'R')] = b;
     }
@@ -210,7 +211,9 @@ export class Figur {
       { const nase = new THREE.Mesh(new THREE.ConeGeometry(0.017, 0.05, 10), haut); nase.rotation.x = Math.PI / 2 - 0.35; nase.position.set(0, -0.005, 0.118); gesicht.add(nase);
         gesicht.add(at(sph(0.012, haut, 10, 8), 0, -0.02, 0.122)); }
       { const lippe = mat(o.lippen ?? 0xb5686b, { r: .5 }); const ol = sph(1, lippe, 12, 8); ol.scale.set(0.026, 0.006, 0.01); gesicht.add(at(ol, 0, -0.04, 0.106));
-        const ul = sph(1, lippe, 12, 8); ul.scale.set(0.022, 0.007, 0.01); gesicht.add(at(ul, 0, -0.06, 0.104)); }
+        const ul = sph(1, lippe, 12, 8); ul.scale.set(0.022, 0.007, 0.01); gesicht.add(at(ul, 0, -0.06, 0.104)); this.unterlippe = ul;
+        this.zaehne = box(0.03, 0.008, 0.006, mat(0xf4f1ea, { r: .3 })); this.zaehne.position.set(0, -0.046, 0.101); gesicht.add(this.zaehne);
+        for (const sx of [1, -1]) { const fal = box(0.003, 0.02, 0.004, mat(new THREE.Color(o.haut ?? 0xd9a77a).multiplyScalar(.82))); fal.position.set(sx * 0.034, -0.035, 0.1); fal.rotation.z = sx * .4; gesicht.add(fal); } }   // Lachfalten
       this.mundMesh = sph(0.02, mat(0x2a0f10, { r: 0.5 }), 12, 8); this.mundMesh.scale.set(1.1, 0.25, 0.5);
       this.mundMesh.position.set(0, -0.05, 0.102); gesicht.add(this.mundMesh);
       if (o.bart) { const bt = sph(0.1, mat(o.bart, { r: 0.95 }), 16, 10, true); bt.scale.set(0.95, 0.6, 0.85); bt.position.set(0, -0.06, 0.03); gesicht.add(bt); }
@@ -270,6 +273,7 @@ export class Figur {
     j.head.rotation.set(kn, kd, ks);
     j.hips.position.y = 0.98;
     this.mund(p.mund ?? 0);
+    { const tz = Figur.zeit + (this.phase ??= ((this.o.nummer ?? 3) * 0.917 + (this.o.groesse ?? 1.8) * 3.1) % 3.7); this.blinzeln(p.blinz ?? ((tz % 3.7) < .12 ? 1 : 0)); }
     if (p.blick) for (const a of this.augen) { a.position.x = Math.sign(a.position.x) * 0.04 + p.blick[0] * 0.008; a.position.y = 0.022 + p.blick[1] * 0.006; }
   }
 
@@ -278,10 +282,18 @@ export class Figur {
     fs.forEach((f, k) => { f.rotation.x = k < anzahl ? 0 : -1.9; f.visible = true; });
   }
 
+  // Mimik: Mund öffnet sich mit Unterlippe + Kiefer, Zähne blitzen, Brauen heben sich beim Reden
   mund(k) {
-    if (!this.mundMesh) return;
-    this.mundMesh.scale.y = 0.15 + 0.8 * clamp(k);
+    k = clamp(k);
+    if (this.mundMesh) {
+      this.mundMesh.scale.y = 0.2 + 1.05 * k; this.mundMesh.position.y = -0.05 - 0.006 * k;
+      if (this.unterlippe) this.unterlippe.position.y = -0.06 - 0.016 * k;
+      if (this.zaehne) this.zaehne.visible = k > .15;
+      if (this.kiefer) this.kiefer.position.y = 0.06 - 0.012 * k;
+    }
+    for (const [b, sx] of [[this.braueL, 1], [this.braueR, -1]]) if (b) { b.position.y = 0.05 + 0.008 * k; b.rotation.z = sx * (-0.08 + 0.12 * k); }
   }
+  blinzeln(b) { if (this.lider) for (const l of this.lider) { l.scale.y = 0.55 + 0.95 * b; l.position.y = 0.031 - 0.01 * b; } }
 
   // Root setzen, dann so verschieben, dass der tiefste Körperpunkt genau auf boden liegt.
   platziere(x, z, drehung = 0, { boden = 0, ohneHaende = true, kipp = null, hoehe = null } = {}) {

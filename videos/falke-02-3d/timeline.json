@@ -60,27 +60,27 @@
   },
   {
    "n": "dach",
-   "d": 9.0,
-   "tr": "whip",
-   "trd": 0.4
+   "d": 10.6,
+   "tr": "mix",
+   "trd": 0.8
   },
   {
    "n": "flug",
    "d": 9.5,
    "tr": "weiss",
-   "trd": 0.6
+   "trd": 0.8
   },
   {
    "n": "abseilen",
    "d": 9.0,
-   "tr": "zoom",
-   "trd": 0.5
+   "tr": "mix",
+   "trd": 0.7
   },
   {
    "n": "tuer",
    "d": 10.4,
-   "tr": "glitch",
-   "trd": 0.45,
+   "tr": "mix",
+   "trd": 0.7,
    "sync": {
     "zeile": "Drei",
     "ereignis": 4.9,
@@ -99,15 +99,13 @@
   },
   {
    "n": "twist",
-   "d": 10.5,
-   "tr": "mix",
-   "trd": 0.7
+   "d": 10.5
   }
  ],
  "dialog": [
   [
    "hook",
-   2.95,
+   2.4,
    "6",
    "Tja. Die Tür war mal zu."
   ],
@@ -131,13 +129,13 @@
   ],
   [
    "dach",
-   5.0,
+   6.0,
    "2",
    "Gibt's im Hubschrauber Frühstück?"
   ],
   [
    "dach",
-   7.2,
+   8.4,
    "4",
    "Nein."
   ],

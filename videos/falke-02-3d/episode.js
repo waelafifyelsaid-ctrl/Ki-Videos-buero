@@ -1,7 +1,7 @@
 // EINHEIT FALKE – Einsatz 02: Das Flugzeug (3D, nur POV, Morgennebel).
 import {
   THREE, W, H, mat, box, cyl, sph, caps, at, bodenPlatte, clamp, lerp, easeOut, easeIn, easeInOut, easeBack, smooth,
-  betonTex, holzTex, liveTex, weltPos, rng, radialTex, rauchTex,
+  betonTex, holzTex, liveTex, weltPos, rng, radialTex, rauchTex, canvasTex as canvasTexEp,
 } from '/tools/einsatz3d/kern.js';
 import { Figur, gehPose, rennPose, hockPose, stehPose, schildModell, handschellenModell } from '/tools/einsatz3d/figur.js';
 import { renderer, Post, UEBERGANG, Explosion, Schwaden, schild, hauptquartier, hqDetails } from '/tools/einsatz3d/welt.js';
@@ -51,7 +51,7 @@ const richtung = (vx, vz, sonst) => (Math.hypot(vx, vz) > 0.05 ? Math.atan2(vx, 
 const wackel = (t, st) => { const r = rng(Math.floor(t * 30)); return V3((r() - .5) * st, (r() - .5) * st, 0); };
 
 const OPS = { 1: { headset: true, groesse: 1.86 }, 2: { groesse: 1.98, visier: true }, 4: { groesse: 1.72, visier: true }, 7: { groesse: 1.76, headset: true } };
-const teamOps = (s, nr) => { const f = new Figur({ art: 'team', nummer: nr, maske: true, helm: true, ...OPS[nr] }); s.add(f.root); return f; };
+const teamOps = (s, nr) => { const f = new Figur({ art: 'team', nummer: nr, maske: false, helm: true, ...OPS[nr] }); s.add(f.root); return f; };
 const ZIVIL = {
   1: { haut: 0xe0ac69, haare: true, haarfarbe: 0x9a9a9a, bart: 0xa5a5a5, groesse: 1.86 }, 2: { haut: 0x7a4a2a, groesse: 1.98 },
   4: { haut: 0xf1c27d, haare: true, haarfarbe: 0x6f1d1b, dutt: true, groesse: 1.72, lippen: 0xc0505a }, 7: { haut: 0xffdbac, haare: true, haarfarbe: 0x5b3a29, brille: true, groesse: 1.76 },
@@ -151,12 +151,13 @@ function s_dach(lt, t) {
   const { d, h, k, pov, laeufer, sitzer, wind } = DACH;
   dachUpdate(d, t);
   // Abheben
-  const ab = smooth(4.9, SZ('dach').d + .6, lt);
-  const hoch = 22 * easeIn(clamp((lt - 4.9) / 4.6)) * 1.0 + .35 * smooth(4.7, 5.3, lt);
-  h.g.position.set(HELI_DACH.x - 14 * easeIn(clamp((lt - 6.4) / 3.5)), HELI_DACH.y + hoch, HELI_DACH.z);
-  h.g.rotation.set(-.16 * smooth(5.6, 7.5, lt) + .015 * Math.sin(t * 3) * ab, Math.PI / 2 + .25 * smooth(6.5, 9.5, lt), .05 * Math.sin(t * 1.3) * ab);
+  const TO = 5.7;   // Abheben erst, wenn alle sitzen
+  const ab = smooth(TO, SZ('dach').d + .6, lt);
+  const hoch = 22 * easeIn(clamp((lt - TO) / 4.6)) * 1.0 + .35 * smooth(TO - .2, TO + .4, lt);
+  h.g.position.set(HELI_DACH.x - 14 * easeIn(clamp((lt - TO - 1.5) / 3.5)), HELI_DACH.y + hoch, HELI_DACH.z);
+  h.g.rotation.set(-.16 * smooth(TO + .7, TO + 2.6, lt) + .015 * Math.sin(t * 3) * ab, Math.PI / 2 + .25 * smooth(TO + 1.6, TO + 4.6, lt), .05 * Math.sin(t * 1.3) * ab);
   h.g.updateMatrixWorld(true);
-  heliUpdate(h, t, { rpm: .85 + .15 * smooth(3.5, 5, lt) });
+  heliUpdate(h, t, { rpm: .85 + .15 * smooth(4.5, 6, lt) });
   wind.update(t, clamp(1 - hoch / 14), HELI_DACH, 0, k);
   d.sonne.target.position.set(0, 0, -5);
   // Tür des Treppenhauses fliegt auf
@@ -178,7 +179,7 @@ function s_dach(lt, t) {
     }
   }
   // 1 steht an der Tür und winkt alle rein, steigt nach uns ein
-  const eins = lt > 4.45;
+  const eins = lt > 5.35;
   laeufer[1].root.visible = !eins; sitzer[1].root.visible = eins;
   if (!eins) {
     const wink = lt > .8 && lt < 3.6;
@@ -196,7 +197,7 @@ function s_dach(lt, t) {
     const sw = Math.sin(t * 5);
     e.pose(abh ? { armL: [3.0, .2 + .2 * sw], armR: [3.0, .2 - .2 * sw], ellL: .2, ellR: .2, kopf: [-.2, 0, 0] } : { armL: [1.6, 1.2 + .3 * sw], armR: [1.6, 1.2 - .3 * sw], ellL: .4, ellR: .4 });
     e.platziere(6.5, -3.0, -2.2); }
-  { const c = DACH.crew; const drin = lt > 4.3; c.root.visible = !drin;
+  { const c = DACH.crew; const drin = lt > 5.45; c.root.visible = !drin;
     if (!drin) { c.pose({ ...hockPose(.15), armR: [1.4 + .5 * Math.sin(t * 6), .3], ellR: 1.0, armL: [.9, .2], ellL: 1.4, kopf: [0, -.3, 0] }); c.platziere(tuer.x - 1.3, tuer.z + .55, .6); } }
   // Kamera: aus dem Treppenhaus sprinten, auf die Kufe, rein, hinsetzen
   let pos, ziel;
@@ -206,28 +207,33 @@ function s_dach(lt, t) {
     const lauf = clamp(p.s / 3);
     pos = V3(p.x, 1.62 + Math.abs(Math.sin(p.dist / .85 * Math.PI)) * .06 * lauf - .12 * lauf, p.z).add(wackel(t, .012 * lauf));
     ziel = V3(tuer.x + .3, 1.3, tuer.z - 3);
-  } else if (lt < 4.5) {
-    const kk = easeInOut((lt - 3.6) / .9);
-    const a = V3(tuer.x + .3, 1.5, tuer.z + 1.25), m = h.g.localToWorld(V3(-1.0, HELI_BODEN + 1.2, -.05));
-    pos = kk < .5 ? a.clone().lerp(m, kk * 2) : m.clone().lerp(sitzW, (kk - .5) * 2);
-    ziel = kk < .5 ? h.g.localToWorld(V3(.3, 1.0, -.3)) : h.g.localToWorld(V3(0, 1.1, -2.6)).lerp(h.g.localToWorld(V3(-3, .6, -2.2)), (kk - .5) * 2);
+  } else if (lt < 5.3) {
+    // Einsteigen Schritt für Schritt: Fuß auf die Trittstufe → geduckt rein → umdrehen → hinsetzen
+    const A = h.g.worldToLocal(V3(tuer.x + .3, 1.5, tuer.z + 1.25)), S = V3(-1.45, 2.02, .2), I = V3(-.5, HELI_BODEN + 1.2, .55), Z = AUGE6.clone();
+    const k1 = easeInOut((lt - 3.6) / .45), k2 = easeInOut((lt - 4.05) / .5), k3 = easeInOut((lt - 4.55) / .7);
+    const lp = lt < 4.05 ? A.clone().lerp(S, k1) : lt < 4.55 ? S.clone().lerp(I, k2) : I.clone().lerp(Z, k3);
+    lp.y += lt < 4.05 ? Math.sin(k1 * Math.PI) * .08 : 0;
+    pos = h.g.localToWorld(lp);
+    const zA = V3(-.3, 1.3, -.2), zB = V3(.4, 1.1, 1.45), zC = V3(0, 1.45, -2.6), zD = V3(-3, .6, -2.2);
+    const zl = zA.clone().lerp(zB, smooth(3.95, 4.5, lt)).lerp(zC, smooth(4.55, 5.0, lt)).lerp(zD, smooth(4.95, 5.3, lt));
+    ziel = h.g.localToWorld(zl);
   } else {
-    // sitzend: Blick nach vorne-links aus der offenen Tür, zwischendurch zu 2 und 4
+    // sitzend: Blick nach vorne-links aus der offenen Tür, zwischendurch zu 2 und 4 (weich)
     const z2 = L('dach', 'Gibt'), z4 = L('dach', 'Nein');
     const zu2 = smooth(z2.start - .3, z2.start + .2, lt) * (1 - smooth(z4.start - .2, z4.start + .2, lt));
     const zu4 = smooth(z4.start - .2, z4.start + .2, lt);
-    let zl = V3(-3, .6 - .8 * ab, -2.2);
+    let zl = V3(-3, .6 - .35 * ab, -2.2);
     zl.lerp(V3(-.5, 1.5, -.82), zu2).lerp(V3(.72, 1.5, .9), zu4 * .8);
     pos = sitzW.clone().add(wackel(t, .006 + .01 * ab)); ziel = h.g.localToWorld(zl);
   }
-  schau(k, pos, ziel, lt > 4.5 ? h.g.rotation.z * .6 : 0);
-  pov.setze({ modus: 'gewehr', t, lauf: lt < 3.6 ? 1 : .15, zielen: -.3, senken: lt > 4.5 ? .35 : 0 });
+  schau(k, pos, ziel, lt > 5.3 ? h.g.rotation.z * .6 : 0);
+  pov.setze({ modus: 'gewehr', t, lauf: lt < 3.6 ? 1 : lt < 5.3 ? .4 : .15, zielen: -.3, senken: lt > 3.6 ? .4 : 0 });
   return { welt: DACH, uhr: '05:16' };
 }
 
 // ======================================================================= WELT 3: Flug (Innenraum, Tür offen, Landschaft unten)
 const FLUG = (() => {
-  const s = new THREE.Scene(); s.background = new THREE.Color(0xb9c3d0); s.fog = new THREE.Fog(0xb9c3d0, 120, 900);
+  const s = new THREE.Scene(); s.background = new THREE.Color(0xb9c3d0); s.fog = new THREE.Fog(0xb9c3d0, 260, 1700);
   s.add(new THREE.HemisphereLight(0xe8eefc, 0x40444c, 1.3));
   const sonne = new THREE.DirectionalLight(0xffd2a6, 2.0); sonne.position.set(-6, 3, 1); s.add(sonne); s.add(sonne.target);
   const h = heliModell(); s.add(h.g); h.g.rotation.order = 'YXZ';
@@ -238,8 +244,24 @@ const FLUG = (() => {
     for (let i = 0; i < 40; i++) { const x = r() * 900, y = r() * 900; g.fillStyle = '#8d8d8d'; g.fillRect(x, y, 22, 16); g.fillStyle = '#6b2d2d'; g.fillRect(x, y, 22, 6); }
     g.fillStyle = '#ffd27a'; for (let i = 0; i < 60; i++) g.fillRect(r() * 1024, r() * 1024, 4, 4); feld.tex.needsUpdate = true; }
   feld.tex.wrapS = feld.tex.wrapT = THREE.RepeatWrapping; feld.tex.repeat.set(8, 8);
-  const boden = new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), new THREE.MeshStandardMaterial({ map: feld.tex, roughness: 1 }));
-  boden.rotation.x = -Math.PI / 2; boden.position.y = -160; s.add(boden);
+  // Landschaft unten in 3D (Kacheln à 400 m, Häuser, Bäume, Straßen) – zieht unter uns durch, verschwindet nie
+  feld.tex.repeat.set(1, 1);
+  const land = new THREE.Group(); land.position.y = -140; s.add(land);
+  const hausGeo = new THREE.BoxGeometry(1, 1, 1), baumGeo = new THREE.ConeGeometry(1, 1, 7);
+  const r3 = rng(31), KACHEL = 400;
+  for (let ix = -2; ix <= 2; ix++) for (let iz = -2; iz <= 2; iz++) {
+    const k0 = new THREE.Group(); k0.position.set(ix * KACHEL, 0, iz * KACHEL); land.add(k0);
+    k0.add(at(new THREE.Mesh(new THREE.PlaneGeometry(KACHEL, KACHEL), new THREE.MeshStandardMaterial({ map: feld.tex, roughness: 1 })), 0, 0, 0, -Math.PI / 2));
+    const haeuser = new THREE.InstancedMesh(hausGeo, mat(0xd6cfc2, { r: .8 }), 60), daecher = new THREE.InstancedMesh(hausGeo, mat(0x8c3b2e, { r: .8 }), 60);
+    const baeume = new THREE.InstancedMesh(baumGeo, mat(0x3d5a2e, { r: 1 }), 220);
+    const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), ps = new THREE.Vector3();
+    const dorfX = (r3() - .5) * 250, dorfZ = (r3() - .5) * 250;
+    for (let i = 0; i < 60; i++) { const w = 8 + r3() * 8, h = 6 + r3() * 5; ps.set(dorfX + (r3() - .5) * 90, h / 2, dorfZ + (r3() - .5) * 90); q.setFromAxisAngle(V3(0, 1, 0), Math.floor(r3() * 4) * Math.PI / 2 + .2);
+      haeuser.setMatrixAt(i, m4.compose(ps, q, sc.set(w, h, w * .7))); daecher.setMatrixAt(i, m4.compose(ps.clone().setY(h + 1), q, sc.set(w * 1.05, 2, w * .75))); }
+    for (let i = 0; i < 220; i++) { const h = 8 + r3() * 8; const wald = i < 150; ps.set(wald ? (r3() - .5) * 120 + 120 * Math.sign(ix + .5) : (r3() - .5) * KACHEL, h / 2, wald ? (r3() - .5) * 120 - 100 : (r3() - .5) * KACHEL); baeume.setMatrixAt(i, m4.compose(ps, q.identity(), sc.set(3 + r3() * 2, h, 3 + r3() * 2))); }
+    k0.add(haeuser, daecher, baeume);
+  }
+  const boden = land;
   const glut = new THREE.Sprite(new THREE.SpriteMaterial({ map: radialTex('sonne', [[0, 'rgba(255,240,200,1)'], [.3, 'rgba(255,190,120,.6)'], [1, 'rgba(255,170,100,0)']]), fog: false, depthWrite: false }));
   glut.position.set(-420, 30, 60); glut.scale.set(200, 200, 1); s.add(glut);
   // Wolkenfetzen, die vorbeiziehen
@@ -247,12 +269,12 @@ const FLUG = (() => {
   for (let i = 0; i < 14; i++) { const w = new THREE.Sprite(new THREE.SpriteMaterial({ map: rt, color: 0xf1f3f5, transparent: true, opacity: .55, depthWrite: false })); w.userData = { x: -40 - r() * 60, y: -30 + r() * 40, z: r() * 400, s: 30 + r() * 40 }; s.add(w); wolken.push(w); }
   const k = kamera(s, 76); const pov = new Pov(k);
   const t = {}; for (const nr of [1, 2, 4, 7]) { t[nr] = teamOps(s, nr); s.remove(t[nr].root); h.g.add(t[nr].root); }
-  return { s, h, k, pov, t, feld, sonne, wolken };
+  return { s, h, k, pov, t, feld, sonne, wolken, land, KACHEL };
 })();
 function s_flug(lt, t) {
   const { h, k, pov, t: tm, feld, sonne, wolken } = FLUG;
   const d = SZ('flug').d;
-  feld.tex.offset.set((t * .012) % 1, 0);
+  FLUG.land.position.x = ((t * 48) % FLUG.KACHEL);   // wir fliegen nach −x (Nase), der Boden zieht nach +x
   for (const w of FLUG.wolken) { const u = w.userData; w.position.set(u.x, u.y, ((u.z - t * 60) % 400 + 400) % 400 - 200); w.scale.set(u.s, u.s * .5, 1); }
   const kurve = smooth(d - 3.2, d - .4, lt);
   h.g.position.set(0, 0, 0); h.g.rotation.set(-.08 + .02 * Math.sin(t * 1.7), Math.PI / 2, -.03 * Math.sin(t * .9) - .22 * kurve);
@@ -280,8 +302,11 @@ function s_flug(lt, t) {
   let zl = V3(.5, 1.6, -.82);
   const raus = smooth(z4.start - .3, z4.start + .4, lt);
   zl.lerp(V3(.72, 1.45, 1.0), .75 * smooth(z4.start - .2, z4.start + .1, lt) * (1 - smooth(z4.start + .7, z4.start + 1.0, lt)));
-  zl.lerp(V3(-3.2, -.4, -1.5), raus * smooth(z4.start + .9, z4.start + 1.4, lt)).lerp(V3(-2.5, -2.6, .2), kurve);
-  if (lt > z1.start - .2 && lt < z1.ende - .6) zl.lerp(V3(.24, 1.5, .5), .7 * smooth(z1.start - .2, z1.start + .3, lt));
+  // ruhige Blickführung: 7 → (Funk) kurz zu 4 → raus auf den Horizont → (Funk) zu 1 → raus. Alles weich, nie steil nach unten.
+  const draussen = V3(-3.4, 1.15, -1.7);
+  zl.lerp(draussen, smooth(z4.start + .9, z4.start + 1.5, lt) * (1 - smooth(z1.start - .3, z1.start + .2, lt)));
+  zl.lerp(V3(.24, 1.55, .9), .65 * fenster(z1, lt, .3, .4));
+  zl.lerp(draussen, smooth(z1.ende - .2, z1.ende + .5, lt));
   schau(k, sitzW.add(wackel(t, .01)), h.g.localToWorld(zl), h.g.rotation.z * .7);
   pov.setze({ modus: 'gewehr', t, senken: .4, zielen: -.25, geste: spricht6('flug', lt) });
   return { welt: FLUG, uhr: '05:24' };
@@ -329,7 +354,39 @@ function jetDetails(jet) {
   { const lp = new THREE.Group(); lp.add(at(box(.32, .015, .22, mat(0x9aa0a6, { m: .6 })), 0, 0, 0)); lp.add(at(box(.32, .2, .01, mat(0x111111, { e: 0x2a6f97, ei: .4 })), 0, .1, -.11, -.2)); lp.position.set(-.55, 2.26, -9.6); j.add(lp); }
   // Stufe + Haltegriff am Einstieg
   j.add(at(cyl(.015, .015, .6, chrom, 8), R0 - .1, 2.4, -2.62)); j.add(at(cyl(.015, .015, .6, chrom, 8), R0 - .1, 2.4, -3.48));
-  // außen: fiktives Logo am Leitwerk
+  // ---- Luxus-Ausstattung: Lederpaneele, Goldleisten, Teppich mit Muster, Vorhang zum Cockpit, Blumen, Kaffeemaschine, Kassettendecke
+  const gold = mat(0xc9a227, { m: .9, r: .25 }), creme = mat(0xefe4cf, { r: .6 });
+  const teppich = canvasTexEp('jetTeppich', 256, 256, (g, w, h) => { g.fillStyle = '#3a2f4f'; g.fillRect(0, 0, w, h); g.strokeStyle = '#8c7a4b'; g.lineWidth = 3;
+    for (let x = -w; x < w * 2; x += 32) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x + h, h); g.stroke(); g.beginPath(); g.moveTo(x + h, 0); g.lineTo(x, h); g.stroke(); } }, [3, 30]);
+  j.add(at(box(.62, .006, 9.5, mat(0xffffff, { map: teppich, r: 1 })), 0, 1.517, -8.2));
+  for (const sx of [1, -1]) {
+    j.add(at(box(.03, .42, 9.2, creme), sx * .99, 1.78, -8.2));                                  // Lederpaneel unten
+    for (let z = -4; z > -12.4; z -= .46) j.add(at(box(.032, .4, .006, mat(0xd9c9a8)), sx * .99, 1.78, z));   // Steppnähte
+    j.add(at(box(.035, .015, 9.2, gold), sx * .985, 2.0, -8.2)); j.add(at(box(.035, .015, 9.2, gold), sx * .985, 2.11, -8.2));   // Goldleisten
+    j.add(at(box(.02, .03, 9.2, mat(0xfff1d6, { e: 0xffd9a0, ei: 2.5 })), sx * .95, 1.56, -8.2));   // Bodenlicht
+  }
+  for (let z = -4; z > -11; z -= .9) j.add(at(box(1.3, .03, .8, mat(0xf6efe2, { r: .5 })), 0, 3.47, z - .45));   // Deckenkassetten
+  for (const sx of [-.45, .45]) { const v = box(.12, 1.5, .06, mat(0x6b2737, { r: .9 })); v.position.set(sx + (sx > 0 ? .1 : -.1), 2.3, -2.5); j.add(v); j.add(at(box(.14, .03, .08, gold), sx + (sx > 0 ? .1 : -.1), 2.4, -2.5)); }   // Vorhang (gerafft)
+  j.add(at(cyl(.05, .04, .16, mat(0xe9f5ff, { transparent: true, opacity: .5, r: .05 }), 12), .55, 2.62, -3.6));
+  for (let k = 0; k < 5; k++) j.add(at(sph(.035, mat([0xffffff, 0xf4a3b5, 0xffffff, 0xe85d75, 0xfff1d6][k], { r: .8 }), 8, 6), .55 + Math.cos(k * 1.3) * .04, 2.74 + (k % 2) * .03, -3.6 + Math.sin(k * 1.3) * .04));   // Blumen
+  j.add(at(box(.18, .26, .2, mat(0x1d1f22, { m: .6, r: .3 })), .85, 2.66, -4.05)); j.add(at(box(.04, .03, .05, mat(0xff4d4d, { e: 0xff4d4d, ei: 2 })), .78, 2.74, -3.95));   // Kaffeemaschine
+  j.add(at(box(.5, .6, .02, mat(0x9fb2c8, { m: .9, r: .05 })), .95, 2.75, -4.4, 0, -Math.PI / 2, 0));   // Spiegel
+  // ---- Cockpit: Glas-Cockpit mit 4 Displays, Autopilot-Panel, Overhead-Schalter, Schubhebel, Lammfellsitze, Headsets
+  const pfd = canvasTexEp('jetPFD', 256, 256, (g, w, h) => { g.fillStyle = '#2f6fb0'; g.fillRect(0, 0, w, h / 2); g.fillStyle = '#7a5230'; g.fillRect(0, h / 2, w, h / 2); g.strokeStyle = '#fff'; g.lineWidth = 3;
+    for (let k = -2; k <= 2; k++) { g.beginPath(); g.moveTo(w / 2 - 30, h / 2 + k * 22); g.lineTo(w / 2 + 30, h / 2 + k * 22); g.stroke(); } g.fillStyle = '#111'; g.fillRect(0, 0, 40, h); g.fillRect(w - 40, 0, 40, h);
+    g.fillStyle = '#80ed99'; g.font = 'bold 18px DejaVu Sans'; g.fillText('140', 4, h / 2); g.fillText('0', w - 30, h / 2); g.strokeStyle = '#ffd166'; g.beginPath(); g.moveTo(w / 2 - 50, h / 2); g.lineTo(w / 2 + 50, h / 2); g.stroke(); });
+  const nd = canvasTexEp('jetND', 256, 256, (g, w, h) => { g.fillStyle = '#05080c'; g.fillRect(0, 0, w, h); g.strokeStyle = '#80ed99'; g.lineWidth = 2; g.beginPath(); g.arc(w / 2, h * .85, 110, Math.PI, 2 * Math.PI); g.stroke();
+    g.strokeStyle = '#ff4dff'; g.beginPath(); g.moveTo(w / 2, h * .85); g.lineTo(w / 2 + 30, 40); g.stroke(); g.fillStyle = '#4cc9f0'; g.font = 'bold 16px DejaVu Sans'; g.fillText('RWY 27', 140, 60); });
+  const bildschirm = (tex, x, y, z, ry = 0) => { j.add(at(box(.24, .2, .02, mat(0x0b0b0d)), x, y, z - .01, -.35, ry)); j.add(at(new THREE.Mesh(new THREE.PlaneGeometry(.21, .17), new THREE.MeshStandardMaterial({ map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: .9 })), x, y, z + .002, -.35, ry)); };
+  bildschirm(pfd, -.55, 2.27, -.38); bildschirm(nd, -.28, 2.27, -.36); bildschirm(nd, .28, 2.27, -.36); bildschirm(pfd, .55, 2.27, -.38);
+  j.add(at(box(1.5, .07, .16, mat(0x1b1d21)), 0, 2.48, -.42, .2)); for (let k = 0; k < 14; k++) j.add(at(box(.035, .02, .02, mat(0x000000, { e: [0x80ed99, 0xffd166][k % 2], ei: 2 })), -.6 + k * .093, 2.5, -.36));   // Autopilot-Panel
+  const ov = canvasTexEp('jetOverhead', 256, 128, (g, w, h) => { g.fillStyle = '#2b2f36'; g.fillRect(0, 0, w, h); for (let y = 10; y < h; y += 22) for (let x = 10; x < w; x += 20) { g.fillStyle = '#d0d0d0'; g.fillRect(x, y, 6, 10); if ((x + y) % 3 === 0) { g.fillStyle = '#ffd166'; g.fillRect(x + 8, y, 6, 4); } } });
+  j.add(at(new THREE.Mesh(new THREE.PlaneGeometry(.85, .45), new THREE.MeshStandardMaterial({ map: ov, emissive: 0xffffff, emissiveMap: ov, emissiveIntensity: .25 })), 0, 3.21, -.9, Math.PI / 2 + .3));
+  j.add(at(box(.3, .12, .55, mat(0x1b1d21)), 0, 1.98, -1.05)); for (const x of [-.06, .06]) { j.add(at(cyl(.012, .012, .18, chrom, 6), x, 2.1, -1.05, -.4)); j.add(at(box(.05, .03, .03, mat(0x111111)), x, 2.18, -1.0)); }   // Schubhebel
+  for (const x of [-.4, .4]) { j.add(at(box(.46, .1, .46, mat(0xf1ece2, { r: 1 })), x, 1.98, -1.45)); j.add(at(box(.46, .6, .06, mat(0xf1ece2, { r: 1 })), x, 2.3, -1.68));   // Lammfell
+    j.add(at(new THREE.Mesh(new THREE.TorusGeometry(.08, .012, 6, 14, Math.PI), mat(0x111111)), x + (x > 0 ? .3 : -.3), 2.55, -1.3)); }   // Headsets am Haken
+  j.add(at(box(.18, .24, .02, mat(0x1d3557)), .42, 2.0, -.75, -.5));   // Checklisten-Mappe
+
   { const lg = new THREE.Mesh(new THREE.CircleGeometry(.45, 24), mat(0xff9f1c, { r: .4 })); for (const sx of [1, -1]) { const m = lg.clone(); m.position.set(sx * .075, 4.9, -16.2); m.rotation.y = sx * Math.PI / 2; j.add(m); } }
   return jet;
 }
@@ -538,7 +595,7 @@ function s_abseilen(lt, t) {
   VF.seilHaufen.visible = raus > .98; VF.seilHaufen.position.set(seil.oben.x, 0, seil.oben.z);
   // Crew-Chief kniet an der Tür, sichert das Seil und gibt Zeichen
   { const c = VF.crew; c.root.visible = true; c.pose({ ...hockPose(.7), armL: [1.3, .1], ellL: .7, armR: lt < 1.2 ? [2.6, .3] : [1.5, .2], ellR: .4, kopf: [.5, -.4, 0] });
-    c.platziere(-.95, -.45, -Math.PI / 2, { boden: h.g.localToWorld(V3(-.95, HELI_BODEN, -.45)).y });
+    c.platziere(-.95, -.8, -Math.PI / 2, { boden: h.g.localToWorld(V3(-.95, HELI_BODEN, -.8)).y });
     c.greife('L', h.g.localToWorld(V3(-1.55, HELI_BODEN + 1.2, -.05)), c.lokal(.5, 1.2, .3)); }
   // Jet rollt heran, bremst, Reifenqualm
   const nz = jetZ(lt), brems = lt > JB.tb && lt < JB.tb + 2.2 ? Math.sin((lt - JB.tb) / 2.2 * Math.PI) * .035 : 0;
@@ -557,10 +614,10 @@ function s_abseilen(lt, t) {
   const seilX = seil.oben.x, seilZ = seil.oben.z;
   for (const nr of [1, 4, 7]) tm[nr].root.visible = false;
   // 1 kniet im Heli hinter der Tür und gibt das Seil frei (ruft, zeigt runter)
-  if (lt < 3.2) { const f = tm[1]; f.root.visible = true; const w = h.g.localToWorld(V3(-.45, 0, -.15));
+  if (lt < 3.2) { const f = tm[1]; f.root.visible = true; const w = h.g.localToWorld(V3(-.3, 0, .05));
     f.pose({ ...hockPose(.55), mund: redet('abseilen', lt, '1'), armR: lt < 1.9 ? [2.4 + .3 * Math.sin(t * 8), .3] : [1.2, .2], ellR: .4 });
-    f.platziere(w.x, w.z, Math.PI, { boden: h.g.localToWorld(V3(-.45, HELI_BODEN, -.15)).y }); f.haltGewehr('tief');
-    schaueAn(f, h.g.localToWorld(V3(-1.25, HELI_BODEN + 1.4, .35)), 1); nicken(f, 'abseilen', lt, '1'); }
+    f.platziere(w.x, w.z, Math.PI * .75, { boden: h.g.localToWorld(V3(-.3, HELI_BODEN, .05)).y }); f.haltGewehr('tief');
+    schaueAn(f, k.position, 1); nicken(f, 'abseilen', lt, '1'); }
   {
     const f = tm[2];
     VF.schild2.visible = lt > r2b;
@@ -588,20 +645,21 @@ function s_abseilen(lt, t) {
   const nase = V3(0, 2.2, nz);
   if (lt < g0) {
     pos = tuerSitz.clone().add(wackel(t, .008));
-    ziel = lt < r2a ? h.g.localToWorld(V3(-9, -2.5, -1.6)) : (tm[2].root.visible ? weltPos(tm[2].j.hips) : V3(seilX, 0, seilZ));
-    if (lt < 1.45) ziel = kopfW(tm[1]).lerp(h.g.localToWorld(V3(-9, -2.5, -1.6)), smooth(1.0, 1.45, lt));   // erst zu 1 (ruft), dann raus
+    // erst zu 1 (ruft „Seil frei!“), dann raus, dann 2 beim Rutschen folgen – alles weich
+    ziel = kopfW(tm[1]).lerp(h.g.localToWorld(V3(-9, -2.5, -1.6)), smooth(1.0, 1.45, lt));
+    if (tm[2].root.visible) ziel.lerp(weltPos(tm[2].j.hips), smooth(1.45, 1.9, lt));
   } else if (lt < g1) {
     const kk = easeInOut((lt - g0) / (g1 - g0));
-    pos = tuerSitz.clone().lerp(V3(seilX + .04, HH + HELI_BODEN + 1.25, seilZ + .24), kk);
-    ziel = V3(seilX, 0, seilZ).lerp(nase, .15);
+    pos = tuerSitz.clone().lerp(V3(seilX + .06, HH + HELI_BODEN + 1.25, seilZ + .36), kk);
+    ziel = weltPos(tm[2].j.hips).lerp(V3(seilX, 0, seilZ).lerp(nase, .15), kk);
   } else if (lt < unten) {
     const kk = clamp((lt - g1) / (unten - g1)); const f = kk < .75 ? kk * kk / .75 * 1.33 * .75 : 1 - (1 - kk) * (1 - kk) * 4 * .25 / 1;
     const y = lerp(HH + HELI_BODEN + 1.25, 1.75, clamp(kk < .8 ? .9 * (kk / .8) * (kk / .8) : .9 + .1 * easeOut((kk - .8) / .2)));
-    pos = V3(seilX + .04 + .02 * Math.sin(t * 7), y, seilZ + .24);
-    ziel = V3(seilX, y - 2.4, seilZ - 1.1).lerp(nase, smooth(.55, .95, kk));
+    pos = V3(seilX + .06 + .02 * Math.sin(t * 7), y, seilZ + .36);
+    ziel = V3(seilX, 0, seilZ).lerp(nase, .15).lerp(V3(seilX, y - 1.5, seilZ - 1.9), smooth(0, .15, kk)).lerp(nase, smooth(.55, .95, kk));
   } else {
     const stoss = Math.exp(-6 * (lt - unten)) * Math.sin((lt - unten) * 14) * .3;
-    const p = pfad([[unten + .35, seilX + .04, seilZ + .24], [d, 3.4, -5.8]], lt);
+    const p = pfad([[unten + .35, seilX + .06, seilZ + .36], [d, 3.4, -5.8]], lt);
     const lauf = clamp(p.s / 3);
     pos = V3(p.x, 1.62 - Math.max(0, stoss) - .1 * lauf + Math.abs(Math.sin(p.dist / .85 * Math.PI)) * .05 * lauf, p.z);
     ziel = V3(1.2, 1.9, TUER_Z).lerp(nase, 1 - smooth(unten + .5, unten + 1.6, lt));
@@ -610,8 +668,11 @@ function s_abseilen(lt, t) {
   }
   schau(k, pos, ziel);
   if (lt > g0 - .2 && lt < unten + .15) {
-    const seilPunkt = dy => V3(seilX, k.position.y + dy, seilZ);
-    pov.setze({ modus: 'frei', t, zielR: seilPunkt(-.62), zielL: seilPunkt(-.36) });
+    k.updateMatrixWorld(true);
+    const schulterR = k.localToWorld(V3(.2, -.3, .1)), schulterL = k.localToWorld(V3(-.2, -.3, .1));
+    const greif = (sch, dy) => V3(seilX, sch.y + dy, seilZ);
+    const rutsch = lt > g1 && lt < unten ? .015 * Math.sin(t * 40) : 0;    // Hände gleiten am Seil
+    pov.setze({ modus: 'frei', t, zielR: greif(schulterR, -.12 + rutsch), zielL: greif(schulterL, .14 - rutsch) });
   } else pov.setze({ modus: 'gewehr', t, lauf: lt > unten + .4 ? 1 : .1, zielen: lt > unten ? -.1 : -.35, senken: lt < g0 ? .3 : 0 });
   return { welt: VF, uhr: '05:31' };
 }
@@ -673,7 +734,8 @@ function s_tuer(lt, t) {
   let pos = V3(lerp(6.6, 5.1, push), lerp(1.05, 1.2, push), lerp(-7.6, -9.4, push)), ziel = V3(.6, 2.6, TUER_Z - 1.6);
   if (lt > MARKEN[0] - .7 && lt < SPRENG - .3) ziel.lerp(weltPos(tm[1].j.haL).add(V3(0, .1, 0)), .45 * smooth(MARKEN[0] - .7, MARKEN[0] - .2, lt));
   const sh = d > 0 ? .1 * Math.exp(-3 * d) : 0;
-  if (lt > zugriff + 1.8) { const p = pfad([[zugriff + 1.8, 5.1, -9.4], [zugriff + 2.9, 2.6, -13.05]], lt); pos = V3(p.x, 1.55 + rampeH(p.x) * 0, p.z); ziel = V3(1.0, 2.6, TUER_Z); }
+  // Kamera-Lauf endet genau dort, wo die Kabinen-Szene beginnt
+  if (lt > zugriff + 1.8) { const p = pfad([[zugriff + 1.8, 5.1, -9.4], [Math.max(zugriff + 2.6, SZ('tuer').d), 2.6, -13.05]], lt); pos = V3(p.x, 1.55 + rampeH(p.x) * 0, p.z); ziel = V3(1.0, 2.6, TUER_Z); }
   pos.add(wackel(t, sh));
   schau(k, pos, ziel);
   const duckIch = d > -.1 && d < 1.2 ? Math.sin(clamp((d + .1) / 1.3) * Math.PI) : 0;
@@ -695,7 +757,7 @@ function s_kabine(lt, t) {
   stelleJet(NASE_STOP); jet.licht.forEach(l => { l.intensity = 0; }); VF.heli.g.visible = false;
   jet.pivot.rotation.z = -2.59;
   tm[7].root.visible = false;
-  const zP = L('kabine', 'Nicht'), tackle = zP.ende + .1;
+  const zP = L('kabine', 'Nicht'), zPol = L('kabine', 'POLIZEI'), tackle = zPol.ende + .95;   // Leibwächter springt sofort nach dem Zuruf auf uns zu
   pilotSitzt(lt, lt > .9, lt > .9 && lt < zP.ende + .3);
   // 2 steht im Gang mit Schild, Leibwächter stürmt an, Tackle, Handschellen
   const g0 = V3(-.55, 0, -18.4 + 0);   // Platz des Leibwächters (Welt)
@@ -746,31 +808,34 @@ function s_kabine(lt, t) {
   // Tablet auf Sitz 1A
   const sitz1A = V3(-.55, 1.5 + .52, -14.3);
   const zT = L('kabine', 'Sitz 1A');
-  const greift = smooth(zT.start + 1.4, zT.start + 2.4, lt), hebt = smooth(zT.start + 2.4, zT.ende + .3, lt);
+  const greift = smooth(zT.start + 1.0, zT.start + 1.9, lt), hebt = smooth(zT.start + 1.9, zT.ende + .15, lt);
   VF.tablet.visible = true;
-  const tabletHand = k.localToWorld(V3(0, -.1, -.42));
-  VF.tablet.position.copy(sitz1A.clone().lerp(tabletHand, hebt));
-  if (hebt < .01) VF.tablet.rotation.set(-Math.PI / 2, 0, 0); else { VF.tablet.quaternion.copy(k.quaternion); VF.tablet.rotateX(-.15 * (1 - hebt) - .3 * (1 - hebt)); }
   zeichneTablet(lt < zT.start ? -1 : 0, t);
-  // Kamera: Treppe hoch, rein, Blick nach hinten, kurz zum Cockpit, dann zum Tackle, dann zum Tablet
-  const zT0 = L('kabine', 'Sitz 1A').start;
-  const steig = pfad([[0, 2.25, -13.05], [.9, 1.0, -13.05], [1.5, .22, -13.7], [tackle + .1, .12, -13.95], [tackle + 1.1, .1, -15.55], [zT0 - .9, .1, -15.55], [zT0 + .1, .05, -13.65]], lt);
+  // Kamera ohne Sprünge: Treppe hoch, geduckt durch die Tür, Blick ins Cockpit → (Leibwächter springt auf) weicher Schwenk nach hinten → Festnahme → Tablet
+  const zT0 = zT.start;
+  const steig = pfad([[0, 2.6, -13.05], [.75, 1.3, -13.05], [1.25, .45, -13.35], [1.7, .2, -13.75], [tackle + .1, .14, -13.9], [tackle + 1.1, .1, -15.55], [zT0 - .9, .1, -15.55], [zT0 + .2, .05, -13.7]], lt);
   const boden = steig.x > TUER_X ? rampeH(steig.x) : 1.5;
-  const pos = V3(steig.x, boden + 1.55 + Math.sin(steig.dist / .6 * Math.PI) * .03, steig.z);
-  let ziel = V3(0, 2.9, -20);
-  if (lt < .9) ziel = V3(.4, 2.75, -13.3).lerp(V3(0, 2.8, -16), smooth(.4, .9, lt));
-  if (lt > zP.start - .2 && lt < zP.ende - .2) ziel = V3(.35, 2.3, -11.4);
-  if (lt > tackle + .8 && lt < L('kabine', 'Wo ist').start) ziel = weltPos(gorilla.j.hips).add(V3(0, .1, 0));
-  { const zA = L('kabine', 'Bitte'), zW = L('kabine', 'Wo ist'), zF = L('kabine', 'Ihr Flug');
-    if (lt > zW.start - .3 && lt < zT.start - .3) ziel = weltPos(gorilla.j.hips).add(V3(0, .1, 0));
-    ziel.lerp(kopfW(tm[2]), .75 * Math.max(fenster(zA, lt, .25, .1), fenster(zW, lt, .2, .1)));
-    schaueAn(tm[2], k.position, Math.max(fenster(zA, lt, .1, .2), fenster(zW, lt, .1, .3))); nicken(tm[2], 'kabine', lt, '2');
-    schaueAn(tm[2], weltPos(gorilla.j.head), fenster(zF, lt) * .9);
-    schaueAn(tm[4], weltPos(VF.pilot.j.head), 1); nicken(tm[4], 'kabine', lt, '4'); schaueAn(VF.pilot, kopfW(tm[4]), fenster(L('kabine', 'POLIZEI'), lt, .1, .4)); }
-  if (lt > zT.start - .3) ziel = sitz1A.clone().lerp(V3(0, 2.9, -16), hebt);
+  const duck = steig.x > .5 && steig.x < 1.45 ? .22 * Math.sin((steig.x - .5) / .95 * Math.PI) : 0;   // unter dem Türrahmen ducken
+  const pos = V3(steig.x, boden + 1.55 - duck + Math.sin(steig.dist / .6 * Math.PI) * .03 * clamp(steig.s), steig.z);
+  const zA = L('kabine', 'Bitte'), zW = L('kabine', 'Wo ist'), zF = L('kabine', 'Ihr Flug');
+  let ziel = V3(1.0, 2.6, TUER_Z).lerp(V3(.2, 2.55, -11.6), smooth(.3, 1.3, lt));                     // von der Tür (Ende Tür-Szene) weich ins Cockpit: 4 brüllt den Piloten an
+  ziel.lerp(weltPos(gorilla.j.chest), smooth(zPol.ende - .25, zPol.ende + .45, lt));                  // er springt auf – wir schwenken mit
+  ziel.lerp(weltPos(gorilla.j.hips).add(V3(0, .1, 0)), smooth(tackle + .3, tackle + 1.0, lt));        // Festnahme am Boden
+  ziel.lerp(kopfW(tm[2]), .7 * Math.max(fenster(zA, lt, .35, .3), fenster(zW, lt, .35, .3)));
+  ziel.lerp(sitz1A, smooth(zT.start - .5, zT.start + .4, lt));                                        // Sitz 1A: das Tablet
+  ziel.lerp(V3(0, 2.6, -16.5), hebt);                                                                 // Tablet hoch vors Gesicht (= Start der Twist-Szene)
+  schaueAn(tm[2], k.position, Math.max(fenster(zA, lt, .1, .2), fenster(zW, lt, .1, .3))); nicken(tm[2], 'kabine', lt, '2');
+  schaueAn(tm[2], weltPos(gorilla.j.head), fenster(zF, lt) * .9);
+  schaueAn(tm[4], weltPos(VF.pilot.j.head), 1); nicken(tm[4], 'kabine', lt, '4'); schaueAn(VF.pilot, kopfW(tm[4]), fenster(zPol, lt, .1, .4));
   schau(k, pos.add(wackel(t, nach > 0 && nach < .5 ? .03 : 0)), ziel);
-  if (greift > 0 && hebt < 1) pov.setze({ modus: 'frei', t, zielR: k.localToWorld(V3(.25, -.4, -.35)).lerp(VF.tablet.position.clone().add(V3(.1, 0, .05)), greift), zielL: hebt > .3 ? VF.tablet.position.clone().add(V3(-.12, 0, 0)) : null });
-  else pov.setze({ modus: 'gewehr', t, lauf: lt < 1.4 ? .7 : .1, zielen: .2, senken: lt > tackle ? .5 : 0, lampe: 12, geste: spricht6('kabine', lt) });
+  // Tablet: liegt flach → wird gegriffen → gleitet (Position + Drehung weich) in die Halteposition der Twist-Szene
+  const flach = new THREE.Quaternion().setFromEuler(new THREE.Euler(-Math.PI / 2, 0, 0));
+  const halten = k.quaternion.clone().multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(-.12, 0, 0)));
+  VF.tablet.position.copy(sitz1A.clone().lerp(k.localToWorld(V3(0, -.06, -.4)), easeInOut(hebt)));
+  VF.tablet.quaternion.copy(flach).slerp(halten, easeInOut(hebt)); VF.tablet.updateMatrixWorld(true);
+  const griffR = VF.tablet.localToWorld(V3(.14, -.02, 0)), griffL = VF.tablet.localToWorld(V3(-.14, -.02, 0));
+  if (greift > 0) pov.setze({ modus: 'frei', t, zielR: k.localToWorld(V3(.25, -.4, -.35)).lerp(griffR, greift), zielL: hebt > .05 ? k.localToWorld(V3(-.25, -.45, -.3)).lerp(griffL, smooth(.05, .5, hebt)) : null });
+  else pov.setze({ modus: 'gewehr', t, lauf: lt < 1.7 ? .7 : .1, zielen: .1 + .1 * smooth(0, .6, lt), senken: .35 * smooth(0, .5, lt) * (1 - smooth(1.7, 2.2, lt)) + .5 * smooth(tackle, tackle + .5, lt), lampe: 12 * smooth(0, .6, lt), geste: spricht6('kabine', lt) });
   return { welt: VF, uhr: '05:33' };
 }
 
@@ -876,6 +941,7 @@ function szeneRendern(i, lt, ziel) {
   POST.rendere(r.welt.s, r.welt.k, ziel); return r;
 }
 window.renderFrame = async (t) => {
+  Figur.zeit = t;
   let i = 0; TL.szenen.forEach((s, k) => { if (t >= s.start) i = k; });
   const s = TL.szenen[i], lt = t - s.start, tr = s.tr, trd = s.trd ?? .5;
   let r, post = {}, weiss = 0;

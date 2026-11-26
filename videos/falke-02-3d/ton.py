@@ -259,7 +259,13 @@ for z in TL["dialog"]:
     if not len(x):
         continue
     gef += 1
-    x = x / max(1e-9, np.max(np.abs(x))) * .8
+    x = x / max(1e-9, np.max(np.abs(x))) * .9
+    if z["text"].startswith(("POLIZEI", "ZUGRIFF", "Einsteigen", "Seil frei", "Raus")):   # Festnahme-Gebrüll: lauter, leicht übersteuert, mit Raumhall
+        x = np.tanh(x * 2.2) / np.tanh(2.2) * 1.25
+        hall = np.zeros(len(x) + int(.25 * SR))
+        for dly, g in ((.045, .35), (.09, .22), (.16, .12)):
+            i0 = int(dly * SR); hall[i0:i0 + len(x)] += g * x
+        hall[:len(x)] += x; x = hall
     if z["funk"]:
         x = np.concatenate([funkfilter(x) * .9, .4 * funk()[:int(.12 * SR)]])
     elif z.get("lautsprecher"):
@@ -269,7 +275,7 @@ for z in TL["dialog"]:
     stimme[i:e2] += x[:e2 - i]
 if gef:
     huelle = lowpass(np.abs(stimme), 6) * 8
-    a = a * (1 - .3 * np.clip(huelle, 0, 1))
+    a = a * (1 - .5 * np.clip(huelle, 0, 1))   # Musik/Geräusche unter Stimmen deutlicher absenken → Gespräche gut hörbar
     a = a / max(1e-9, np.max(np.abs(a))) * .6 + stimme
 print(f"Stimmen gemischt: {gef}")
 a = a / max(1e-9, np.max(np.abs(a))) * .89

@@ -49,7 +49,7 @@
  "szenen": [
   {
    "n": "hook",
-   "d": 5.611,
+   "d": 5.061,
    "verzug": 0.0,
    "start": 0.0
   },
@@ -60,37 +60,37 @@
    "trd": 1.0,
    "karte": "2 STUNDEN VORHER",
    "verzug": 0.0,
-   "start": 5.611
+   "start": 5.061
   },
   {
    "n": "dach",
-   "d": 9.414,
-   "tr": "whip",
-   "trd": 0.4,
+   "d": 10.6,
+   "tr": "mix",
+   "trd": 0.8,
    "verzug": 0.0,
-   "start": 14.874
+   "start": 14.324
   },
   {
    "n": "flug",
    "d": 12.094,
    "tr": "weiss",
-   "trd": 0.6,
+   "trd": 0.8,
    "verzug": 0.0,
-   "start": 24.288
+   "start": 24.924
   },
   {
    "n": "abseilen",
    "d": 9.0,
-   "tr": "zoom",
-   "trd": 0.5,
+   "tr": "mix",
+   "trd": 0.7,
    "verzug": 0.0,
-   "start": 36.382
+   "start": 37.018
   },
   {
    "n": "tuer",
    "d": 10.915,
-   "tr": "glitch",
-   "trd": 0.45,
+   "tr": "mix",
+   "trd": 0.7,
    "sync": {
     "zeile": "Drei",
     "ereignis": 4.9,
@@ -108,29 +108,27 @@
     3.63,
     4.75
    ],
-   "start": 45.382
+   "start": 46.018
   },
   {
    "n": "kabine",
    "d": 16.059,
    "verzug": 0.0,
-   "start": 56.297
+   "start": 56.933
   },
   {
    "n": "twist",
    "d": 12.434,
-   "tr": "mix",
-   "trd": 0.7,
    "verzug": 0.0,
-   "start": 72.356
+   "start": 72.992
   }
  ],
  "dialog": [
   {
    "id": "01_hook_6",
    "szene": "hook",
-   "start": 2.95,
-   "ende": 5.261,
+   "start": 2.4,
+   "ende": 4.711,
    "wer": "6",
    "text": "Tja. Die Tür war mal zu.",
    "funk": false,
@@ -177,8 +175,8 @@
   {
    "id": "05_dach_2",
    "szene": "dach",
-   "start": 5.0,
-   "ende": 7.334,
+   "start": 6.0,
+   "ende": 8.334,
    "wer": "2",
    "text": "Gibt's im Hubschrauber Frühstück?",
    "funk": false,
@@ -189,14 +187,14 @@
   {
    "id": "06_dach_4",
    "szene": "dach",
-   "start": 7.484,
-   "ende": 9.064,
+   "start": 8.484,
+   "ende": 10.064,
    "wer": "4",
    "text": "Nein.",
    "funk": false,
    "lautsprecher": false,
    "datei": "05_hq_4.mp3",
-   "verschoben": 0.28
+   "verschoben": 0.08
   },
   {
    "id": "07_flug_7v",
@@ -439,5 +437,5 @@
    "verschoben": 0.57
   }
  ],
- "dauer": 84.79
+ "dauer": 85.426
 }
