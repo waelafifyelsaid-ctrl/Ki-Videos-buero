@@ -37,7 +37,7 @@
 | 0:51.9 | 1 | ZUGRIFF! |
 | 0:55.3 | 4 | POLIZEI! Hände hoch! |
 | 0:57.3 | PILOT | Nicht schießen! Ich bin nur der Pilot! |
-| 1:00.5 | 6 · DU | Gute Landung, Kleiderschrank. |
+| 1:00.5 | 6 · DU | Ihr Flug wurde leider gestrichen. |
 | 1:03.4 | 2 | Bitte anschnallen. |
 | 1:05.2 | 6 · DU | Wo ist der Fuchs? |
 | 1:07.4 | 7 · FUNK | Sitz 1A. Da liegt nur ein Tablet. |

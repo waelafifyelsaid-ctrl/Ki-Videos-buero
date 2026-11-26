@@ -34,7 +34,7 @@ for z in zeilen:
     if ziel.exists() or (nur and z["rolle"] not in nur) or any(t == z["text_ohne_tags"] or t.replace("1A", "eins A").replace("FX-77", "F X sieben sieben") == z["text_ohne_tags"] for t in ZU if (HIER / "stimmen" / ZU[t]).exists()):
         continue
     tag = z["text_v3"][1:z["text_v3"].index("]")].lower() if z["text_v3"].startswith("[") else ""
-    laut = tag in LAUT
+    laut = tag in LAUT or os.environ.get("NUR_V2") == "1"   # NUR_V2=1: stabilste Stimme (gleiche Tonhöhe)
     modell = "eleven_multilingual_v2" if laut else "eleven_v3"
     text = z["text_ohne_tags"]
     if not laut and tag:

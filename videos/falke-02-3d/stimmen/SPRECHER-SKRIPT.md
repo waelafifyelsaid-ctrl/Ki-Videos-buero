@@ -20,11 +20,11 @@
 | 0:51.9 | 1 | [schreit] ZUGRIFF! |
 | 0:55.3 | 4 | [schreit] POLIZEI! Hände hoch! |
 | 0:57.3 | PILOT | [panisch] Nicht schießen! Ich bin nur der Pilot! |
-| 1:00.5 | 6 · DU | [grinsend] Gute Landung, Kleiderschrank. |
-| 1:03.4 | 2 | [trocken] Bitte anschnallen. |
-| 1:05.2 | 6 · DU | [ernst] Wo ist der Fuchs? |
-| 1:07.4 | 7 · FUNK | [nervös] Sitz 1A. Da liegt nur ein Tablet. |
-| 1:12.0 | FUCHS · VIDEO | [kalt] Zu langsam, Falke. |
-| 1:13.8 | FUCHS · VIDEO | [kalt] Wir sehen uns in den Bergen. |
-| 1:16.4 | 6 · DU | [kleinlaut] Ich hasse Berge. |
-| 1:18.6 | 2 | [hungrig] Gibt's da Frühstück? |
+| 1:00.5 | 6 · DU | [grinsend] Ihr Flug wurde leider gestrichen. |
+| 1:03.0 | 2 | [trocken] Bitte anschnallen. |
+| 1:04.7 | 6 · DU | [ernst] Wo ist der Fuchs? |
+| 1:06.9 | 7 · FUNK | [nervös] Sitz 1A. Da liegt nur ein Tablet. |
+| 1:11.5 | FUCHS · VIDEO | [kalt] Zu langsam, Falke. |
+| 1:13.4 | FUCHS · VIDEO | [kalt] Wir sehen uns in den Bergen. |
+| 1:15.9 | 6 · DU | [kleinlaut] Ich hasse Berge. |
+| 1:18.1 | 2 | [hungrig] Gibt's da Frühstück? |

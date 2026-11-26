@@ -77,3 +77,8 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Zugriff staffeln: jede Figur bekommt eigene Zeitfenster auf der Treppe (2 → 1 → 4 → Kamera), an der niedrigen Tür ducken.
 - Bei Dialog-Szenen in engen Räumen Kamera seitlich versetzen und Team an den Rand stellen, damit niemand Sprecher/Action verdeckt.
 - Endkarte mit LIKE + FOLGEN-Buttons (3 s) + „Teil 3 kommt bald“; Musik im Mix lauter (Musik 1,25 : Geräusche 0,5, Ducking 30 %).
+- Zierstreifen/Anbauteile am Rumpf an der Türöffnung unterbrechen – sonst laufen Figuren sichtbar „durch den Strich“.
+- Club-Sitze im Jet: Tische gehören zwischen die GEGENÜBER-Sitze (Beinraum), nicht zwischen Rücken an Rücken.
+- Kamera im Jet immer im Gang lassen (x ≈ 0…0,1); für den Blick auf die Festnahme den Kollegen seitlich in den Beinraum knien lassen.
+- Neue Zeile für 6 mit v3 klang höher (147 Hz statt ~105 Hz) → mit `NUR_V2=1 python3 stimmen_erzeugen.py` neu: 111 Hz, passt.
+- Mehr Leben im Bild: Einweiser mit Warnweste + Leuchtkellen, Crew-Chief an der Heli-Tür, Flughafenfeuerwehr mit Blaulicht, Seilhaufen am Boden.

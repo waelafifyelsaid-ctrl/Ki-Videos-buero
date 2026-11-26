@@ -1,6 +1,6 @@
 // Detaillierter Einsatz-Hubschrauber (außen + innen), Rotor-Abwind, Abseilseil.
 // Lokale Achsen: vorne = -Z, links = -X (Tür links ist die Abseiltür), Kufen-Unterkante y = 0.
-import { THREE, mat, box, cyl, sph, caps, at, liveTex, textTex, rauchTex, rng, clamp, lerp } from './kern.js';
+import { THREE, mat, box, cyl, sph, caps, at, liveTex, textTex, rauchTex, rng, clamp, lerp, canvasTex } from './kern.js';
 import { Figur } from './figur.js';
 
 export const HELI_BODEN = 0.62;          // Kabinenboden (lokal)
@@ -103,6 +103,17 @@ export function heliModell({ farbe = 0x2c3e50, piloten = true } = {}) {
   balken.add(at(box(.12, .12, .12, gelb), -1.6, B + 1.48, -.05));
   // Seilsäcke am Boden
   g.add(at(cyl(.13, .15, .26, mat(0x3a3f2e, { r: .95 }), 12), .05, B + .13, .55));
+  // Kleinkram wie im echten Einsatzhubschrauber
+  { const rot = mat(0xb00020, { r: .4, m: .3 }); g.add(at(cyl(.055, .055, .4, rot, 12), .9, B + .45, 1.62)); g.add(at(box(.06, .05, .05, mat(0x111111)), .9, B + .68, 1.62)); }   // Feuerlöscher
+  { const med = mat(0xe85d04, { r: .8 }); g.add(at(box(.4, .22, .18, med), -.3, B + 1.35, 1.6)); g.add(at(box(.12, .03, .005, mat(0xffffff)), -.3, B + 1.35, 1.505)); g.add(at(box(.03, .12, .005, mat(0xffffff)), -.3, B + 1.35, 1.505)); }   // Notfalltasche
+  { const netzT = canvasTex('ladenetz', 128, 128, (c, w, h) => { c.fillStyle = 'rgba(0,0,0,0)'; c.clearRect(0, 0, w, h); c.strokeStyle = '#2b2f22'; c.lineWidth = 5; for (let k = 0; k <= w; k += 21) { c.beginPath(); c.moveTo(k, 0); c.lineTo(k, h); c.stroke(); c.beginPath(); c.moveTo(0, k); c.lineTo(w, k); c.stroke(); } });
+    g.add(at(new THREE.Mesh(new THREE.PlaneGeometry(1.4, .5), new THREE.MeshStandardMaterial({ map: netzT, transparent: true, side: THREE.DoubleSide })), .2, B + 1.25, 1.66, 0, Math.PI, 0)); }
+  for (const x of [-.6, -.2, .2, .6]) for (const z of [-.5, .4]) g.add(at(new THREE.Mesh(new THREE.TorusGeometry(.03, .008, 6, 10), metall), x, B + .01, z, Math.PI / 2));   // Zurrringe
+  for (const [x, z] of [[-.72, 1.1], [.24, 1.1], [.72, 1.1], [-.5, -.5], [.5, -.5]]) {   // Intercom-Spiralkabel von der Decke
+    const kab = new THREE.Mesh(new THREE.TorusGeometry(.025, .006, 5, 10), mat(0x111111)); for (let k = 0; k < 6; k++) { const c = kab.clone(); c.position.set(x, B + 1.5 - k * .04, z); c.rotation.x = Math.PI / 2; g.add(c); } }
+  for (const [x, z, f] of [[-.24, 1.15, 0x3a3f2e], [-.15, .9, 0x1d1f22]]) g.add(at(box(.38, .24, .3, mat(f, { r: .95 })), x, B + .12, z));   // Ausrüstungstaschen
+  for (const [x, z] of [[-1.02, -.95], [1.02, -.95]]) g.add(at(box(.01, .12, .2, mat(0xffd60a, { e: 0x332a00, ei: .3 })), x, B + 1.2, z));   // Hinweisschilder an der Säule
+  g.add(at(cyl(.012, .012, 1.9, mat(0xff6b00), 6), -.95, B + 1.55, -.05, Math.PI / 2));   // Sicherungsleine
   // Abseilseil (wird in der Szene gesetzt)
   const seilM = mat(0x2a2116, { r: 1 });
   const seil = cyl(.022, .022, 1, seilM, 8); seil.position.set(-1.6, B + 1.5, -.05); g.add(seil); seil.visible = false;

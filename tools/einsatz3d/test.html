@@ -11,10 +11,10 @@ s.add(bodenPlatte(30, 30, mat(0x777777, { map: betonTex() })));
 s.add(new THREE.HemisphereLight(0xdde6ff, 0x404040, 1.2));
 const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(3, 6, 4); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
 Object.assign(sun.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5 }); s.add(sun);
-const cam = new THREE.PerspectiveCamera(50, 1080 / 1920, 0.05, 100); cam.position.set(0, 1.4, 6.5); cam.lookAt(0, 1.0, 0); cam.fov = 32; cam.updateProjectionMatrix();
+const cam = new THREE.PerspectiveCamera(50, 1080 / 1920, 0.05, 100); cam.position.set(0, 1.5, 4.2); cam.lookAt(0, 1.1, 0); cam.fov = 38; cam.updateProjectionMatrix();
 const team = (nr, x, z, extra = {}) => { const f = new Figur({ art: 'team', nummer: nr, maske: true, helm: true, headset: nr === 1, visier: true, ...extra }); s.add(f.root); return f; };
 const f1 = team(1, -.9, 0); const f2 = team(2, 0.1, -0.4, { groesse: 2.0 }); const f4 = team(4, .8, 0.2, { groesse: 1.72 });
-const g = new Figur({ art: 'zivil', jacke: 0xf77f00, kappe: 0x111111, sonnenbrille: true, haut: 0xe8b98a }); s.add(g.root);
+const g = new Figur({ art: 'zivil', jacke: 0x1b1b1e, hose: 0x1b1b1e, hemd: true, krawatte: 0x111111, ohrstoepsel: true, haare: true, haut: 0xe8b98a, sonnenbrille: true }); s.add(g.root);
 const g2 = new Figur({ art: 'zivil', kapuze: true, jacke: 0x6c757d, haare: true, haut: 0xc68642 }); s.add(g2.root);
 window.renderFrame = async (t) => {
   f1.pose({ ...hockPose(0.4), kopf: [0, 0.3, 0] }); f1.platziere(-1.1, 0, 0.3); f1.haltGewehr('tief');

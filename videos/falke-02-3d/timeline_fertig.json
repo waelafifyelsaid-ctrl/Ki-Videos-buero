@@ -112,7 +112,7 @@
   },
   {
    "n": "kabine",
-   "d": 16.507,
+   "d": 16.059,
    "verzug": 0.0,
    "start": 54.686
   },
@@ -122,7 +122,7 @@
    "tr": "zoom",
    "trd": 0.6,
    "verzug": 0.0,
-   "start": 71.193
+   "start": 70.745
   }
  ],
  "dialog": [
@@ -346,49 +346,49 @@
    "id": "19_kabine_6",
    "szene": "kabine",
    "start": 5.8,
-   "ende": 8.582,
+   "ende": 8.134,
    "wer": "6",
-   "text": "Gute Landung, Kleiderschrank.",
+   "text": "Ihr Flug wurde leider gestrichen.",
    "funk": false,
    "lautsprecher": false,
-   "datei": "18_kabine_6.mp3",
+   "datei": "19_kabine_6.mp3",
    "verschoben": 0.0
   },
   {
    "id": "20_kabine_2",
    "szene": "kabine",
-   "start": 8.732,
-   "ende": 10.346,
+   "start": 8.284,
+   "ende": 9.898,
    "wer": "2",
    "text": "Bitte anschnallen.",
    "funk": false,
    "lautsprecher": false,
    "datei": "19_kabine_2.mp3",
-   "verschoben": 1.33
+   "verschoben": 0.88
   },
   {
    "id": "21_kabine_6",
    "szene": "kabine",
-   "start": 10.496,
-   "ende": 12.546,
+   "start": 10.048,
+   "ende": 12.098,
    "wer": "6",
    "text": "Wo ist der Fuchs?",
    "funk": false,
    "lautsprecher": false,
    "datei": "20_kabine_6.mp3",
-   "verschoben": 1.7
+   "verschoben": 1.25
   },
   {
    "id": "22_kabine_7f",
    "szene": "kabine",
-   "start": 12.696,
-   "ende": 16.157,
+   "start": 12.248,
+   "ende": 15.709,
    "wer": "7f",
    "text": "Sitz 1A. Da liegt nur ein Tablet.",
    "funk": true,
    "lautsprecher": false,
    "datei": "21_kabine_7f.mp3",
-   "verschoben": 2.7
+   "verschoben": 2.25
   },
   {
    "id": "23_twist_X",
@@ -439,5 +439,5 @@
    "verschoben": 0.57
   }
  ],
- "dauer": 83.627
+ "dauer": 83.179
 }

@@ -97,6 +97,11 @@ export class Figur {
       const pec = sph(1, oben, 20, 12); pec.scale.set(0.17, 0.09, 0.115); chest.add(at(pec, 0, 0.13, 0.005));
       const schulter = caps(0.07, 0.3, oben); schulter.rotation.z = Math.PI / 2; schulter.scale.z = 0.95; chest.add(at(schulter, 0, 0.2, -0.01)); }
     if (o.rueckenNr) { const rn = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 0.16), new THREE.MeshStandardMaterial({ map: nummerTex(o.nummer ?? '?', '#e9ecef', '#2e3440'), roughness: 0.9 })); rn.position.set(0, 0.12, -0.122); rn.rotation.y = Math.PI; chest.add(rn); }
+    if (o.warnweste) {   // Warnweste mit Reflexstreifen (Bodenpersonal)
+      const ww = mat(0xd4ff00, { r: .7, e: 0x2a3300, ei: .4 }), rf = mat(0xe9ecef, { r: .2, m: .6 });
+      { const v = cyl(0.195, 0.165, 0.3, ww, 22); v.scale.z = .68; chest.add(at(v, 0, 0.06, 0)); }
+      for (const y of [0.0, 0.1]) { const st = cyl(0.197, 0.19, 0.025, rf, 22); st.scale.z = .69; chest.add(at(st, 0, y, 0)); }
+    }
     if (team) {
       const weste = mat(o.weste ?? 0x3b3f35, { r: 0.9, map: molleTex('#3b3f35') });
       chest.add(at(box(0.31, 0.32, 0.05, weste), 0, 0.08, 0.115));                 // Frontplatte
@@ -117,6 +122,16 @@ export class Figur {
       chest.add(at(new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.05, 8, 16, Math.PI), oben), 0, 0.28, -0.07, -0.4, 0, 0));
     }
     if (o.art === 'chefin') chest.add(at(box(0.08, 0.26, 0.012, mat(0xe9ecef)), 0, 0.12, 0.106));
+    for (const s of [1, -1]) { const tr = caps(0.05, 0.12, oben); tr.rotation.z = s * 1.15; tr.scale.z = .8; chest.add(at(tr, s * 0.09, 0.235, -0.015)); tr.rotation.z = s * 1.15; }   // Nacken-Schulter-Übergang
+    if (!team && !o.hemd) {
+      const kragen = new THREE.Mesh(new THREE.TorusGeometry(0.062, 0.016, 8, 20, Math.PI * 1.3), oben);
+      kragen.rotation.set(Math.PI / 2 + .15, 0, Math.PI * 1.15); kragen.position.set(0, 0.255, 0.0); chest.add(kragen);
+    }
+    if (o.hemd) { const w = mat(0xf1f3f5, { r: .6 }); for (const s of [1, -1]) chest.add(at(box(0.04, 0.12, 0.008, w), s * 0.028, 0.205, 0.12, -.35, 0, s * -.32));
+      chest.add(at(cyl(0.05, 0.055, 0.04, w, 14), 0, 0.255, 0.0)); }
+    if (o.krawatte) { const km = mat(o.krawatte, { r: .5 }); chest.add(at(box(0.026, 0.14, 0.008, km), 0, 0.165, 0.127, -.3)); chest.add(at(box(0.026, 0.025, 0.016, km), 0, 0.24, 0.112, -.3)); }
+    if (o.schulterklappen) for (const s of [1, -1]) { chest.add(at(box(0.07, 0.012, 0.11, mat(0x111111)), s * 0.17, 0.265, 0, 0, 0, s * -.25)); for (let k = 0; k < 3; k++) chest.add(at(box(0.06, 0.013, 0.008, mat(0xf2c14e, { m: .8, r: .3 })), s * 0.17, 0.268, -0.03 + k * 0.025, 0, 0, s * -.25)); }
+    if (o.ohrstoepsel) { /* Leibwächter: Kabel vom Ohr in den Kragen */ }
     const neck = add(chest, 'neck', 0, 0.245, 0);
     neck.add(at(cyl(0.05, 0.055, 0.09, team && o.maske ? mat(0x1b1c1f) : haut, 12), 0, 0.03, 0));
     const head = add(neck, 'head', 0, 0.07, 0);
@@ -137,7 +152,9 @@ export class Figur {
       this['finger' + name] = [];
       for (let k = 0; k < 4; k++) {
         const f = new THREE.Group(); f.position.set(-0.027 + k * 0.018, -0.088, 0.005);
-        f.add(at(caps(0.008, 0.045, hand, false), 0, -0.03, 0)); ha.add(f); this['finger' + name].push(f);
+        f.add(at(caps(0.0085, 0.026, hand, false), 0, -0.018, 0));
+        const g2 = new THREE.Group(); g2.position.y = -0.036; g2.rotation.x = 0.35; g2.add(at(caps(0.0078, 0.02, hand, false), 0, -0.014, 0)); f.add(g2);
+        ha.add(f); this['finger' + name].push(f);
       }
       const hip = add(hips, 'hip' + name, s * 0.1, -0.04, 0);
       hip.add(at(cyl(0.088, 0.062, 0.42, unten, 18), 0, -0.22, 0));
@@ -175,7 +192,9 @@ export class Figur {
     const kopfMat = maske ? mat(0x1b1c1f, { r: 0.95 }) : haut;
     const k = sph(0.108, kopfMat, 28, 20); k.scale.set(0.93, 1.12, 1.02); k.position.y = 0.125; head.add(k);
     { const kiefer = sph(0.08, kopfMat, 20, 14); kiefer.scale.set(1.0, 0.8, 0.95); kiefer.position.set(0, 0.06, 0.025); head.add(kiefer); }
-    if (!maske) { for (const s of [1, -1]) head.add(at(sph(0.025, haut, 10, 8), s * 0.112, 0.12, 0)); }
+    if (!maske) { for (const s of [1, -1]) { const ohr = sph(1, haut, 12, 10); ohr.scale.set(0.012, 0.03, 0.02); ohr.position.set(s * 0.104, 0.12, -0.005); ohr.rotation.y = s * .3; head.add(ohr);
+      const innen = sph(1, mat(new THREE.Color(o.haut ?? 0xd9a77a).multiplyScalar(.8), { r: .7 }), 10, 8); innen.scale.set(0.006, 0.02, 0.012); innen.position.set(s * 0.112, 0.12, -0.002); head.add(innen); } }
+    if (o.ohrstoepsel) { head.add(at(sph(0.01, mat(0x111111), 8, 6), 0.11, 0.12, 0.0)); head.add(at(cyl(0.003, 0.003, 0.2, mat(0xdee2e6), 5), 0.1, 0.02, -0.02, .3)); }
     const gesicht = new THREE.Group(); gesicht.position.set(0, 0.12, 0); head.add(gesicht);
     if (maske) gesicht.add(at(box(0.16, 0.052, 0.03, haut), 0, 0.022, 0.1));
     const weiss = mat(0xf1ede6, { r: 0.25 }), iris = mat(o.augenfarbe ?? 0x3d2b1f, { r: 0.2 });
@@ -209,6 +228,11 @@ export class Figur {
       head.add(at(box(0.06, 0.04, 0.03, mat(0x1d1f22)), 0, 0.235, 0.115, -0.5));
       if (o.headset) for (const s of [1, -1]) head.add(at(cyl(0.045, 0.045, 0.04, mat(0x1d1f22), 14), s * 0.12, 0.11, 0, 0, 0, Math.PI / 2));
       if (o.visier) head.add(at(box(0.2, 0.06, 0.04, mat(0x22272e, { r: 0.1, m: 0.5 })), 0, 0.215, 0.1, -0.3));
+      for (const s of [1, -1]) head.add(at(box(0.012, 0.12, 0.012, mat(0x15171a)), s * 0.1, 0.05, 0.02, 0, 0, s * .15));            // Kinnriemen
+      head.add(at(box(0.07, 0.012, 0.03, mat(0x15171a)), 0, -0.005, 0.07));
+      head.add(at(box(0.07, 0.05, 0.01, mat(0x3a3d35, { r: 1 })), 0, 0.2, -0.13, 0.4));                                                // Klett-Patch hinten
+      head.add(at(sph(0.012, mat(0x300000, { e: 0xff2030, ei: 1.5 }), 6, 4), 0, 0.26, -0.09));                                            // Markierungslicht
+      if (o.nummer) { const nh = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.05), new THREE.MeshStandardMaterial({ map: nummerTex(o.nummer), roughness: .8 })); nh.position.set(0, 0.2, -0.137); nh.rotation.set(-0.4, Math.PI, 0); head.add(nh); }
     } else if (o.kappe) {
       const km = mat(o.kappe, { r: 0.85 });
       head.add(at(new THREE.Mesh(new THREE.SphereGeometry(0.122, 20, 12, 0, Math.PI * 2, 0, Math.PI * 0.5), km), 0, 0.14, 0));
@@ -217,6 +241,8 @@ export class Figur {
       const hm = mat(o.haarfarbe ?? 0x2b2118, { r: 0.95 });
       const h = new THREE.Mesh(new THREE.SphereGeometry(0.121, 20, 12, 0, Math.PI * 2, 0, Math.PI * 0.42), hm);
       h.position.y = 0.135; h.rotation.x = -0.25; head.add(h);
+      const hinten = sph(1, hm, 16, 10); hinten.scale.set(0.104, 0.09, 0.085); hinten.position.set(0, 0.13, -0.035); head.add(hinten);
+      for (const s of [1, -1]) head.add(at(box(0.012, 0.045, 0.03, hm), s * 0.1, 0.12, 0.03));                                         // Koteletten
       if (o.dutt) head.add(at(sph(0.05, hm, 12, 10), 0, 0.2, -0.09));
     }
     if (o.zopf) head.add(at(caps(0.03, 0.12, mat(o.zopf)), 0, 0.06, -0.13, 0.3));
