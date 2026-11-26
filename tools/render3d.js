@@ -66,6 +66,7 @@ async function video(seite, dauer, n, ordner) {
   for (let k = 0; k < n; k++) {
     const a = Math.floor(frames * k / n), e = Math.floor(frames * (k + 1) / n);
     const datei = path.join(ordner, `teil${k}.mp4`); teile.push(datei);
+    if (process.env.NUR && !process.env.NUR.split(',').includes(String(k))) continue;   // NUR=0,1 → nur diese Teile neu rendern
     jobs.push(worker(port, seite, a, e, datei));
   }
   await Promise.all(jobs);
