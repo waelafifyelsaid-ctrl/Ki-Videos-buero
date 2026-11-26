@@ -173,8 +173,7 @@ export function flughafen(s) {
   });
   s.add(new THREE.Mesh(new THREE.SphereGeometry(1200, 32, 16), new THREE.MeshBasicMaterial({ map: himmel, side: THREE.BackSide, fog: false })));
   // Grasflächen neben Vorfeld und Bahnen
-  const gras = mat(0x6b7a4a, { r: 1, map: canvasTex('gras', 256, 256, (g, w, h) => { const r = rng(4); g.fillStyle = '#6b7a4a'; g.fillRect(0, 0, w, h);
-    for (let i = 0; i < 2500; i++) { g.fillStyle = ['#5f6e40', '#788756', '#66753f', '#828f5c'][i % 4]; g.fillRect(r() * w, r() * h, 2, 3); } }, [60, 60]) });
+  const gras = mat(0x6f8f45, { r: 1 });   // einfarbig grün (kein Flimmern)
   for (const [x, z, w, d] of [[-260, -60, 400, 700], [260, -60, 380, 700], [0, -190, 120, 22], [0, -330, 700, 200]]) s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(w, d), gras), x, .004, z, -Math.PI / 2));
   // Baumreihe + Hügel + Stadt-Silhouette am Horizont
   const r = rng(17), baum = mat(0x3d4a2e, { r: 1 });
@@ -189,7 +188,7 @@ export function flughafen(s) {
   tankwagen(s, 18, -38, .2);
   { const sl = new THREE.Group(); sl.add(at(box(2.6, 1.1, 5.5, mat(0xe9ecef)), 0, .8, 0)); sl.add(at(box(1.6, .9, 1.4, mat(0x223344, { r: .1, m: .5 })), 0, 1.75, -1.8));
     for (const sx of [-1.2, 1.2]) for (const zz of [-1.8, 1.8]) sl.add(at(cyl(.5, .5, .4, mat(0x111111), 14), sx, .5, zz, 0, 0, Math.PI / 2)); sl.position.set(-16, 0, -58); sl.rotation.y = .5; s.add(sl); }
-  s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(190, 330), mat(0x8e9298, { r: .6 })), 160, .01, -120, -Math.PI / 2));   // Vorfeld Ost (Beton)
+  s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(190, 330), mat(0x6c7178, { r: .8 })), 160, .01, -120, -Math.PI / 2));   // Vorfeld Ost (Beton)
   // ---- Erweiterung: viel größerer Flughafen (Pier mit 6 Gates, Frachtvorfeld, Parkhaus + Parkplätze, 2. Startbahn, mehr Masten)
   { const pier = new THREE.Group(); s.add(pier);
     pier.add(at(box(14, 10, 240, mat(0xa3acb6, { r: .6 })), 118, 5, -140));

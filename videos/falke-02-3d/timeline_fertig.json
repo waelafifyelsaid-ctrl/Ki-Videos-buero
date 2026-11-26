@@ -49,18 +49,18 @@
  "szenen": [
   {
    "n": "hook",
-   "d": 5.061,
+   "d": 4.861,
    "verzug": 0.0,
    "start": 0.0
   },
   {
    "n": "hq",
-   "d": 9.263,
+   "d": 9.063,
    "tr": "uhr",
    "trd": 1.0,
    "karte": "2 STUNDEN VORHER",
    "verzug": 0.0,
-   "start": 5.061
+   "start": 4.861
   },
   {
    "n": "dach",
@@ -68,7 +68,7 @@
    "tr": "mix",
    "trd": 0.8,
    "verzug": 0.0,
-   "start": 14.324
+   "start": 13.924
   },
   {
    "n": "flug",
@@ -76,21 +76,19 @@
    "tr": "weiss",
    "trd": 0.8,
    "verzug": 0.0,
-   "start": 25.638
+   "start": 25.238
   },
   {
    "n": "anflug",
-   "d": 19.2,
+   "d": 21.0,
    "tr": "weiss",
    "trd": 0.9,
    "verzug": 0.0,
-   "start": 32.516
+   "start": 32.116
   },
   {
    "n": "tuer",
    "d": 10.915,
-   "tr": "mix",
-   "trd": 0.7,
    "sync": {
     "zeile": "Drei",
     "ereignis": 4.9,
@@ -108,27 +106,27 @@
     3.63,
     4.75
    ],
-   "start": 51.716
+   "start": 53.116
   },
   {
    "n": "kabine",
-   "d": 16.059,
+   "d": 15.659,
    "verzug": 0.0,
-   "start": 62.631
+   "start": 64.031
   },
   {
    "n": "twist",
-   "d": 12.034,
+   "d": 11.734,
    "verzug": 0.0,
-   "start": 78.69
+   "start": 79.69
   }
  ],
  "dialog": [
   {
    "id": "01_hook_6",
    "szene": "hook",
-   "start": 2.4,
-   "ende": 4.711,
+   "start": 2.2,
+   "ende": 4.511,
    "wer": "6",
    "text": "Tja. Die Tür war mal zu.",
    "funk": false,
@@ -139,8 +137,8 @@
   {
    "id": "02_hq_Z",
    "szene": "hq",
-   "start": 0.4,
-   "ende": 6.813,
+   "start": 0.2,
+   "ende": 6.613,
    "wer": "Z",
    "text": "Flug FX-77. Privatjet, Vorfeld Ost. Start in zwanzig Minuten.",
    "funk": false,
@@ -151,14 +149,14 @@
   {
    "id": "03_hq_1",
    "szene": "hq",
-   "start": 6.963,
-   "ende": 8.913,
+   "start": 6.763,
+   "ende": 8.713,
    "wer": "1",
    "text": "Dann sind wir in zehn da.",
    "funk": false,
    "lautsprecher": false,
    "datei": "03_hq_1.mp3",
-   "verschoben": 2.76
+   "verschoben": 2.56
   },
   {
    "id": "04_dach_1",
@@ -343,8 +341,8 @@
   {
    "id": "19_kabine_6",
    "szene": "kabine",
-   "start": 5.8,
-   "ende": 8.134,
+   "start": 5.4,
+   "ende": 7.734,
    "wer": "6",
    "text": "Ihr Flug wurde leider gestrichen.",
    "funk": false,
@@ -355,44 +353,44 @@
   {
    "id": "20_kabine_2",
    "szene": "kabine",
-   "start": 8.284,
-   "ende": 9.898,
+   "start": 7.884,
+   "ende": 9.498,
    "wer": "2",
    "text": "Bitte anschnallen.",
    "funk": false,
    "lautsprecher": false,
    "datei": "19_kabine_2.mp3",
-   "verschoben": 0.88
+   "verschoben": 0.48
   },
   {
    "id": "21_kabine_6",
    "szene": "kabine",
-   "start": 10.048,
-   "ende": 12.098,
+   "start": 9.648,
+   "ende": 11.698,
    "wer": "6",
    "text": "Wo ist der Fuchs?",
    "funk": false,
    "lautsprecher": false,
    "datei": "20_kabine_6.mp3",
-   "verschoben": 1.25
+   "verschoben": 0.85
   },
   {
    "id": "22_kabine_7f",
    "szene": "kabine",
-   "start": 12.248,
-   "ende": 15.709,
+   "start": 11.848,
+   "ende": 15.309,
    "wer": "7f",
    "text": "Sitz 1A. Da liegt nur ein Tablet.",
    "funk": true,
    "lautsprecher": false,
    "datei": "21_kabine_7f.mp3",
-   "verschoben": 2.25
+   "verschoben": 1.85
   },
   {
    "id": "23_twist_X",
    "szene": "twist",
-   "start": 0.8,
-   "ende": 2.458,
+   "start": 0.5,
+   "ende": 2.158,
    "wer": "X",
    "text": "Zu langsam, Falke.",
    "funk": false,
@@ -403,14 +401,14 @@
   {
    "id": "24_twist_X",
    "szene": "twist",
-   "start": 2.608,
-   "ende": 4.702,
+   "start": 2.6,
+   "ende": 4.694,
    "wer": "X",
    "text": "Wir sehen uns in den Bergen.",
    "funk": false,
    "lautsprecher": true,
    "datei": "23_twist_X.mp3",
-   "verschoben": 0.01
+   "verschoben": 0.0
   },
   {
    "id": "25_twist_6",
@@ -437,5 +435,5 @@
    "verschoben": 0.57
   }
  ],
- "dauer": 90.724
+ "dauer": 91.424
 }

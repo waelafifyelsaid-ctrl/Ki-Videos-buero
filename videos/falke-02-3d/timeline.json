@@ -72,15 +72,13 @@
   },
   {
    "n": "anflug",
-   "d": 19.2,
+   "d": 21.0,
    "tr": "weiss",
    "trd": 0.9
   },
   {
    "n": "tuer",
    "d": 10.4,
-   "tr": "mix",
-   "trd": 0.7,
    "sync": {
     "zeile": "Drei",
     "ereignis": 4.9,
@@ -105,13 +103,13 @@
  "dialog": [
   [
    "hook",
-   2.4,
+   2.2,
    "6",
    "Tja. Die Tür war mal zu."
   ],
   [
    "hq",
-   0.4,
+   0.2,
    "Z",
    "Flug FX-77. Privatjet, Vorfeld Ost. Start in zwanzig Minuten."
   ],
@@ -213,7 +211,7 @@
   ],
   [
    "kabine",
-   5.8,
+   5.4,
    "6",
    "Ihr Flug wurde leider gestrichen."
   ],
@@ -237,7 +235,7 @@
   ],
   [
    "twist",
-   0.8,
+   0.5,
    "X",
    "Zu langsam, Falke."
   ],
@@ -260,5 +258,5 @@
    "Gibt's da Frühstück?"
   ]
  ],
- "ende": 2.6
+ "ende": 2.3
 }

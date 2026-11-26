@@ -117,3 +117,9 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Kamera-Wackeln immer weich (Sinus-Mix), nie Zufall pro Bild → sonst „ruckelt der Kopf“.
 - Fahrzeuge nie aufpoppen lassen: von weit außerhalb losfahren (≥150 m), Fahrtrichtung aus dem Weg berechnen.
 - Sturmhaube bis knapp unter die Augen (Kugelabschnitt ab Äquator), sonst wirkt sie „halb im Gesicht“.
+- Innenausbau eines Rumpfes muss IN den Rumpf passen: Trennwände als runde Scheiben (ShapeGeometry, ggf. mit Türloch),
+  Böden/Paneele nur so breit wie der Querschnitt auf der Höhe (Halbbreite = √(R² − Δy²)) – sonst ragen Teile sichtbar raus.
+- Bodenflächen im Cartoon-Look einfarbig (keine Riss-/Grastextur) – feine Muster flimmern mit den Konturen.
+- Szenen-Übergang vermeiden, wenn der Raum gleich bleibt: Laufwege, Kamera (Position, Blick, Hocke), POV-Zustand, Heli-Position
+  am Ende exakt auf den Start der nächsten Szene legen.
+- Sitzende Kamera im Heli: kein Wackeln, Augen nicht zu nah an der Decke (Fischauge macht sie riesig).
