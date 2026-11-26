@@ -65,7 +65,8 @@ export function heliModell({ farbe = 0x2c3e50, piloten = true } = {}) {
   for (const s of [1, -1]) { g.add(at(box(.05, .28, .5, dunkel), s * .62, B + 1.95, -.2)); g.add(at(cyl(.16, .2, .4, dunkel, 14), s * .35, B + 2.05, 1.95, Math.PI / 2)); }
   // Cockpit: Nase, Glas, Rahmen
   { const nase = sph(1.08, lack, 28, 18); nase.scale.set(1, .5, 1.1); nase.position.set(0, B + .05, -2.6); g.add(nase); }
-  { const kanzel = new THREE.Mesh(new THREE.SphereGeometry(1.06, 28, 16, 0, Math.PI * 2, 0, Math.PI * .5), glas); kanzel.scale.set(1, 1.45, 1.25); kanzel.position.set(0, B + .1, -2.45); g.add(kanzel); }
+  // Kanzel nur als ferne Scheibe (BackSide) → keine Glas-Linien über den Piloten
+  { const kanzel = new THREE.Mesh(new THREE.SphereGeometry(1.06, 28, 16, 0, Math.PI * 2, 0, Math.PI * .5), glas.clone()); kanzel.material.side = THREE.BackSide; kanzel.scale.set(1, 1.45, 1.25); kanzel.position.set(0, B + .1, -2.45); g.add(kanzel); }
   for (const x of [-.02, .02]) g.add(at(box(.05, .05, 1.5, lack2), x, B + 1.2, -2.6, -.75));
   for (const s of [1, -1]) g.add(at(box(.06, 1.5, .06, lack2), s * .92, B + .85, -2.1, -.25, 0, s * .1));
   g.add(at(box(2.0, .06, .06, lack2), 0, B + .1, -2.4));

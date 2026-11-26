@@ -123,3 +123,8 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Szenen-Übergang vermeiden, wenn der Raum gleich bleibt: Laufwege, Kamera (Position, Blick, Hocke), POV-Zustand, Heli-Position
   am Ende exakt auf den Start der nächsten Szene legen.
 - Sitzende Kamera im Heli: kein Wackeln, Augen nicht zu nah an der Decke (Fischauge macht sie riesig).
+- Flimmern auf glatten Flächen: Filmkorn im Cartoon-Modus aus (korn 0), Bodenflächen ohne Schattenempfang (Schattenkarte wandert mit der Kamera).
+- Punktlichter IN einem Rumpf beleuchten ohne Schatten auch die Außenhaut → helle „Innenraum“-Flecken außen. Kabinenlicht nur an, wenn die Kamera drin ist.
+- Transparente Kanzel/Glas vor Figuren erzeugt Konturlinien → nur die ferne Seite rendern (BackSide).
+- Kollisionsprüfung mit gedrehten Rechtecken für Autos (nicht achsenparallel nähern) – Lücken zwischen Autos mittig durchlaufen.
+- NIE Kommentare per Ersetzung mitten in eine Code-Zeile setzen (zweimal passiert: Code danach wurde zum Kommentar) – Kommentar in eigene Zeile.

@@ -207,6 +207,7 @@ export function flughafen(s) {
   s.add(at(box(900, .02, 45, mat(0x3d4047, { r: .8 })), 0, .012, -330));                                                                    // 2. Startbahn
   for (let x = -400; x < 400; x += 30) s.add(at(box(18, .01, .9, mat(0xf1f3f5)), x, .025, -330));
   for (const [x, z] of [[70, -150], [-26, -150], [70, 20], [140, -20]]) { s.add(at(cyl(.3, .45, 26, mat(0x8d99ae, { m: .5 }), 10), x, 13, z)); s.add(at(box(4, 1.2, .8, mat(0x343a40)), x, 26.5, z)); }
+  s.traverse(o => { if (o.isMesh && o.position.y < .05 && o.geometry?.type !== 'SphereGeometry') o.receiveShadow = false; });   // Bodenflächen + Markierungen: kein Schatten-Flimmern
   return fa;
 }
 
