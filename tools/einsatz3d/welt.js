@@ -78,7 +78,7 @@ export class Post {
   rendere(szene, kamera, ziel) { this.r.setRenderTarget(ziel); this.r.render(szene, kamera); this.r.setRenderTarget(null); }
   fertig(einstellungen = {}) {
     const u = this.u;
-    const def = this.cartoon ? { modus: 0, p: 0, blitz: 0, sat: 1.25, korn: 0.0, wolb: 0.3, vign: 0.35, spulen: 0, schwarz: 0, rot: 0 } : { modus: 0, p: 0, blitz: 0, sat: 1, korn: 0.045, wolb: 0.09, vign: 0.55, spulen: 0, schwarz: 0, rot: 0 };
+    const def = this.cartoon ? { modus: 0, p: 0, blitz: 0, sat: 1.25, korn: 0.0, wolb: 0.3, vign: 0.35, spulen: 0, schwarz: 0, rot: 0, kontur: 1 } : { modus: 0, p: 0, blitz: 0, sat: 1, korn: 0.045, wolb: 0.09, vign: 0.55, spulen: 0, schwarz: 0, rot: 0 };
     if (this.cartoon && einstellungen.sat !== undefined) einstellungen = { ...einstellungen, sat: einstellungen.sat * 1.25 };
     for (const [k, v] of Object.entries({ ...def, ...einstellungen })) if (u[k] && k !== 'fokus') u[k].value = v;
     if (einstellungen.fokus) u.fokus.value.set(einstellungen.fokus[0], einstellungen.fokus[1]);

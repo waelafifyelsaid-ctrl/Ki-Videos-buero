@@ -263,10 +263,7 @@ const FLUG = (() => {
   const h = heliModell(); s.add(h.g); h.g.rotation.order = 'YXZ';
   const feld = liveTex(1024, 1024); { const g = feld.ctx, r = rng(3);
     for (let i = 0; i < 64; i++) { g.fillStyle = ['#7d8a6a', '#8f9c78', '#a09a7a', '#6e7c5e', '#9aa58a', '#b0a882'][(i * 7) % 6]; g.fillRect((i % 8) * 128, Math.floor(i / 8) * 128, 128, 128); }
-    for (let i = 0; i < 30; i++) { g.fillStyle = 'rgba(40,60,40,.5)'; g.beginPath(); g.arc(r() * 1024, r() * 1024, 10 + r() * 40, 0, 7); g.fill(); }
-    g.fillStyle = '#4a4f57'; g.fillRect(500, 0, 30, 1024); g.fillRect(0, 300, 1024, 20); g.fillStyle = '#e9ecef'; for (let y = 0; y < 1024; y += 40) g.fillRect(514, y, 3, 20);
-    for (let i = 0; i < 40; i++) { const x = r() * 900, y = r() * 900; g.fillStyle = '#8d8d8d'; g.fillRect(x, y, 22, 16); g.fillStyle = '#6b2d2d'; g.fillRect(x, y, 22, 6); }
-    g.fillStyle = '#ffd27a'; for (let i = 0; i < 60; i++) g.fillRect(r() * 1024, r() * 1024, 4, 4); feld.tex.needsUpdate = true; }
+    g.fillStyle = '#4a4f57'; g.fillRect(500, 0, 30, 1024); g.fillRect(0, 300, 1024, 20); feld.tex.needsUpdate = true; }   // ruhige Felder ohne Kleinkram (flimmert sonst)
   feld.tex.wrapS = feld.tex.wrapT = THREE.RepeatWrapping; feld.tex.repeat.set(8, 8);
   // Landschaft unten in 3D (Kacheln à 400 m, Häuser, Bäume, Straßen) – zieht unter uns durch, verschwindet nie
   feld.tex.repeat.set(1, 1);
@@ -313,7 +310,7 @@ function s_flug(lt, t) {
   // Kamera sitzt an der Tür und schaut 7 an (gegenüber) – ruhig, immer auf Augenhöhe
   schau(k, auge.clone(), k7.clone().add(V3(0, -.05, 0)), h.g.rotation.z * .7);
   pov.setze({ modus: 'gewehr', t, senken: .4, zielen: -.25 });
-  return { welt: FLUG, uhr: '05:24' };
+  return { welt: FLUG, uhr: '05:24', kontur: .6 };
 }
 
 // Zusätzliche Jet-Details außen + innen
@@ -508,7 +505,7 @@ const VF = (() => {
   Object.assign(sonne.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 90 }); s.add(sonne); s.add(sonne.target);
   { const bp = bodenPlatte(700, 700, mat(0x6c7178, { r: .8 }), 0, -60); bp.receiveShadow = false; s.add(bp); }   // einfarbig grau, kein Schatten-Flimmern
   for (let z = 20; z > -180; z -= 6) s.add(at(box(.18, .01, 3.6, mat(0xf2c14e, { e: 0x4a3a10, ei: .3 })), 0, .006, z));   // Mittellinie
-  s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), mat(0x6f8f45, { r: 1 })), 0, -.03, 0, -Math.PI / 2));   // Land bis zum Horizont (keine Kante von oben)
+  s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), mat(0x6f8f45, { r: 1 })), 0, -.6, 0, -Math.PI / 2));   // Land bis zum Horizont (keine Kante von oben)
   const fa = flughafen(s);
   const jet = jetDetails(bauJet(s));
   const expl = new Explosion(s, V3(0, 0, 0), { groesse: .85, richtung: V3(1, .3, 0), seed: 9, truemmer: 28, farbe: 0xdee2e6 });
@@ -643,6 +640,7 @@ function tuerWinkel(d) {        // Tür klappt nach der Sprengung nach außen un
   return th;
 }
 function vfStandard(t) {
+  VF.fa.fein.forEach(o => { o.visible = true; });
   VF.jet.kabinenLichter.forEach(l => { l.visible = false; });   // außen: Kabinenlicht aus (würde den Rumpf von innen durchleuchten)
   VF.s.fog.far = 340;
   VF.jet.cockpitTuer.rotation.y = 0;
@@ -688,6 +686,7 @@ function pilotSitzt(lt, haendeHoch, blickZurueck, szene = 'kabine') {
 // ---------------------------------------------------------------- Abseilen (Hubschrauber schwebt vor dem rollenden Jet)
 const HH = 11.5;                 // Schwebehöhe
 const HELI_AB = V3(0, HH, 3.6);
+const SEIL_X = .05, SEIL_Z = 2.0;   // Fußpunkt des Seils beim Schweben – feste Laufwege (der Heli fliegt später weg, die Wege dürfen nicht mitwandern)
 // Eine Figur rutscht am Seil (Hände greifen, Beine umklammern), landet weich in der Hocke
 function rutschen(f, t0, t1, sx, sz, lt) {
   const kk = clamp((lt - t0) / (t1 - t0)); const y = lerp(HH + HELI_BODEN - .3, 0, kk * kk * (1.6 - .6 * kk));
@@ -746,13 +745,13 @@ function s_abseilen(lt, t, ausAnflug = false) {
     if (lt < r2a) { f.root.visible = false; }
     else if (lt < r2b + .3) rutschen(f, r2a, r2b, seilX, seilZ, lt);
     else {
-      const p = pfad([[r2b + .3, seilX, seilZ + .25], [r2b + .9, seilX + 1.6, seilZ - 1.0], [5.6, seilX + 1.6, seilZ - 1.0], [6.9, 3.4, -4.3], [7.7, 3.3, -7.0], [9.3, 1.62, -13.1]], lt);   // 2 läuft direkt an die Tür
+      const p = pfad([[r2b + .3, SEIL_X, SEIL_Z + .25], [r2b + .9, SEIL_X + 1.6, SEIL_Z - 1.0], [5.6, SEIL_X + 1.6, SEIL_Z - 1.0], [6.9, 3.4, -4.3], [7.7, 3.3, -7.0], [9.3, 1.62, -13.1]], lt);   // 2 läuft direkt an die Tür
       const da = lt > 9.3; f.pose(p.s > .05 ? rennPose(p.dist / .9 * Math.PI, { neig: .3 }) : da ? { ...stehPose(t), kopf: [-.2, 0, 0], rumpf: [.05, 0, 0] } : hockPose(.45)); f.platziere(p.x, p.z, p.s > .05 ? richtung(p.vx, p.vz, Math.PI) : da ? -Math.PI / 2 : Math.PI); f.haltGewehr(p.s > .05 ? 'tief' : 'anschlag'); schildHand(f);
     }
   }
   // 4 + 7 + 1 kommen nach uns runter und überholen uns im Sprint
   // Laufwege mit Abstand (geprüft: nie näher als 1,4 m aneinander oder an der Kamera)
-  const nach = { 1: [[7.0, seilX - .4, seilZ + .9], [8.0, 3.4, -2.6], [8.7, 3.3, -6.9], [9.2, 2.2, -10.0]], 4: [[7.1, seilX - .7, seilZ + .2], [8.3, 3.4, -3.4], [9.0, 3.3, -6.9], [9.6, 2.5, -9.4]], 7: [[7.4, seilX - 1.3, seilZ + .6], [8.7, 3.4, -3.8], [9.3, 3.3, -6.9], [9.8, 2.8, -8.8]] };   // bis in den Stack an der Jet-Nase   // um die Streifenwagen herum, geprüft ≥ 0,9 m Abstand
+  const nach = { 1: [[7.0, SEIL_X - .4, SEIL_Z + .9], [8.0, 3.4, -2.6], [8.7, 3.3, -6.9], [9.2, 2.2, -10.0]], 4: [[7.1, SEIL_X - .7, SEIL_Z + .2], [8.3, 3.4, -3.4], [9.0, 3.3, -6.9], [9.6, 2.5, -9.4]], 7: [[7.4, SEIL_X - 1.3, SEIL_Z + .6], [8.7, 3.4, -3.8], [9.3, 3.3, -6.9], [9.8, 2.8, -8.8]] };   // bis in den Stack an der Jet-Nase   // um die Streifenwagen herum, geprüft ≥ 0,9 m Abstand
   if (lt > 5.8 && lt < 6.95) rutschen(tm[4], 5.8, 6.65, seilX, seilZ, lt);   // 4 kommt direkt nach uns am Seil runter
   for (const nr of [4, 7, 1]) {
     if (lt < nach[nr][0][0]) continue;
@@ -782,7 +781,7 @@ function s_abseilen(lt, t, ausAnflug = false) {
     ziel = V3(seilX, 0, seilZ).lerp(nase, .15).lerp(V3(seilX, y - 1.5, seilZ - 1.9), smooth(0, .15, kk)).lerp(nase, smooth(.55, .95, kk));
   } else {
     const stoss = Math.exp(-6 * (lt - unten)) * Math.sin((lt - unten) * 14) * .3;
-    const p = pfad([[unten + .35, seilX + .06, seilZ + .36], [6.6, -1.6, .9], [8.0, -.6, -.4], [8.9, 3.4, -2.9], [9.5, 3.4, -5.8], [d, 6.6, -7.6]], lt);   // mittig durch die Lücke zwischen den Streifenwagen (Abstand geprüft)   // Team vorlassen, zwischen den Streifenwagen durch, hinten an den Stack
+    const p = pfad([[unten + .35, SEIL_X + .06, SEIL_Z + .36], [6.6, -1.6, .9], [8.0, -.6, -.4], [8.9, 3.4, -2.9], [9.5, 3.4, -5.8], [d, 6.6, -7.6]], lt);   // mittig durch die Lücke zwischen den Streifenwagen (Abstand geprüft)   // Team vorlassen, zwischen den Streifenwagen durch, hinten an den Stack
     const lauf = clamp(p.s / 3);
     pos = V3(p.x, lerp(1.62 - Math.max(0, stoss) - .1 * lauf + Math.abs(Math.sin(p.dist / .85 * Math.PI)) * .05 * lauf, 1.05, smooth(d - .7, d, lt)), p.z);   // am Ende in die Hocke wie in der Tür-Szene
     ziel = V3(1.2, 1.9, TUER_Z).lerp(nase, 1 - smooth(unten + .5, unten + 1.6, lt)).lerp(V3(.6, 2.6, TUER_Z - 1.6), smooth(d - 1.3, d, lt));
@@ -828,6 +827,8 @@ function s_anflug(lt, t) {
   }
   heliAnflug(lt, t);
   VF.s.fog.far = 340 + 5 * Math.max(0, h.g.position.y - 12);   // von oben sieht man weiter
+  const ruhig = smooth(24, 16, h.g.position.y);   // hoch oben: feine Markierungen aus, keine Konturen → ruhiger Boden ohne Flimmern
+  VF.fa.fein.forEach(o => { o.visible = h.g.position.y < 22; });
   // Jet rollt los (Landelichter), wird von den Streifenwagen gestoppt
   const nz = jetAnflug(lt), brems = lt > JA.tb ? Math.sin(clamp((lt - JA.tb) / 2) * Math.PI) * .035 : 0;
   stelleJet(nz, brems); VF.jet.licht.forEach(l => { l.intensity = lt > JA.los - 1 ? 160 : 40; }); VF.jet.pivot.rotation.z = 0;
@@ -870,7 +871,7 @@ function s_anflug(lt, t) {
   const ich = smooth(z1.ende + .7, z1.ende + 1.0, lt) * (1 - smooth(z1.ende + 1.3, z1.ende + 1.6, lt));
   if (ich > 0) pov.setze({ modus: 'frei', t, zielR: k.localToWorld(V3(.22, -.42, -.3)), zielL: k.localToWorld(V3(-.06, -.16 + .08 * ich, -.2)).lerp(k.localToWorld(V3(-.25, -.45, -.3)), 1 - ich) });
   else pov.setze({ modus: 'gewehr', t, senken: .4, zielen: -.25 });
-  return { welt: VF, uhr: lt < 8 ? '05:27' : '05:31' };
+  return { welt: VF, uhr: lt < 8 ? '05:27' : '05:31', kontur: ruhig };
 }
 
 // ---------------------------------------------------------------- Tür (Ladung, Countdown, Sprengung, Treppe)
@@ -1156,7 +1157,7 @@ window.renderFrame = async (t) => {
     ui.zeit.style.opacity = tr === 'uhr' ? Math.sin(Math.PI * p) : 0;
     if (tr === 'uhr') { ui.zeit.querySelector('.zeiger').style.transform = `rotate(${p * 1080}deg)`; ui.zeit.querySelector('.std').style.transform = `rotate(${p * 160}deg)`; ui.zeit.querySelector('b').textContent = s.karte; }
   } else { r = szeneRendern(i, lt, POST.a); ui.zeit.style.opacity = 0; }
-  POST.fertig({ ...post, zeit: t, blitz: Math.max(r.blitz ?? 0, weiss), sat: r.sat ?? 1, spulen: r.spulen ?? 0, rot: r.rot ?? 0 });
+  POST.fertig({ ...post, kontur: r.kontur ?? 1, zeit: t, blitz: Math.max(r.blitz ?? 0, weiss), sat: r.sat ?? 1, spulen: r.spulen ?? 0, rot: r.rot ?? 0 });
   zeigeUI(s.n, lt, r, t);
   await new Promise(res => requestAnimationFrame(() => res()));
 };

@@ -129,3 +129,6 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Kollisionsprüfung mit gedrehten Rechtecken für Autos (nicht achsenparallel nähern) – Lücken zwischen Autos mittig durchlaufen.
 - NIE Kommentare per Ersetzung mitten in eine Code-Zeile setzen (zweimal passiert: Code danach wurde zum Kommentar) – Kommentar in eigene Zeile.
 - Cockpit-Einbauten (Instrumentenbrett, Displays) weit genug hinter die Nasenspitze setzen – an der Spitze ist der Rumpf schmal, sonst ragen sie sichtbar heraus. Scheiben als gebogene Kugelausschnitte auf die Nase legen.
+- Laufwege NIE an bewegliche Objekte koppeln (Seil hing am Heli → Wege wanderten mit, als der Heli wegflog → durchs Auto). Feste Bodenpunkte nutzen.
+- Kollisionen in der ECHTEN Szene messen (Playwright-Skript: Figur-Position in Auto-Koordinaten umrechnen, Abstand zur Box) statt nur auf dem Papier.
+- Aus großer Höhe: feine Markierungen/Lämpchen ausblenden und Konturen abschalten (sonst Pixel-Flimmern); Gelände-Ebenen mit deutlichem Höhenabstand (≥0,5 m) stapeln.
