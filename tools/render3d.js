@@ -51,6 +51,7 @@ async function worker(port, seite, a, e, datei) {
     const jpg = await p.screenshot({ type: 'jpeg', quality: 92 });
     if (!ff.stdin.write(jpg)) await new Promise(r => ff.stdin.once('drain', r));
     if ((i - a) % 60 === 0) console.log(`  ${path.basename(datei)}: ${i - a}/${e - a}`);
+    if ((i - a) % 15 === 0 || i === e - 1) fs.writeFileSync(datei.replace(/\.mp4$/, '.fortschritt'), `${i - a + 1} ${e - a}`);   // für den Fortschrittsbalken
   }
   ff.stdin.end();
   await new Promise(r => ff.on('close', r));

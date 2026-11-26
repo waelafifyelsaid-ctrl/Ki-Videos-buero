@@ -34,6 +34,7 @@ Ziel des Büros: kurze KI-Videos für TikTok, die Reichweite bringen und Geld ve
 - Kein Posten, keine Käufe, keine Konten anlegen – das macht der Nutzer selbst.
 - Alles, was das Büro lernt, landet in `wissen/learnings.md`, damit es beim nächsten Mal besser wird.
 - Nach jeder fertigen Etappe committen, damit man am Handy und am Laptop am selben Stand ist.
+- **Beim Rendern dem Nutzer immer einen Fortschrittsbalken zeigen** (`python3 tools/fortschritt.py videos/<folge>/tmp`), bei jeder Statusfrage.
 
 ## Serie: EINHEIT FALKE (Spezialeinheit, POV)
 - Serienbibel: `ideen/serie-einheit-falke.md` (Team, Hauptquartier, Folgen-Plan, Aufbau jeder Folge).
