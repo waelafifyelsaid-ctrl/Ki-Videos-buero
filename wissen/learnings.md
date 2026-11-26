@@ -128,3 +128,4 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Transparente Kanzel/Glas vor Figuren erzeugt Konturlinien → nur die ferne Seite rendern (BackSide).
 - Kollisionsprüfung mit gedrehten Rechtecken für Autos (nicht achsenparallel nähern) – Lücken zwischen Autos mittig durchlaufen.
 - NIE Kommentare per Ersetzung mitten in eine Code-Zeile setzen (zweimal passiert: Code danach wurde zum Kommentar) – Kommentar in eigene Zeile.
+- Cockpit-Einbauten (Instrumentenbrett, Displays) weit genug hinter die Nasenspitze setzen – an der Spitze ist der Rumpf schmal, sonst ragen sie sichtbar heraus. Scheiben als gebogene Kugelausschnitte auf die Nase legen.

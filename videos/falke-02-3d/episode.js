@@ -382,8 +382,8 @@ function jetDetails(jet) {
   const nd = canvasTexEp('jetND', 256, 256, (g, w, h) => { g.fillStyle = '#05080c'; g.fillRect(0, 0, w, h); g.strokeStyle = '#80ed99'; g.lineWidth = 2; g.beginPath(); g.arc(w / 2, h * .85, 110, Math.PI, 2 * Math.PI); g.stroke();
     g.strokeStyle = '#ff4dff'; g.beginPath(); g.moveTo(w / 2, h * .85); g.lineTo(w / 2 + 30, 40); g.stroke(); g.fillStyle = '#4cc9f0'; g.font = 'bold 16px DejaVu Sans'; g.fillText('RWY 27', 140, 60); });
   const bildschirm = (tex, x, y, z, ry = 0) => { j.add(at(box(.24, .2, .02, mat(0x0b0b0d)), x, y, z - .01, -.35, ry)); j.add(at(new THREE.Mesh(new THREE.PlaneGeometry(.21, .17), new THREE.MeshStandardMaterial({ map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: .9 })), x, y, z + .002, -.35, ry)); };
-  bildschirm(pfd, -.55, 2.27, -.38); bildschirm(nd, -.28, 2.27, -.36); bildschirm(nd, .28, 2.27, -.36); bildschirm(pfd, .55, 2.27, -.38);
-  j.add(at(box(1.5, .07, .16, mat(0x1b1d21)), 0, 2.48, -.42, .2)); for (let k = 0; k < 14; k++) j.add(at(box(.035, .02, .02, mat(0x000000, { e: [0x80ed99, 0xffd166][k % 2], ei: 2 })), -.6 + k * .093, 2.5, -.36));   // Autopilot-Panel
+  bildschirm(pfd, -.45, 2.27, -.78); bildschirm(nd, -.18, 2.27, -.78); bildschirm(nd, .18, 2.27, -.78); bildschirm(pfd, .45, 2.27, -.78);
+  j.add(at(box(1.1, .07, .16, mat(0x1b1d21)), 0, 2.48, -.85, .2)); for (let k = 0; k < 12; k++) j.add(at(box(.035, .02, .02, mat(0x000000, { e: [0x80ed99, 0xffd166][k % 2], ei: 2 })), -.5 + k * .09, 2.5, -.79));   // Autopilot-Panel
   const ov = canvasTexEp('jetOverhead', 256, 128, (g, w, h) => { g.fillStyle = '#2b2f36'; g.fillRect(0, 0, w, h); for (let y = 10; y < h; y += 22) for (let x = 10; x < w; x += 20) { g.fillStyle = '#d0d0d0'; g.fillRect(x, y, 6, 10); if ((x + y) % 3 === 0) { g.fillStyle = '#ffd166'; g.fillRect(x + 8, y, 6, 4); } } });
   j.add(at(new THREE.Mesh(new THREE.PlaneGeometry(.85, .45), new THREE.MeshStandardMaterial({ map: ov, emissive: 0xffffff, emissiveMap: ov, emissiveIntensity: .25 })), 0, 3.21, -.9, Math.PI / 2 + .3));
   j.add(at(box(.3, .12, .55, mat(0x1b1d21)), 0, 1.98, -1.05)); for (const x of [-.06, .06]) { j.add(at(cyl(.012, .012, .18, chrom, 6), x, 2.1, -1.05, -.4)); j.add(at(box(.05, .03, .03, mat(0x111111)), x, 2.18, -1.0)); }   // Schubhebel
@@ -428,14 +428,16 @@ function bauJet(s) {
     for (let z = -4.3; z > -11.5; z -= .95) { const f = fw.clone(); f.scale.set(.85, 1.2, 1); f.position.set(sx * (R0 - .085), Y + .25, z); f.rotation.y = sx * Math.PI / 2; j.add(f);
       const blende = box(.02, .05, .3, mat(0xd8ccb6)); blende.position.set(sx * (R0 - .095), Y + .37, z); j.add(blende); }
   }
-  { const glasA = mat(0x0f1620, { r: .05, m: .7 }), rahmenC = mat(0x2b2d31, { r: .6 });
+  { // Cockpitscheiben als gebogene Flächen, die genau auf der Nase liegen (nichts steht ab, von außen nur dunkles Glas)
+    const glasA = mat(0x0f1620, { r: .05, m: .7 });
     const himmelC = canvasTexEp('cockpitHimmel', 64, 128, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#a9bed6'); gr.addColorStop(.7, '#f0d9c2'); gr.addColorStop(1, '#9aa1a8'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
-    const mitte = V3(0, Y, -2.0);
-    for (const [dx, dy, dz, bw, bh] of [[.33, .5, .8, .58, .34], [-.33, .5, .8, .58, .34], [.72, .42, .55, .5, .3], [-.72, .42, .55, .5, .3]]) {
-      const n = V3(dx, dy, dz).normalize(), pa = V3(n.x * R0, n.y * R0, n.z * R0 * 1.75).add(mitte), pi = V3(n.x * (R0 - .06), n.y * (R0 - .06), n.z * (R0 - .06) * 1.75).add(mitte);
-      const aussen = new THREE.Mesh(new THREE.PlaneGeometry(bw, bh), glasA); aussen.position.copy(pa).addScaledVector(n, .012); aussen.lookAt(pa.clone().add(n)); j.add(aussen);   // Scheibe außen
-      const innen = new THREE.Mesh(new THREE.PlaneGeometry(bw * .92, bh * .9), new THREE.MeshBasicMaterial({ map: himmelC, toneMapped: false })); innen.position.copy(pi).addScaledVector(n, -.01); innen.lookAt(pi.clone().sub(n)); j.add(innen);   // Blick nach draußen
-      const rah = box(bw + .04, .025, .02, rahmenC); rah.position.copy(innen.position).addScaledVector(n, -.005); rah.quaternion.copy(innen.quaternion); rah.translateY(-bh * .47); j.add(rah);
+    const innenM = new THREE.MeshBasicMaterial({ map: himmelC, side: THREE.BackSide, toneMapped: false });
+    const O = Math.PI * 1.5;
+    for (const [p0, pl, t0, tl] of [[O - .78, .72, .62, .38], [O + .06, .72, .62, .38], [O - 1.4, .5, 1.05, .3], [O + .9, .5, 1.05, .3]]) {
+      for (const [r, m] of [[R0 + .006, glasA], [R0 - .056, innenM]]) {
+        const sc = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 6, p0, pl, t0, tl), m);
+        sc.rotation.x = Math.PI / 2; sc.scale.set(1, 1.75, 1); sc.position.set(0, Y, -2.0); j.add(sc);
+      }
     } }
   for (const sx of [1, -1]) {   // Flügel, Winglets, Triebwerke
     const fl = box(6.2, .16, 2.3, lack); fl.position.set(sx * 3.9, 1.7, -8.6); fl.rotation.y = sx * .32; j.add(fl);
@@ -490,8 +492,8 @@ function bauJet(s) {
   j.add(at(box(.3, .02, 10, mat(0xfff6e0, { e: 0xffe2b8, ei: 1.5 })), 0, 3.5, -7.5));
   // Cockpit: zwei Sitze, Instrumente
   for (const x of [-.4, .4]) { const g = new THREE.Group(); g.add(at(box(.5, .12, .5, mat(0x2b2d31)), 0, .45, 0)); g.add(at(box(.5, .7, .1, mat(0x2b2d31)), 0, .8, -.25)); g.position.set(x, 1.5, -1.45); j.add(g); }
-  j.add(at(box(1.6, .35, .4, mat(0x1b1d21, { e: 0x2a6f97, ei: .5 })), 0, 2.2, -.55));
-  for (const x of [-.45, -.15, .15, .45]) j.add(at(box(.25, .18, .02, mat(0x0d1b2a, { e: [0x4cc9f0, 0x80ed99, 0xffd166, 0x4cc9f0][Math.round((x + .45) / .3)], ei: .9 })), x, 2.25, -.34, -.3));
+  j.add(at(box(1.25, .35, .3, mat(0x1b1d21, { e: 0x2a6f97, ei: .5 })), 0, 2.2, -.95));   // Instrumentenbrett weiter hinten → steht nicht aus der Nase
+  for (const x of [-.45, -.15, .15, .45]) j.add(at(box(.25, .18, .02, mat(0x0d1b2a, { e: [0x4cc9f0, 0x80ed99, 0xffd166, 0x4cc9f0][Math.round((x + .45) / .3)], ei: .9 })), x * .8, 2.25, -.78, -.3));
   for (const x of [-.4, .4]) { j.add(at(cyl(.015, .015, .3, mat(0x222222), 6), x, 1.95, -.85, -.6)); j.add(at(box(.18, .05, .04, mat(0x222222)), x, 2.05, -.95)); }
   j.add(at(box(.9, .06, .5, mat(0x1b1d21)), 0, 3.25, -.9));
   return { j, pivot, tuer, raeder, licht, cockpitTuer, kabinenLichter };
