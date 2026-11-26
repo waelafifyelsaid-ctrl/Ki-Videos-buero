@@ -81,7 +81,7 @@ export class Figur {
   static augen = 1;   // Cartoon-Mix: größere Augen (z. B. 1,5)   // globale Zeit fürs Blinzeln (setzt die Episode pro Bild)
   constructor(o = {}) {
     this.o = o;
-    const haut = mat(o.haut ?? 0xd9a77a, { r: 0.6 });
+    const haut = mat(o.haut ?? 0xd9a77a, { r: 0.6, weich: true });
     const team = o.art === 'team';
     const oben = mat(o.jacke ?? (team ? 0x2e3440 : 0x6c757d), { r: 0.85 });
     const unten = mat(o.hose ?? (team ? 0x262a31 : 0x343a40), { r: 0.85 });
@@ -217,7 +217,7 @@ export class Figur {
       { const lippe = mat(o.lippen ?? 0xb5686b, { r: .5 }); const ol = sph(1, lippe, 12, 8); ol.scale.set(0.026, 0.006, 0.01); gesicht.add(at(ol, 0, -0.04, 0.106)); this.unterGesicht?.push(ol);
         const ul = sph(1, lippe, 12, 8); ul.scale.set(0.022, 0.007, 0.01); gesicht.add(at(ul, 0, -0.06, 0.104)); this.unterlippe = ul; this.unterGesicht?.push(ul);
         this.zaehne = box(0.03, 0.008, 0.006, mat(0xf4f1ea, { r: .3 })); this.zaehne.position.set(0, -0.046, 0.101); gesicht.add(this.zaehne);
-        for (const sx of [1, -1]) { const fal = box(0.003, 0.02, 0.004, mat(new THREE.Color(o.haut ?? 0xd9a77a).multiplyScalar(.82))); fal.position.set(sx * 0.034, -0.035, 0.1); fal.rotation.z = sx * .4; gesicht.add(fal); } }   // Lachfalten
+      }
       this.mundMesh = sph(0.02, mat(0x2a0f10, { r: 0.5 }), 12, 8); this.mundMesh.scale.set(1.1, 0.25, 0.5);
       this.mundMesh.position.set(0, -0.05, 0.102); gesicht.add(this.mundMesh);
       if (o.bart) { const bt = sph(0.1, mat(o.bart, { r: 0.95 }), 16, 10, true); bt.scale.set(0.95, 0.6, 0.85); bt.position.set(0, -0.06, 0.03); gesicht.add(bt); }
@@ -246,8 +246,6 @@ export class Figur {
       head.add(at(box(0.06, 0.04, 0.03, mat(0x1d1f22)), 0, 0.262, 0.112, -0.5));
       if (o.headset) for (const s of [1, -1]) head.add(at(cyl(0.045, 0.045, 0.04, mat(0x1d1f22), 14), s * 0.12, 0.11, 0, 0, 0, Math.PI / 2));
       if (o.visier) head.add(at(box(0.2, 0.06, 0.04, mat(0x22272e, { r: 0.1, m: 0.5 })), 0, 0.25, 0.1, -0.45));   // Schutzbrille hochgeschoben auf dem Helm
-      for (const s of [1, -1]) head.add(at(box(0.012, 0.12, 0.012, mat(0x15171a)), s * 0.1, 0.05, 0.02, 0, 0, s * .15));            // Kinnriemen
-      head.add(at(box(0.07, 0.012, 0.03, mat(0x15171a)), 0, -0.005, 0.07));
       head.add(at(box(0.07, 0.05, 0.01, mat(0x3a3d35, { r: 1 })), 0, 0.225, -0.13, 0.4));                                                // Klett-Patch hinten
       head.add(at(sph(0.012, mat(0x300000, { e: 0xff2030, ei: 1.5 }), 6, 4), 0, 0.29, -0.09));                                            // Markierungslicht
       if (o.nummer) { const nh = new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.05), new THREE.MeshStandardMaterial({ map: nummerTex(o.nummer), roughness: .8 })); nh.position.set(0, 0.225, -0.137); nh.rotation.set(-0.4, Math.PI, 0); head.add(nh); }

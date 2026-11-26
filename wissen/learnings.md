@@ -132,3 +132,8 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - Laufwege NIE an bewegliche Objekte koppeln (Seil hing am Heli → Wege wanderten mit, als der Heli wegflog → durchs Auto). Feste Bodenpunkte nutzen.
 - Kollisionen in der ECHTEN Szene messen (Playwright-Skript: Figur-Position in Auto-Koordinaten umrechnen, Abstand zur Box) statt nur auf dem Papier.
 - Aus großer Höhe: feine Markierungen/Lämpchen ausblenden und Konturen abschalten (sonst Pixel-Flimmern); Gelände-Ebenen mit deutlichem Höhenabstand (≥0,5 m) stapeln.
+- Gesichter im Cartoon-Mix: Haut NICHT toon-schattieren (Lambert, weich), keine dünnen Linien-Teile im Gesicht (Kinnriemen, Falten) – sonst „Streifen“.
+- Konturen nur für kräftige Kanten (Schwelle .32–.6), sonst zeichnen sie Linien in Flächen und Gesichter.
+- Von oben: Markierungen/Startbahnen als Textur (mit Mipmaps + Anisotropie) statt dünner 3D-Streifen → sichtbar UND ohne Flimmern. Nah: 3D-Streifen.
+- Bodenebenen nie überlappend knapp übereinander (Gras unter das Vorfeld legen).
+- Musik-Baukasten: `braam()`, `taiko()`, `ostinato()` in tools/musik.py für Trailer-Spannung; Musik-Gain 2.1, Geräusche .5.

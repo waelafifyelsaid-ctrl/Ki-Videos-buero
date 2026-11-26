@@ -174,7 +174,7 @@ export function flughafen(s) {
   s.add(new THREE.Mesh(new THREE.SphereGeometry(1200, 32, 16), new THREE.MeshBasicMaterial({ map: himmel, side: THREE.BackSide, fog: false })));
   // Grasflächen neben Vorfeld und Bahnen
   const gras = mat(0x6f8f45, { r: 1 });   // einfarbig grün (kein Flimmern)
-  for (const [x, z, w, d] of [[-260, -60, 400, 700], [260, -60, 380, 700], [0, -190, 120, 22], [0, -330, 700, 200]]) s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(w, d), gras), x, .004, z, -Math.PI / 2));
+  for (const [x, z, w, d] of [[-260, -60, 400, 700], [260, -60, 380, 700], [0, -190, 120, 22], [0, -330, 700, 200]]) s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(w, d), gras), x, -.25, z, -Math.PI / 2));   // UNTER dem Vorfeld (kein Z-Flimmern bei Überlappung)
   // Baumreihe + Hügel + Stadt-Silhouette am Horizont
   const r = rng(17), baum = mat(0x3d4a2e, { r: 1 });
   for (let i = 0; i < 90; i++) { const x = -330 + i * 7.5 + r() * 3, h = 6 + r() * 6; s.add(at(new THREE.Mesh(new THREE.ConeGeometry(2.2 + r(), h, 7), baum), x, h / 2, -262 - r() * 8)); }
@@ -210,7 +210,7 @@ export function flughafen(s) {
   s.traverse(o => { if (o.isMesh && o.position.y < .05 && o.geometry?.type !== 'SphereGeometry') o.receiveShadow = false; });
   // feine Bodenmarkierungen + kleine Lampen: aus großer Höhe flimmern sie (kleiner als ein Pixel) → werden dann ausgeblendet
   fa.fein = []; s.traverse(o => { if (!o.isMesh) return; const g = o.geometry?.parameters ?? {};
-    if ((o.geometry.type === 'BoxGeometry' && g.height <= .012) || (o.geometry.type === 'SphereGeometry' && g.radius <= .2 && o.position.y < .5)) fa.fein.push(o); });   // Bodenflächen + Markierungen: kein Schatten-Flimmern
+    if ((o.geometry.type === 'BoxGeometry' && g.height <= .025 && o.position.y < .05) || (o.geometry.type === 'SphereGeometry' && g.radius <= .2 && o.position.y < .5)) fa.fein.push(o); });   // Bodenflächen + Markierungen: kein Schatten-Flimmern
   return fa;
 }
 

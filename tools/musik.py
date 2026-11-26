@@ -142,6 +142,37 @@ class Musik:
             takt += 1
             t += 4 * b
 
+    # ---- Spannung (Film-/Trailer-Elemente)
+    def braam(self, t0, d=2.2, v=1.0, grund=("D", 1)):
+        """tiefer, fetter Blechbläser-Akkord mit sich öffnendem Filter (Trailer-„BRAAM“)"""
+        t = ts(d); f0 = hz(*grund)
+        x = sum(saege(f0 * m, d, vs) for m, vs in ((1, 0), (1, .004), (1.5, -.003), (2, .002), (3, 0)))
+        roh = np.zeros(len(t))
+        for i in range(0, len(t), 2205):
+            k = i / len(t); roh[i:i + 2205] = lp(x[i:i + 2205], 180 + 1400 * min(1, 4 * k) * (1 - .6 * k))
+        self.add(t0, roh * np.minimum(1, t / .04) * np.exp(-1.1 * t) * .55, v)
+
+    def taiko(self, t0, t1, bpm=140, v=1.0):
+        """treibende Trommeln (Taiko-artig): Achtel mit Akzenten + Wirbel am Taktende"""
+        b = 60 / bpm; t, k = t0, 0
+        while t < t1:
+            for s in range(8):
+                ts_ = t + s * b / 2
+                if ts_ >= t1: break
+                if s in (0, 3, 6): self.tom(ts_, 62, .9 * v)
+                elif s in (2, 5): self.tom(ts_, 85, .55 * v)
+                if k % 2 == 1 and s == 7:
+                    for r in range(4): self.tom(ts_ + r * b / 8, 110 - r * 8, .5 * v)
+            t += 4 * b; k += 1
+
+    def ostinato(self, t0, t1, noten, bpm=140, v=1.0):
+        """nervöse Streicher-Sechzehntel (gefilterte Säge) – hält die Spannung"""
+        b = 60 / bpm; t, i = t0, 0
+        while t < t1:
+            f = hz(*noten[i % len(noten)]); d = b / 4 * .9
+            x = lp(saege(f, d) + saege(f * 1.003, d), 2400) * np.exp(-6 * ts(d))
+            self.add(t, x * .5, v); t += b / 4; i += 1
+
     def fertig(self, lautheit=.35):
         m = self.m - np.mean(self.m)
         return m / max(1e-9, np.max(np.abs(m))) * lautheit

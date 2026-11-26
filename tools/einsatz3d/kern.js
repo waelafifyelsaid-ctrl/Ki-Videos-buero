@@ -31,8 +31,12 @@ function verlauf() {
   return toonVerlauf;
 }
 export function mat(color, o = {}) {
-  const key = JSON.stringify([TOON, color, o.r, o.m, o.e, o.ei, o.map?.uuid, o.transparent, o.opacity, o.side, o.flat, o.envI]);
+  const key = JSON.stringify([TOON, o.weich, color, o.r, o.m, o.e, o.ei, o.map?.uuid, o.transparent, o.opacity, o.side, o.flat, o.envI]);
   if (!o.noCache && matCache.has(key)) return matCache.get(key);
+  if (TOON && o.weich) {   // Haut: weich schattiert (keine harten Toon-Stufen → keine Streifen im Gesicht)
+    const m = new THREE.MeshLambertMaterial({ color, emissive: o.e ?? 0x000000, emissiveIntensity: o.ei ?? 1, map: o.map ?? null, side: o.side ?? THREE.FrontSide });
+    if (!o.noCache) matCache.set(key, m); return m;
+  }
   if (TOON) {
     const m = new THREE.MeshToonMaterial({ color, gradientMap: verlauf(), emissive: o.e ?? 0x000000, emissiveIntensity: o.ei ?? 1, map: o.map ?? null,
       transparent: o.transparent ?? false, opacity: o.opacity ?? 1, side: o.side ?? THREE.FrontSide });

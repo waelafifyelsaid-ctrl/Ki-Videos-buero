@@ -246,10 +246,25 @@ M.impact(e, .9); M.stab(e, DM, .7, d=.9); M.pad(e, DM + [("A", 4)], 3.0, .35, cu
 M.groove(e + .2, e + 2.9, 140, 2, [DM, BB], ["D", "A#"], cutoff_bass=700)
 for s_ in TL["szenen"][1:]:
     M.impact(s_["start"], .55)
+# ---- Spannung drauf: Trailer-BRAAMs, Taiko-Trommeln, nervöse Streicher-Ostinati
+DUNKEL_OST = [("D", 4), ("D", 4), ("F", 4), ("D", 4), ("G#", 4), ("D", 4), ("F", 4), ("A", 4)]
+M.braam(0, 2.0, 1.0); M.taiko(0, 2.9, 150, 1.0); M.ostinato(0, 2.9, DUNKEL_OST, 150, .5)                  # Hook: sofort volle Spannung
+M.braam(1.45, 2.4, 1.2, ("A#", 0)); M.impact(2.9, 1.0); M.braam(2.9, 2.5, .8, ("D", 1))
+M.ostinato(h0, h0 + hd - 1.6, [("D", 4), ("A", 4)] * 4, 120, .22)                                           # Büro: unterschwellig nervös
+M.braam(h0 + hd - 1.6, 2.2, 1.0); M.taiko(h0 + hd - 1.6, h0 + hd, 150, .8)                                  # Alarm
+M.taiko(d0, d0 + dd, 140, .75); M.ostinato(d0, d0 + dd, DUNKEL_OST, 140, .3)                                # Dach: Sprint + Start
+M.braam(d0 + 6.9, 2.2, .9, ("F", 1))                                                                         # Abheben
+M.ostinato(l0, l0 + ld, [("D", 4), ("F", 4), ("A", 4), ("F", 4)], 118, .25)                                 # Flug
+M.taiko(f0, a0 + ad, 140, .85); M.ostinato(f0, a0, DUNKEL_OST, 140, .38)                                    # Anflug + Abseilen
+for tb_, g_ in ((f0, ("D", 1)), (f0 + 7.0, ("A#", 0)), (f0 + 11.0, ("D", 1)), (a0 + 5.55, ("F", 1))): M.braam(tb_, 2.2, 1.0, g_)
+M.ostinato(t0, spreng, [("D", 4), ("D#", 4)] * 4, 150, .45)                                                 # Countdown: Halbton-Reibung
+M.braam(spreng, 3.0, 1.3, ("D", 1)); M.taiko(zug, st("kabine") + 2.0, 150, 1.0)                             # Sprengung + Zugriff
+M.braam(k0 + 2.6, 2.0, .9, ("A#", 0))                                                                       # Tackle
+M.braam(w0 + .8, 2.6, 1.0, ("C#", 1)); M.braam(e, 2.6, 1.1, ("D", 1)); M.taiko(e + .2, e + 2.9, 150, .9)   # Twist + Endkarte
 M.arp(e + .2, [("D", 5), ("F", 5), ("A", 5), ("D", 6)], .12, 12, .15)
 for z_ in (.7, 1.1):
     add(e + z_ + .05, .3 * np.sin(2 * np.pi * 1200 * ts(.15)) * np.exp(-18 * ts(.15)))   # Like-/Folgen-Pop
-a = a / max(1e-9, np.max(np.abs(a))) * .55 + M.fertig(1.0) * 1.7
+a = a / max(1e-9, np.max(np.abs(a))) * .5 + M.fertig(1.0) * 2.1   # Musik deutlich im Vordergrund
 
 
 # ---------------------------------------------------------------- Stimmen

@@ -7,7 +7,7 @@ import { Figur, gehPose, rennPose, hockPose, stehPose, schildModell, handschelle
 import { renderer, Post, UEBERGANG, Explosion, Schwaden, schild, hauptquartier, hqDetails } from '/tools/einsatz3d/welt.js';
 import { Pov } from '/tools/einsatz3d/pov.js';
 import { heliModell, heliUpdate, setzeSeil, Abwind, HELI_BODEN } from '/tools/einsatz3d/heli.js';
-import { flughafen, flughafenUpdate } from '/tools/einsatz3d/flughafen.js';
+import { flughafen, flughafenUpdate, verkehrsflugzeug } from '/tools/einsatz3d/flughafen.js';
 import { dachWelt, dachUpdate } from '/tools/einsatz3d/dach.js';
 
 const TL = await (await fetch('./timeline_fertig.json')).json();
@@ -117,7 +117,10 @@ const HQ = (() => {
   const chefin = new Figur({ art: 'chefin', jacke: 0x5c636e, hose: 0x3a3f47, schuh: 0x111111, haare: true, haarfarbe: 0xe9ecef, dutt: true, brille: true, haut: 0xf1c9a5, groesse: 1.7 });
   s.add(chefin.root);
   const croissant = new THREE.Mesh(new THREE.TorusGeometry(.06, .035, 8, 14, Math.PI * 1.2), mat(0xd4a35a, { r: .8 })); s.add(croissant);
-  return { s, hq, k, pov, t, chefin, croissant };
+  const kollegen = [new Figur({ art: 'zivil', jacke: 0x495057, hose: 0x343a40, schuh: 0x111111, haare: true, haarfarbe: 0x3d2b1f, haut: 0xe0ac69, headset: true, groesse: 1.78 }),
+    new Figur({ art: 'zivil', jacke: 0x6c757d, hose: 0x343a40, schuh: 0x111111, haare: true, dutt: true, haarfarbe: 0x14110f, haut: 0xc68642, brille: true, groesse: 1.68 })];
+  kollegen.forEach(f => s.add(f.root));
+  return { s, hq, k, pov, t, chefin, croissant, kollegen };
 })();
 function zeichneHqSchirm(lt, t) {
   const g = HQ.hq.schirm.ctx, w = 1600, h = 900;
@@ -153,6 +156,10 @@ function s_hq(lt, t) {
   const beiss = (lt * .9) % 1 < .3 && !alarm;
   stell(2, -.55, -2.75, 2.7, { kopf: [beiss ? .2 : 0, alarm ? -.8 : 0, 0], mund: redet('hq', lt, '2') || (beiss ? .5 : 0), armR: [beiss ? 1.9 : 1.0, .1], ellR: beiss ? 2.3 : 1.6 });
   HQ.croissant.position.copy(weltPos(tm[2].j.haR)).add(V3(0, -.03, .05));
+  HQ.kollegen.forEach((f, i) => { const x = [-3.9, -2.75][i];   // Kollegen an den Arbeitsplätzen tippen
+    f.pose({ beinL: [1.5, 1.55], beinR: [1.42, 1.5], rumpf: [.15, 0, 0], kopf: [-.1 + .05 * Math.sin(t * .7 + i), .15 * Math.sin(t * .4 + i * 2), 0] });
+    f.platziere(x, -4.55, Math.PI, { hoehe: .5 - .98 * f.root.scale.x + .04 });
+    for (const [n, dx] of [['L', .1], ['R', -.1]]) f.greife(n, V3(x + dx + .02 * Math.sin(t * 11 + dx * 30), .8 + .01 * Math.abs(Math.sin(t * 13 + dx * 50)), -5.0), f.lokal(n === 'L' ? .5 : -.5, .8, -.2)); });
   stell(4, .25, -3.95, 3.0, { kopf: [0, alarm ? -.7 : 0, 0], armL: [.9, -.2, .4], ellL: 1.9, armR: [.9, -.2, .4], ellR: 1.9 });
   stell(7, -1.35, -3.45, 2.4, { kopf: [.3, 0, 0], armL: [.8, .1], ellL: 1.6, armR: [.8, .1], ellR: 1.6 });
   const zZ = L('hq', 'Flug'), kZ = kopfW(chefin), k1 = kopfW(tm[1]);
@@ -244,8 +251,8 @@ function s_dach(lt, t) {
   } else {
     // sitzend: Blick nach vorne-links aus der offenen Tür, zwischendurch zu 2 und 4 (weich)
     const z2 = L('dach', 'Gibt'), z4 = L('dach', 'Nein');
-    const zu2 = smooth(z2.start - .3, z2.start + .2, lt) * (1 - smooth(z4.start - .2, z4.start + .2, lt));
-    const zu4 = smooth(z4.start - .2, z4.start + .2, lt);
+    const zu2 = smooth(z2.start - .3, z2.start + .2, lt) * (1 - smooth(z4.start - .7, z4.start - .2, lt));
+    const zu4 = smooth(z4.start - .7, z4.start - .2, lt);   // rechtzeitig zu 4 drehen
     let zl = V3(-3, .6 - .35 * ab, -2.2);
     zl.lerp(h.g.worldToLocal(kopfW(sitzer[2])), zu2).lerp(h.g.worldToLocal(kopfW(sitzer[4])), zu4);   // Blick genau in die Gesichter (nicht auf den Boden)
     pos = sitzW.clone(); ziel = h.g.localToWorld(zl);   // sitzend: kein Wackeln (die Decke wackelte sonst im Bild)
@@ -290,11 +297,13 @@ const FLUG = (() => {
   for (let i = 0; i < 14; i++) { const w = new THREE.Sprite(new THREE.SpriteMaterial({ map: rt, color: 0xf1f3f5, transparent: true, opacity: .55, depthWrite: false })); w.userData = { x: -40 - r() * 60, y: -30 + r() * 40, z: r() * 400, s: 30 + r() * 40 }; s.add(w); wolken.push(w); }
   const k = kamera(s, 76); const pov = new Pov(k);
   const t = {}; for (const nr of [1, 2, 4, 7]) { t[nr] = teamOps(s, nr); s.remove(t[nr].root); h.g.add(t[nr].root); }
-  return { s, h, k, pov, t, feld, sonne, wolken, land, KACHEL };
+  const voegel = new THREE.Group(); for (let i = 0; i < 14; i++) { const v = new THREE.Group(); for (const sx of [-1, 1]) v.add(at(box(.6, .03, .18, mat(0x2b2d31)), sx * .3, 0, 0, 0, 0, sx * .35)); v.userData = { dx: (i % 5) * 2.2 - 4, dz: Math.floor(i / 5) * 2.4, ph: i }; voegel.add(v); } s.add(voegel);
+  return { s, h, k, pov, t, feld, sonne, wolken, land, KACHEL, voegel };
 })();
 function s_flug(lt, t) {
   const { h, k, pov, t: tm, sonne } = FLUG;
   FLUG.land.position.x = ((t * 48) % FLUG.KACHEL);   // wir fliegen nach −x (Nase), der Boden zieht nach +x
+  FLUG.voegel.position.set(-30 + lt * 9, -6 + Math.sin(lt * .5) * 2, -26); FLUG.voegel.children.forEach(v => { const u = v.userData; v.position.set(u.dx + Math.abs(u.dx) * .3, Math.sin(lt * 3 + u.ph) * .3, u.dz + Math.abs(u.dx) * .5); v.children.forEach((f, j) => { f.rotation.z = (j ? 1 : -1) * (.35 + .5 * Math.sin(lt * 9 + u.ph)); }); });
   for (const w of FLUG.wolken) { const u = w.userData; w.position.set(u.x, u.y, ((u.z - t * 60) % 400 + 400) % 400 - 200); w.scale.set(u.s, u.s * .5, 1); }
   h.g.position.set(0, 0, 0); h.g.rotation.set(-.08 + .02 * Math.sin(t * 1.7), Math.PI / 2, -.03 * Math.sin(t * .9));
   h.g.updateMatrixWorld(true);
@@ -503,7 +512,24 @@ const VF = (() => {
   const fuell = new THREE.DirectionalLight(0xdfe6f2, .9); fuell.position.set(30, 10, 40); s.add(fuell);
   const sonne = new THREE.DirectionalLight(0xffd4ab, 1.6); sonne.position.set(-25, 18, 20); sonne.castShadow = true; sonne.shadow.mapSize.set(2048, 2048);
   Object.assign(sonne.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 90 }); s.add(sonne); s.add(sonne.target);
-  { const bp = bodenPlatte(700, 700, mat(0x6c7178, { r: .8 }), 0, -60); bp.receiveShadow = false; s.add(bp); }   // einfarbig grau, kein Schatten-Flimmern
+  // Vorfeld: einfarbig grau; für die Sicht von oben eine Variante mit aufgemalten Linien (Textur mit Mipmaps → flimmert nicht)
+  const vorfeldLinien = canvasTexEp('vorfeldLinien', 2048, 2048, (g, w, h) => {
+    const m = x => (x + 350) / 700 * w, n = z => (z + 410) / 700 * h;   // Welt → Pixel
+    g.fillStyle = '#6c7178'; g.fillRect(0, 0, w, h); g.lineCap = 'butt';
+    g.strokeStyle = '#e8b730'; g.lineWidth = 3;
+    const linie = (x0, z0, x1, z1, strich = null) => { g.setLineDash(strich ?? []); g.beginPath(); g.moveTo(m(x0), n(z0)); g.lineTo(m(x1), n(z1)); g.stroke(); };
+    linie(0, 30, 0, -180); linie(-6, 30, -6, -170); linie(6, 30, 6, -170); linie(-6.4, 30, -6.4, -170, [6, 6]);
+    for (let k = 0; k < 5; k++) { const z = 12 - k * 30; linie(7, z, 21, z); linie(21, z, 21, z - 8); }
+    for (let k = 0; k < 4; k++) linie(-6, -160 - k * .5, 6, -160 - k * .5);
+    g.strokeStyle = '#f1f3f5'; g.lineWidth = 2; for (let z = 25; z > -170; z -= 18) linie(-.6, z, .6, z);
+    for (const zb of [-200, -330]) {   // Startbahnen (dunkel, Mittellinie gestrichelt, Ränder, Schwellen)
+      g.fillStyle = '#3d4047'; g.fillRect(0, n(zb - 22.5), w, n(zb + 22.5) - n(zb - 22.5));
+      g.strokeStyle = '#f1f3f5'; g.lineWidth = 3; linie(-350, zb, 350, zb, [18, 14]); linie(-350, zb - 21, 350, zb - 21); linie(-350, zb + 21, 350, zb + 21);
+      for (let k = 0; k < 8; k++) { linie(-300, zb - 18 + k * 5, -270, zb - 18 + k * 5); linie(270, zb - 18 + k * 5, 300, zb - 18 + k * 5); } }
+    g.setLineDash([]); }, [1, 1]);
+  const vorfeldGrau = mat(0x6c7178, { r: .8 }), vorfeldMitLinien = new THREE.MeshLambertMaterial({ map: vorfeldLinien });
+  vorfeldLinien.anisotropy = 16;
+  const bp = bodenPlatte(700, 700, vorfeldGrau, 0, -60); bp.receiveShadow = false; s.add(bp);
   for (let z = 20; z > -180; z -= 6) s.add(at(box(.18, .01, 3.6, mat(0xf2c14e, { e: 0x4a3a10, ei: .3 })), 0, .006, z));   // Mittellinie
   s.add(at(new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), mat(0x6f8f45, { r: 1 })), 0, -.6, 0, -Math.PI / 2));   // Land bis zum Horizont (keine Kante von oben)
   const fa = flughafen(s);
@@ -534,6 +560,9 @@ const VF = (() => {
   for (const [sx, i] of [[-.8, 0], [.8, 1]]) feuerwehr.add(at(box(.5, .18, .3, blau[i]), sx, 3.0, -3.9));
   s.add(feuerwehr);
   // Team im Hubschrauber (Kinder des Helis) für den durchgehenden Anflug
+  const lander = verkehrsflugzeug(s, 0, -200, Math.PI / 2, { akzent: 0x9d0208, skala: .9 });
+  const bus = new THREE.Group(); bus.add(at(box(2.5, 2.6, 12, mat(0xf1f3f5)), 0, 1.6, 0)); bus.add(at(box(2.52, .9, 11, mat(0x223344, { r: .1, m: .5 })), 0, 2.1, 0)); bus.add(at(box(2.54, .3, 12, mat(0x1d3557)), 0, .7, 0));
+  for (const sx of [-1.2, 1.2]) for (const zz of [-4, 4]) bus.add(at(cyl(.5, .5, .3, mat(0x111111), 14), sx, .5, zz, 0, 0, Math.PI / 2)); s.add(bus);
   const sitzer = {}; for (const nr of [1, 2, 4, 7]) { sitzer[nr] = teamOps(s, nr, 0); s.remove(sitzer[nr].root); heli.g.add(sitzer[nr].root); }
   // Polizei sperrt das Vorfeld ab: 3 Streifenwagen + 4 Polizisten
   const autos = []; const silber = mat(0xdfe3e8, { r: .35, m: .3 }), blauLack = mat(0x1d3f8f, { r: .4, m: .2 }), glasA = mat(0x1a2533, { r: .1, m: .5 });
@@ -573,7 +602,7 @@ const VF = (() => {
   // Reifenqualm beim Bremsen
   const qualm = []; const rt = rauchTex();
   for (let i = 0; i < 18; i++) { const q = new THREE.Sprite(new THREE.SpriteMaterial({ map: rt, color: 0xdee2e6, transparent: true, depthWrite: false })); q.userData = { ph: i / 18, seite: i % 2 ? 1 : -1 }; s.add(q); qualm.push(q); }
-  return { s, k, pov, jet, expl, rauch, t, kopilot, sitzer, autos, autoBlau, polizei, kegel, such, schild2, schildAb, pilot, gorilla, schellen, tablet, ts, heli, wind, qualm, sonne, fa, crew, seilHaufen, feuerwehr, blau };
+  return { s, k, pov, jet, expl, rauch, t, lander, bus, bp, vorfeldGrau, vorfeldMitLinien, kopilot, sitzer, autos, autoBlau, polizei, kegel, such, schild2, schildAb, pilot, gorilla, schellen, tablet, ts, heli, wind, qualm, sonne, fa, crew, seilHaufen, feuerwehr, blau };
 })();
 
 const NASE_STOP = -10;          // Nasenspitze des Jets (Welt-z), wenn er steht
@@ -640,6 +669,8 @@ function tuerWinkel(d) {        // Tür klappt nach der Sprengung nach außen un
   return th;
 }
 function vfStandard(t) {
+  VF.lander.visible = false; VF.bus.visible = false;
+  VF.bp.material = VF.vorfeldGrau;
   VF.fa.fein.forEach(o => { o.visible = true; });
   VF.jet.kabinenLichter.forEach(l => { l.visible = false; });   // außen: Kabinenlicht aus (würde den Rumpf von innen durchleuchten)
   VF.s.fog.far = 340;
@@ -816,6 +847,8 @@ function s_anflug(lt, t) {
   vfStandard(t);
   const { k, pov, sitzer: st, heli: h } = VF;
   stellePolizei(lt, t);
+  { const x = 420 - 75 * lt; VF.lander.visible = x > -420; VF.lander.position.set(x, Math.max(0, (x - 60) * .09), -200); VF.lander.rotation.set(0, Math.PI / 2, 0); }   // Verkehrsflugzeug landet auf der Bahn
+  VF.bus.visible = true; VF.bus.position.set(-40 + 4.5 * lt, 0, 24); VF.bus.rotation.y = Math.PI / 2;   // Vorfeldbus fährt am Rand
   for (const nr of [1, 2, 4, 7]) st[nr].root.visible = true;
   if (lt >= AB0) {
     const r = s_abseilen(lt - AB0, t, true);
@@ -829,6 +862,7 @@ function s_anflug(lt, t) {
   VF.s.fog.far = 340 + 5 * Math.max(0, h.g.position.y - 12);   // von oben sieht man weiter
   const ruhig = smooth(24, 16, h.g.position.y);   // hoch oben: feine Markierungen aus, keine Konturen → ruhiger Boden ohne Flimmern
   VF.fa.fein.forEach(o => { o.visible = h.g.position.y < 22; });
+  VF.bp.material = h.g.position.y < 22 ? VF.vorfeldGrau : VF.vorfeldMitLinien;   // von oben: Linien als glatte Textur (Rollbahnen sichtbar, kein Flimmern)
   // Jet rollt los (Landelichter), wird von den Streifenwagen gestoppt
   const nz = jetAnflug(lt), brems = lt > JA.tb ? Math.sin(clamp((lt - JA.tb) / 2) * Math.PI) * .035 : 0;
   stelleJet(nz, brems); VF.jet.licht.forEach(l => { l.intensity = lt > JA.los - 1 ? 160 : 40; }); VF.jet.pivot.rotation.z = 0;
@@ -1161,5 +1195,5 @@ window.renderFrame = async (t) => {
   zeigeUI(s.n, lt, r, t);
   await new Promise(res => requestAnimationFrame(() => res()));
 };
-window.dauer = TL.dauer; window.__VF = VF; window.__THREE = THREE;
+window.dauer = TL.dauer; window.__VF = VF; window.__THREE = THREE; window.__DACH = DACH;
 window.bereit = true;

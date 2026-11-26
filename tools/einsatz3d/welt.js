@@ -57,7 +57,7 @@ export class Post {
             vec2 px = vec2(1. / ${W}., 1. / ${H}.) * 1.4; float L[9]; int n = 0;
             for (int j = -1; j <= 1; j++) for (int i = -1; i <= 1; i++) { vec3 s = hol(tA, uv + vec2(float(i), float(j)) * px); L[n] = dot(s, vec3(.299, .587, .114)); n++; }
             float gx = L[2] + 2. * L[5] + L[8] - L[0] - 2. * L[3] - L[6], gy = L[6] + 2. * L[7] + L[8] - L[0] - 2. * L[1] - L[2];
-            float kante = smoothstep(.22, .45, sqrt(gx * gx + gy * gy));
+            float kante = smoothstep(.32, .6, sqrt(gx * gx + gy * gy));   // nur kräftige Kanten (Umrisse), keine Linien in Gesichtern/Flächen
             if (modus == 0) c = mix(c, c * .12, kante * kontur);
           }
           float g = dot(c, vec3(.299, .587, .114)); c = mix(vec3(g), c, sat);
