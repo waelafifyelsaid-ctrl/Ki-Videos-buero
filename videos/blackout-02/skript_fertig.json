@@ -29,7 +29,10 @@
    "name": "KAPUZE",
    "farbe": "#ff2a55",
    "look": "fremder",
-   "stimme": "mann2"
+   "stimme": "mann2",
+   "extra": {
+    "kappe": "0x212529"
+   }
   },
   "V": {
    "name": "VERKÄUFER",
@@ -78,15 +81,15 @@
     "pos": [
      [
       0,
-      0.0,
+      1.75,
       1.62,
-      -12.2
+      -11.8
      ],
      [
-      6,
-      0.0,
+      7,
+      1.75,
       1.62,
-      -12.6
+      -12.3
      ]
     ],
     "blick": [
@@ -1249,8 +1252,8 @@
    ],
    "mitte": [
     [
-     6.2,
-     8.8,
+     5.9,
+     7.0,
      "Das war der Typ aus dem Keller!"
     ]
    ],
