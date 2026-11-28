@@ -1,0 +1,96 @@
+{
+ "titel": "BLACKOUT – Teil 1: Die Nacht, in der Neustadt dunkel wurde",
+ "titelKarte": "BLACKOUT",
+ "teilLabel": "BLACKOUT · TEIL 1",
+ "caption": "POV: In deiner ganzen Stadt fällt der Strom aus – und dann klopft es an der Tür 🕯️😨 Was würdest du tun? Teil 2 kommt morgen!",
+ "hashtags": ["#pov", "#blackout", "#storytime", "#serie", "#3danimation"],
+ "ich": { "stimme": "ich", "aermel": "0x2b2d42" },
+ "rollen": {
+  "ich": { "name": "DU", "farbe": "#80ed99" },
+  "M": { "name": "MAMA", "farbe": "#ff9f1c", "look": "mama", "stimme": "frau" },
+  "L": { "name": "LINA", "farbe": "#ff6b9a", "look": "schwester", "stimme": "kind" },
+  "N": { "name": "HERR KRAUSE", "farbe": "#4cc9f0", "look": "nachbar", "stimme": "mann3" },
+  "F": { "name": "???", "farbe": "#ff2a55", "look": "fremder", "stimme": "mann2" }
+ },
+ "ende": { "oben": "TEIL 2", "mitte": "Wer ist im Keller?", "unten": "Folgen, damit du Teil 2 nicht verpasst!" },
+ "szenen": [
+  { "n": "hook", "welt": "wohnung", "d": 6.0, "musik": "hook", "uhr": "21:47",
+    "licht": [[0, 1], [2.3, 1], [2.5, 0]], "stadt": [[0, 0], [1.2, 0], [3.6, 1]], "tv": [[0, 1], [2.5, 0]],
+    "kamera": { "pos": [[0, -0.7, 1.62, -3.95], [6, -0.75, 1.6, -4.05]], "blick": [[0, [-1, -6, -90]], [3.8, [8, -10, -60], 1.4]], "wackel": [[0, 0.3]] },
+    "mitte": [[0.15, 2.9, "In ganz Neustadt geht das Licht aus."]],
+    "hand": [[0, "handy"]],
+    "karten": [[3.4, 5.9, "NETZ · jetzt", "Kein Empfang", "warn"]] },
+  { "n": "essen", "welt": "wohnung", "d": 9.0, "tr": "schwarz", "trd": 0.8, "musik": "ruhig", "uhr": "21:37",
+    "mitte": [[0.2, 1.8, "10 MINUTEN VORHER"]],
+    "kamera": { "pos": [[0, 0.1, 1.22, -0.4]], "blick": [[0, "L"], [3.4, "M", 0.5], [6.6, [0.25, 0.9, -0.25], 0.4]], "wackel": [[0, 0.15]] },
+    "hand": [[0, "leer"], [6.4, "handy"]],
+    "figuren": {
+      "M": { "wege": [[0, -1.0, 0.35]], "pose": [[0, "sitzen"]], "yaw": [[0, 180]], "blick": [[0, "L"], [3.4, "kamera"]] },
+      "L": { "wege": [[0, -1.0, -1.15]], "pose": [[0, "sitzen"]], "yaw": [[0, 0]], "blick": [[0, "kamera"], [3.6, "M"]] }
+    },
+    "karten": [[6.7, 8.9, "STADTWERKE NEUSTADT · jetzt", "Störung im Stromnetz. Bitte Geräte vom Netz trennen.", "info"]],
+    "effekte": [[6.4, "handy"]] },
+  { "n": "aus", "welt": "wohnung", "d": 8.0, "musik": "spannung", "uhr": "21:46",
+    "licht": [[0, 1], [0.8, 1], [1.0, 0.5], [1.3, 1], [2.7, 1], [2.9, 0]], "tv": [[0, 1], [2.9, 0]],
+    "kamera": { "pos": [[0, 0.1, 1.22, -0.4], [4.2, 0.1, 1.22, -0.4], [5.2, 0.25, 1.62, -0.6]], "blick": [[0, [2.7, 1.2, 0.2]], [3.2, "M", 0.5], [5.2, "L", 0.5]], "wackel": [[0, 0.2], [3, 0.5]] },
+    "hand": [[0, "leer"], [4.4, "lampe"]],
+    "figuren": {
+      "M": { "wege": [[0, -1.0, 0.35]], "pose": [[0, "sitzen"], [3.4, "stehen"]], "yaw": [[0, 180]], "wege2": [], "blick": [[0, [2.7, 1.2, 0.2]], [3.2, "kamera"]] },
+      "L": { "wege": [[0, -1.0, -1.15]], "pose": [[0, "sitzen"], [5.2, "panik"]], "yaw": [[0, 0]], "blick": [[0, [2.7, 1.2, 0.2]], [3.6, "kamera"]] }
+    } },
+  { "n": "fenster", "welt": "wohnung", "d": 9.0, "tr": "whip", "musik": "spannung", "uhr": "21:47",
+    "licht": [[0, 0]], "tv": [[0, 0]], "stadt": [[0, 0], [1.4, 0], [4.0, 1]],
+    "kamera": { "pos": [[0, -0.2, 1.62, -1.6], [1.4, -1.45, 1.62, -2.55], [9, -1.45, 1.62, -2.6]], "blick": [[0, [-0.7, 1.3, -6]], [1.2, [-2, -8, -90], 0.6], [6.4, [30, -8, -140], 0.4], [7.6, "M", 0.6]], "wackel": [[0, 0.3]] },
+    "hand": [[0, "lampe"]],
+    "figuren": {
+      "M": { "wege": [[0, 0.6, -0.9], [2.0, -0.1, -2.35]], "pose": [[0, "stehen"], [2.0, "stehen"]], "yaw": [[0, 180]], "blick": [[0, [-2, -8, -90]], [7.6, "kamera"]] }
+    },
+    "effekte": [[6.2, "explosion", [30, -10, -150]]] },
+  { "n": "klopfen", "welt": "wohnung", "d": 9.0, "tr": "zoom", "musik": "horror", "uhr": "21:58",
+    "licht": [[0, 0]], "tv": [[0, 0]], "stadt": [[0, 1]], "kerzen": [[0, 0], [1.4, 1]],
+    "kamera": { "pos": [[0, 0.3, 1.62, -1.4], [5.0, 0.3, 1.62, -1.4], [8.6, -0.9, 1.62, 1.55]], "blick": [[0, "M"], [2.6, "L", 0.5], [4.6, [-0.9, 1.4, 2.6], 0.4]], "wackel": [[0, 0.25], [4.4, 0.6]] },
+    "hand": [[0, "lampe"]],
+    "figuren": {
+      "M": { "wege": [[0, -1.6, -0.3]], "pose": [[0, "stehen"]], "yaw": [[0, 90]], "blick": [[0, [-1.0, 0.9, -0.4]], [4.5, [-0.9, 1.4, 2.6]]] },
+      "L": { "wege": [[0, -1.0, -1.15]], "pose": [[0, "sitzen"], [4.4, "panik"]], "yaw": [[0, 0]], "blick": [[0, "kamera"], [4.5, [-0.9, 1.4, 2.6]]] }
+    },
+    "effekte": [[4.2, "klopfen"], [6.6, "klopfen"]] },
+  { "n": "nachbar", "welt": "wohnung", "d": 10.0, "musik": "horror", "uhr": "21:59",
+    "licht": [[0, 0]], "treppe": [[0, 0]], "tv": [[0, 0]], "stadt": [[0, 1]], "kerzen": [[0, 1]],
+    "tueren": { "wohnung": [[0, 0], [0.6, 0], [1.4, 80]] },
+    "kamera": { "pos": [[0, -0.9, 1.62, 1.55], [1.4, -0.9, 1.62, 1.75]], "blick": [[0, [-0.9, 1.5, 4]], [0.8, "N", 0.5]], "wackel": [[0, 0.35]] },
+    "hand": [[0, [[-0.5, 1.0, 2.55]]], [1.5, "lampe"]],
+    "figuren": {
+      "N": { "wege": [[0, -0.9, 3.55]], "pose": [[0, "stehen"], [5.5, "zeigen"]], "yaw": [[0, 180], [5.5, 240]], "blick": [[0, "kamera"]] }
+    } },
+  { "n": "keller", "welt": "wohnung", "d": 9.0, "tr": "glitch", "musik": "horror", "uhr": "22:00",
+    "licht": [[0, 0]], "treppe": [[0, 0]], "tv": [[0, 0]], "stadt": [[0, 1]], "kerzen": [[0, 1]],
+    "tueren": { "wohnung": [[0, 80]] },
+    "kamera": { "pos": [[0, -0.9, 1.62, 2.4], [2.0, -1.3, 1.62, 3.15], [9, -1.3, 1.6, 3.2]], "blick": [[0, [-1.8, 0.2, 4.6]], [2.0, [-2.3, -0.4, 5.6], 0.6], [6.0, [-2.3, -0.8, 6.2], 0.3]], "wackel": [[0, 0.5], [5.8, 1.2]], "roll": [[0, 0], [5.8, 0], [6.1, -4]] },
+    "hand": [[0, "lampe"]],
+    "figuren": {
+      "N": { "wege": [[0, -0.9, 3.55], [1.2, 0.7, 3.7]], "pose": [[0, "stehen"]], "yaw": [[0, 200]], "blick": [[0, [-2.3, -0.5, 5.6]]] },
+      "F": { "wege": [[0, -2.3, 5.55]], "boden": -1.44, "pose": [[0, "stehen"]], "yaw": [[0, 180]], "sichtbar": [[0, 1], [5.95, 0]], "blick": [[0, "kamera"]] }
+    },
+    "mitte": [[6.6, 8.8, "Wer war das?!"]],
+    "effekte": [[0.4, "schritte", 2.4], [5.6, "lampe_aus", 0.4], [5.6, "herz", 3.0]] }
+ ],
+ "dialog": [
+  ["hook", 3.7, "ich", "Okay … das ist nicht normal."],
+  ["essen", 1.9, "L", "Gibst du mir mal das Salz, Pickel-Prinz?"],
+  ["essen", 4.0, "ich", "Hol's dir selbst, Mini-Gremlin."],
+  ["essen", 5.4, "M", "Handys weg beim Essen!"],
+  ["aus", 3.2, "M", "Was war das denn?"],
+  ["aus", 5.0, "L", "Mamaaa! Ich seh nichts!"],
+  ["aus", 6.4, "ich", "Ruhig. Ist bestimmt nur die Sicherung."],
+  ["fenster", 2.6, "ich", "Nein … die ganze Stadt ist dunkel."],
+  ["fenster", 7.3, "ich", "Das war das Umspannwerk."],
+  ["fenster", 8.0, "M", "Geh weg vom Fenster!"],
+  ["klopfen", 0.8, "M", "Ich hab Kerzen. Bleibt zusammen."],
+  ["klopfen", 5.6, "L", "Wer klopft denn jetzt?!"],
+  ["nachbar", 1.8, "N", "Habt ihr Wasser? Bei mir kommt nichts mehr."],
+  ["nachbar", 4.6, "ich", "Der Strom ist doch erst zehn Minuten weg …"],
+  ["nachbar", 6.6, "N", "Unten im Keller … da ist jemand."],
+  ["keller", 3.0, "ich", "Hallo? Ist da wer?"]
+ ]
+}

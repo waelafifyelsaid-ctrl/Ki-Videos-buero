@@ -154,3 +154,10 @@ Der Ideen-Scout liest diese Datei vor jeder neuen Idee.
 - **Weiterer POV-Blick** (FOV 88° + Fischauge ≈ 0,5×-Kamera, nicht extrem).
 - Bug-Lehre: `obj.localToWorld(KONSTANTE)` verändert den Vektor! Immer `.clone()` übergeben (sonst wandert die Kamera weg).
 - Name `H` ist in kern.js schon die Bildhöhe – eigene Konstanten anders nennen (`HZ`).
+
+## BLACKOUT Fassung 2 (Nutzer-Feedback 28.11.)
+- Nutzer liebt das Format; will: **bessere Hooks, viel mehr Details (GTA-6-Niveau im Cartoon-Stil), weniger reden / mehr Handlung, klarere Story, flüssigere Animation, Handy richtig in der Hand, Wiedererkennungsmerkmal**.
+- Umgesetzt: oben dauerhaft „TEIL N“-Badge + „pov: … *Schlüsselwort*“ in Serifenschrift (wie virale POV-Accounts), Hook = Unfall + Explosion bzw. umkippendes Regal,
+  Story über Eilmeldung/Zettel/Botschaft statt Gerede („TAG 1 VON 7“, Adresse auf dem Zettel), Hermite-Wege (keine Ruckler), weiche Drehung beim Anhalten,
+  Kulissen massiv detailliert (InstancedMesh für hunderte Produkte/Latten/Bücher), neuer Keller.
+- ElevenLabs-Free (10.000 Zeichen) ist nach ~4 Folgen leer → Plan: Aufnahmen wiederverwenden, Azure Free (500.000 Zeichen) oder ElevenLabs Starter.
