@@ -1,8 +1,10 @@
 {
  "titel": "BLACKOUT – Teil 1: Die Nacht, in der Neustadt dunkel wurde",
- "titelKarte": "BLACKOUT",
- "teilLabel": "BLACKOUT · TEIL 1",
- "caption": "POV: In deiner ganzen Stadt fällt der Strom aus – und dann klopft es an der Tür 🕯️😨 Was würdest du tun? Teil 2 kommt morgen!",
+ "teil": "TEIL 1",
+ "pov": "pov: in deiner *ganzen Stadt* geht plötzlich der Strom aus",
+ "povFarbe": "#ff4d6d",
+ "titelKarte": "",
+ "caption": "POV: Deine ganze Stadt wird dunkel – und im Keller ist jemand 😨🔦 Was würdest du tun? Teil 2 kommt morgen!",
  "hashtags": [
   "#pov",
   "#blackout",
@@ -41,32 +43,46 @@
    "name": "???",
    "farbe": "#ff2a55",
    "look": "fremder",
-   "stimme": "mann2"
+   "stimme": "mann2",
+   "extra": {
+    "kappe": "0x212529"
+   }
   }
  },
  "ende": {
   "oben": "TEIL 2",
-  "mitte": "Wer ist im Keller?",
+  "mitte": "Was passiert in 7 Tagen?",
   "unten": "Folgen, damit du Teil 2 nicht verpasst!"
  },
  "szenen": [
   {
    "n": "hook",
    "welt": "wohnung",
-   "d": 6.518,
+   "d": 6.0,
    "musik": "hook",
    "uhr": "21:47",
+   "verkehr": 0,
    "licht": [
     [
      0,
      1
     ],
     [
-     2.3,
+     1.4,
      1
     ],
     [
-     2.5,
+     1.6,
+     0
+    ]
+   ],
+   "tv": [
+    [
+     0,
+     1
+    ],
+    [
+     1.6,
      0
     ]
    ],
@@ -76,22 +92,12 @@
      0
     ],
     [
-     1.2,
+     0.5,
      0
     ],
     [
-     3.6,
+     2.6,
      1
-    ]
-   ],
-   "tv": [
-    [
-     0,
-     1
-    ],
-    [
-     2.5,
-     0
     ]
    ],
    "kamera": {
@@ -104,53 +110,180 @@
      ],
      [
       6,
-      -0.75,
+      -0.8,
       1.6,
-      -4.05
+      -4.1
      ]
     ],
     "blick": [
      [
       0,
       [
-       -1,
        -6,
-       -90
+       -8,
+       -100
       ]
      ],
      [
-      3.8,
+      2.0,
       [
-       8,
-       -10,
-       -60
+       -2.2,
+       -14,
+       -21.6
       ],
-      1.4
+      0.5
+     ],
+     [
+      3.6,
+      [
+       70,
+       -8,
+       -230
+      ],
+      0.5
      ]
     ],
     "wackel": [
      [
       0,
-      0.3
+      0.4
+     ],
+     [
+      3.6,
+      1.0
      ]
     ]
    },
-   "mitte": [
-    [
-     0.15,
-     2.9,
-     "In ganz Neustadt geht das Licht aus."
-    ]
-   ],
    "hand": [
     [
      0,
      "handy"
     ]
    ],
+   "fahrzeuge": [
+    {
+     "farbe": "0x457b9d",
+     "y": -14,
+     "wege": [
+      [
+       0,
+       -45,
+       -21
+      ],
+      [
+       2.45,
+       -3.2,
+       -21
+      ],
+      [
+       2.9,
+       -2.6,
+       -21.4
+      ],
+      [
+       6,
+       -2.6,
+       -21.4
+      ]
+     ],
+     "yaw": [
+      [
+       0,
+       -90
+      ],
+      [
+       2.45,
+       -90
+      ],
+      [
+       2.95,
+       -35
+      ],
+      [
+       6,
+       -35
+      ]
+     ]
+    },
+    {
+     "farbe": "0xe9c46a",
+     "y": -14,
+     "wege": [
+      [
+       0,
+       40,
+       -27
+      ],
+      [
+       1.8,
+       6,
+       -25.5
+      ],
+      [
+       2.45,
+       -1.3,
+       -22.2
+      ],
+      [
+       2.9,
+       -0.8,
+       -22.6
+      ],
+      [
+       6,
+       -0.8,
+       -22.6
+      ]
+     ],
+     "yaw": [
+      [
+       0,
+       90
+      ],
+      [
+       1.8,
+       100
+      ],
+      [
+       2.45,
+       120
+      ],
+      [
+       2.95,
+       175
+      ],
+      [
+       6,
+       175
+      ]
+     ]
+    }
+   ],
+   "effekte": [
+    [
+     2.45,
+     "knall"
+    ],
+    [
+     2.5,
+     "alarm",
+     3.5
+    ],
+    [
+     3.6,
+     "explosion",
+     [
+      70,
+      -8,
+      -230
+     ],
+     40,
+     0.0
+    ]
+   ],
    "karten": [
     [
-     3.4,
+     4.0,
      5.9,
      "NETZ · jetzt",
      "Kein Empfang",
@@ -160,9 +293,9 @@
    "start": 0.0
   },
   {
-   "n": "essen",
+   "n": "vorher",
    "welt": "wohnung",
-   "d": 9.378,
+   "d": 10.373,
    "tr": "schwarz",
    "trd": 0.8,
    "musik": "ruhig",
@@ -170,7 +303,7 @@
    "mitte": [
     [
      0.2,
-     1.8,
+     1.7,
      "10 MINUTEN VORHER"
     ]
    ],
@@ -189,18 +322,23 @@
       "L"
      ],
      [
-      3.4,
+      2.8,
       "M",
       0.5
      ],
      [
-      6.6,
+      4.4,
       [
-       0.25,
-       0.9,
-       -0.25
+       0.3,
+       0.75,
+       -0.45
       ],
-      0.4
+      0.5
+     ],
+     [
+      6.0,
+      "M",
+      0.5
      ]
     ],
     "wackel": [
@@ -216,7 +354,7 @@
      "leer"
     ],
     [
-     6.4,
+     4.2,
      "handy"
     ]
    ],
@@ -244,11 +382,11 @@
      "blick": [
       [
        0,
-       "L"
-      ],
-      [
-       3.4,
-       "kamera"
+       [
+        2.75,
+        1.2,
+        0.15
+       ]
       ]
      ]
     },
@@ -278,33 +416,37 @@
        "kamera"
       ],
       [
-       3.6,
-       "M"
+       2.8,
+       [
+        2.75,
+        1.2,
+        0.15
+       ]
       ]
      ]
     }
    },
    "karten": [
     [
-     6.7,
-     8.9,
+     4.3,
+     7.9,
      "STADTWERKE NEUSTADT · jetzt",
-     "Störung im Stromnetz. Bitte Geräte vom Netz trennen.",
-     "info"
+     "Unbekannte im Umspannwerk Nord. Stromausfall möglich!",
+     "warn"
     ]
    ],
    "effekte": [
     [
-     6.4,
+     4.2,
      "handy"
     ]
    ],
-   "start": 6.518
+   "start": 6.0
   },
   {
    "n": "aus",
    "welt": "wohnung",
-   "d": 10.327,
+   "d": 7.166,
    "musik": "spannung",
    "uhr": "21:46",
    "licht": [
@@ -313,23 +455,23 @@
      1
     ],
     [
-     0.8,
+     0.6,
      1
+    ],
+    [
+     0.8,
+     0.4
     ],
     [
      1.0,
-     0.5
-    ],
-    [
-     1.3,
      1
     ],
     [
-     2.7,
+     1.8,
      1
     ],
     [
-     2.9,
+     2.0,
      0
     ]
    ],
@@ -339,7 +481,7 @@
      1
     ],
     [
-     2.9,
+     2.0,
      0
     ]
    ],
@@ -352,46 +494,52 @@
       -0.4
      ],
      [
-      4.2,
+      3.0,
       0.1,
       1.22,
       -0.4
      ],
      [
-      5.2,
-      0.25,
+      4.0,
+      0.3,
       1.62,
-      -0.6
+      -0.7
+     ],
+     [
+      7,
+      -0.6,
+      1.62,
+      -2.3
      ]
     ],
     "blick": [
      [
       0,
-      [
-       2.7,
-       1.2,
-       0.2
-      ]
+      "M"
      ],
      [
-      3.2,
-      "M",
-      0.5
-     ],
-     [
-      5.2,
+      2.2,
       "L",
-      0.5
+      0.4
+     ],
+     [
+      4.2,
+      [
+       -1.4,
+       1.0,
+       -6
+      ],
+      0.8
      ]
     ],
     "wackel": [
      [
       0,
-      0.2
+      0.25
      ],
      [
-      3,
-      0.5
+      2,
+      0.6
      ]
     ]
    },
@@ -401,7 +549,7 @@
      "leer"
     ],
     [
-     4.4,
+     3.0,
      "lampe"
     ]
    ],
@@ -412,6 +560,16 @@
        0,
        -1.0,
        0.35
+      ],
+      [
+       3.6,
+       -1.0,
+       0.35
+      ],
+      [
+       5.0,
+       -1.7,
+       -0.2
       ]
      ],
      "pose": [
@@ -420,7 +578,7 @@
        "sitzen"
       ],
       [
-       3.4,
+       3.2,
        "stehen"
       ]
      ],
@@ -428,21 +586,24 @@
       [
        0,
        180
+      ],
+      [
+       5.0,
+       120
       ]
      ],
-     "wege2": [],
      "blick": [
       [
        0,
        [
-        2.7,
-        1.2,
-        0.2
+        0,
+        2.4,
+        -0.4
        ]
       ],
       [
-       3.2,
-       "kamera"
+       2.4,
+       "L"
       ]
      ]
     },
@@ -460,7 +621,7 @@
        "sitzen"
       ],
       [
-       5.2,
+       2.0,
        "panik"
       ]
      ],
@@ -474,27 +635,42 @@
       [
        0,
        [
-        2.7,
-        1.2,
-        0.2
+        0,
+        2.4,
+        -0.4
        ]
       ],
       [
-       3.6,
+       2.6,
        "kamera"
       ]
      ]
     }
    },
-   "start": 15.896
+   "stadt": [
+    [
+     0,
+     0
+    ],
+    [
+     2.0,
+     0
+    ],
+    [
+     3.6,
+     1
+    ]
+   ],
+   "start": 16.373
   },
   {
    "n": "fenster",
    "welt": "wohnung",
-   "d": 11.587,
+   "d": 7.0,
    "tr": "whip",
    "musik": "spannung",
    "uhr": "21:47",
+   "verkehr": 0,
    "licht": [
     [
      0,
@@ -510,14 +686,6 @@
    "stadt": [
     [
      0,
-     0
-    ],
-    [
-     1.4,
-     0
-    ],
-    [
-     4.0,
      1
     ]
    ],
@@ -525,53 +693,42 @@
     "pos": [
      [
       0,
-      -0.2,
-      1.62,
-      -1.6
-     ],
-     [
-      1.4,
       -1.45,
       1.62,
       -2.55
      ],
      [
-      9,
-      -1.45,
+      7,
+      -1.5,
       1.62,
-      -2.6
+      -2.65
      ]
     ],
     "blick": [
      [
       0,
       [
-       -0.7,
-       1.3,
-       -6
+       -4,
+       -6,
+       -90
       ]
      ],
      [
-      1.2,
+      2.8,
       [
-       -2,
-       -8,
-       -90
+       -2.4,
+       -14,
+       -22
       ],
       0.6
      ],
      [
-      6.4,
+      5.0,
       [
-       30,
-       -8,
-       -140
+       60,
+       -6,
+       -230
       ],
-      0.4
-     ],
-     [
-      7.6,
-      "M",
       0.6
      ]
     ],
@@ -588,69 +745,71 @@
      "lampe"
     ]
    ],
-   "figuren": {
-    "M": {
+   "fahrzeuge": [
+    {
+     "farbe": "0x457b9d",
+     "y": -14,
      "wege": [
       [
        0,
-       0.6,
-       -0.9
-      ],
-      [
-       2.0,
-       -0.1,
-       -2.35
-      ]
-     ],
-     "pose": [
-      [
-       0,
-       "stehen"
-      ],
-      [
-       2.0,
-       "stehen"
+       -2.6,
+       -21.4
       ]
      ],
      "yaw": [
       [
        0,
-       180
+       -35
       ]
-     ],
-     "blick": [
+     ]
+    },
+    {
+     "farbe": "0xe9c46a",
+     "y": -14,
+     "wege": [
       [
        0,
-       [
-        -2,
-        -8,
-        -90
-       ]
-      ],
+       -0.8,
+       -22.6
+      ]
+     ],
+     "yaw": [
       [
-       7.6,
-       "kamera"
+       0,
+       175
       ]
      ]
     }
-   },
+   ],
    "effekte": [
     [
-     6.2,
+     0,
+     "alarm",
+     7
+    ],
+    [
+     0,
      "explosion",
      [
-      30,
-      -10,
-      -150
-     ]
+      70,
+      -8,
+      -230
+     ],
+     40,
+     0.0
+    ],
+    [
+     1.0,
+     "sirene",
+     6
     ]
    ],
-   "start": 26.223
+   "start": 23.539
   },
   {
    "n": "klopfen",
    "welt": "wohnung",
-   "d": 9.0,
+   "d": 7.0,
    "tr": "zoom",
    "musik": "horror",
    "uhr": "21:58",
@@ -675,10 +834,6 @@
    "kerzen": [
     [
      0,
-     0
-    ],
-    [
-     1.4,
      1
     ]
    ],
@@ -688,33 +843,28 @@
       0,
       0.3,
       1.62,
-      -1.4
+      -1.6
      ],
      [
-      5.0,
+      3.0,
       0.3,
       1.62,
-      -1.4
+      -1.6
      ],
      [
-      8.6,
+      6.8,
       -0.9,
       1.62,
-      1.55
+      1.6
      ]
     ],
     "blick": [
      [
       0,
-      "M"
+      "L"
      ],
      [
-      2.6,
-      "L",
-      0.5
-     ],
-     [
-      4.6,
+      2.2,
       [
        -0.9,
        1.4,
@@ -729,8 +879,8 @@
       0.25
      ],
      [
-      4.4,
-      0.6
+      2.2,
+      0.7
      ]
     ]
    },
@@ -746,32 +896,32 @@
       [
        0,
        -1.6,
-       -0.3
+       -0.6
       ]
      ],
      "pose": [
       [
        0,
        "stehen"
+      ],
+      [
+       2.2,
+       "arme_verschraenkt"
       ]
      ],
      "yaw": [
       [
        0,
-       90
+       60
       ]
      ],
      "blick": [
       [
        0,
-       [
-        -1.0,
-        0.9,
-        -0.4
-       ]
+       "L"
       ],
       [
-       4.5,
+       2.2,
        [
         -0.9,
         1.4,
@@ -794,7 +944,7 @@
        "sitzen"
       ],
       [
-       4.4,
+       2.2,
        "panik"
       ]
      ],
@@ -810,7 +960,7 @@
        "kamera"
       ],
       [
-       4.5,
+       2.3,
        [
         -0.9,
         1.4,
@@ -822,20 +972,20 @@
    },
    "effekte": [
     [
-     4.2,
-     "klopfen"
+     2.0,
+     "haemmern"
     ],
     [
-     6.6,
-     "klopfen"
+     4.4,
+     "haemmern"
     ]
    ],
-   "start": 37.81
+   "start": 30.539
   },
   {
-   "n": "nachbar",
+   "n": "krause",
    "welt": "wohnung",
-   "d": 10.733,
+   "d": 8.0,
    "musik": "horror",
    "uhr": "21:59",
    "licht": [
@@ -875,12 +1025,12 @@
       0
      ],
      [
-      0.6,
+      0.5,
       0
      ],
      [
-      1.4,
-      80
+      1.3,
+      85
      ]
     ]
    },
@@ -890,26 +1040,27 @@
       0,
       -0.9,
       1.62,
-      1.55
+      1.6
      ],
      [
-      1.4,
+      1.3,
       -0.9,
       1.62,
-      1.75
+      1.8
      ]
     ],
     "blick": [
      [
       0,
       [
-       -0.9,
-       1.5,
-       4
-      ]
+       -0.4,
+       1.0,
+       2.55
+      ],
+      0.1
      ],
      [
-      0.8,
+      0.9,
       "N",
       0.5
      ]
@@ -933,7 +1084,7 @@
      ]
     ],
     [
-     1.5,
+     1.4,
      "lampe"
     ]
    ],
@@ -943,16 +1094,20 @@
       [
        0,
        -0.9,
-       3.55
+       3.7
       ]
      ],
      "pose": [
       [
        0,
-       "stehen"
+       "panik"
       ],
       [
-       5.5,
+       2.0,
+       "reden"
+      ],
+      [
+       4.6,
        "zeigen"
       ]
      ],
@@ -962,8 +1117,8 @@
        180
       ],
       [
-       5.5,
-       240
+       4.6,
+       120
       ]
      ],
      "blick": [
@@ -974,13 +1129,19 @@
      ]
     }
    },
-   "start": 46.81
+   "effekte": [
+    [
+     5.0,
+     "haemmern"
+    ]
+   ],
+   "start": 37.539
   },
   {
-   "n": "keller",
+   "n": "treppe",
    "welt": "wohnung",
-   "d": 9.0,
-   "tr": "glitch",
+   "d": 7.0,
+   "tr": "whip",
    "musik": "horror",
    "uhr": "22:00",
    "licht": [
@@ -1017,7 +1178,7 @@
     "wohnung": [
      [
       0,
-      80
+      85
      ]
     ]
    },
@@ -1025,73 +1186,82 @@
     "pos": [
      [
       0,
-      -0.9,
+      1.2,
       1.62,
-      2.4
+      3.0
      ],
      [
-      2.0,
-      -1.3,
+      1.0,
+      2.6,
       1.62,
       3.15
      ],
      [
-      9,
-      -1.3,
-      1.6,
-      3.2
+      3.4,
+      2.6,
+      0.2,
+      6.0
+     ],
+     [
+      4.2,
+      2.1,
+      0.18,
+      6.75
+     ],
+     [
+      4.9,
+      1.4,
+      0.18,
+      6.2
+     ],
+     [
+      7,
+      1.4,
+      -1.2,
+      3.8
      ]
     ],
     "blick": [
      [
       0,
       [
-       -1.8,
-       0.2,
-       4.6
+       2.6,
+       0.4,
+       5
       ]
      ],
      [
-      2.0,
+      1.0,
       [
-       -2.3,
-       -0.4,
-       5.6
+       2.6,
+       -1.4,
+       7.2
       ],
-      0.6
+      0.5
      ],
      [
-      6.0,
+      3.6,
       [
-       -2.3,
-       -0.8,
-       6.2
+       1.0,
+       -0.6,
+       7.2
       ],
-      0.3
+      0.5
+     ],
+     [
+      4.6,
+      [
+       1.4,
+       -2.6,
+       3.0
+      ],
+      0.5
      ]
     ],
     "wackel": [
      [
       0,
-      0.5
-     ],
-     [
-      5.8,
-      1.2
-     ]
-    ],
-    "roll": [
-     [
-      0,
-      0
-     ],
-     [
-      5.8,
-      0
-     ],
-     [
-      6.1,
-      -4
+      0.6
      ]
     ]
    },
@@ -1106,13 +1276,8 @@
      "wege": [
       [
        0,
-       -0.9,
-       3.55
-      ],
-      [
-       1.2,
-       0.7,
-       3.7
+       -0.2,
+       3.4
       ]
      ],
      "pose": [
@@ -1124,29 +1289,181 @@
      "yaw": [
       [
        0,
-       200
+       90
       ]
      ],
      "blick": [
       [
        0,
-       [
-        -2.3,
-        -0.5,
-        5.6
-       ]
+       "kamera"
+      ]
+     ],
+     "sichtbar": [
+      [
+       0,
+       1
       ]
      ]
-    },
+    }
+   },
+   "effekte": [
+    [
+     0,
+     "schritte",
+     6.5
+    ],
+    [
+     2.5,
+     "haemmern"
+    ]
+   ],
+   "start": 45.539
+  },
+  {
+   "n": "keller",
+   "welt": "keller",
+   "d": 12.0,
+   "tr": "glitch",
+   "musik": "horror",
+   "uhr": "22:01",
+   "licht": [
+    [
+     0,
+     0
+    ]
+   ],
+   "tueren": {
+    "hinten": [
+     [
+      0,
+      0
+     ],
+     [
+      5.6,
+      0
+     ],
+     [
+      6.0,
+      85
+     ]
+    ]
+   },
+   "kamera": {
+    "pos": [
+     [
+      0,
+      0,
+      1.62,
+      0.6
+     ],
+     [
+      5.0,
+      0,
+      1.62,
+      -11.5
+     ],
+     [
+      6.4,
+      0.2,
+      1.62,
+      -13.2
+     ],
+     [
+      8.6,
+      0.6,
+      1.62,
+      -15.0
+     ],
+     [
+      12,
+      0.4,
+      1.5,
+      -15.2
+     ]
+    ],
+    "blick": [
+     [
+      0,
+      [
+       0,
+       1.2,
+       -10
+      ]
+     ],
+     [
+      3.0,
+      "F",
+      0.4
+     ],
+     [
+      6.4,
+      [
+       3.3,
+       1.2,
+       -15.6
+      ],
+      0.3
+     ],
+     [
+      7.4,
+      [
+       -0.7,
+       0.4,
+       -16.8
+      ],
+      0.5
+     ]
+    ],
+    "wackel": [
+     [
+      0,
+      0.5
+     ],
+     [
+      5.6,
+      1.2
+     ],
+     [
+      8.8,
+      0.5
+     ]
+    ]
+   },
+   "hand": [
+    [
+     0,
+     "lampe"
+    ]
+   ],
+   "figuren": {
     "F": {
      "wege": [
       [
        0,
-       -2.3,
-       5.55
+       -0.7,
+       -16.15
+      ],
+      [
+       5.5,
+       -0.7,
+       -16.15
+      ],
+      [
+       6.3,
+       2.2,
+       -15.6
+      ],
+      [
+       6.8,
+       3.4,
+       -15.5
+      ],
+      [
+       7.4,
+       5.2,
+       -15.5
       ]
      ],
-     "boden": -1.44,
      "pose": [
       [
        0,
@@ -1157,6 +1474,24 @@
       [
        0,
        180
+      ],
+      [
+       4.6,
+       0
+      ]
+     ],
+     "blick": [
+      [
+       0,
+       [
+        -0.7,
+        1.4,
+        -17
+       ]
+      ],
+      [
+       4.8,
+       "kamera"
       ]
      ],
      "sichtbar": [
@@ -1165,174 +1500,164 @@
        1
       ],
       [
-       5.95,
+       7.0,
        0
-      ]
-     ],
-     "blick": [
-      [
-       0,
-       "kamera"
       ]
      ]
     }
    },
+   "requisiten": [
+    {
+     "typ": "brecheisen",
+     "halter": [
+      [
+       0,
+       "F"
+      ],
+      [
+       5.4,
+       null
+      ]
+     ],
+     "pos": [
+      [
+       5.4,
+       0.2,
+       0.02,
+       -16.0
+      ]
+     ]
+    }
+   ],
    "mitte": [
     [
-     6.6,
-     8.8,
-     "Wer war das?!"
+     7.9,
+     9.1,
+     "TAG 1 VON 7?!"
     ]
    ],
    "effekte": [
     [
-     0.4,
-     "schritte",
-     2.4
+     0.5,
+     "haemmern"
     ],
     [
-     5.6,
-     "lampe_aus",
-     0.4
+     2.0,
+     "haemmern"
     ],
     [
-     5.6,
+     5.5,
+     "tuer"
+    ],
+    [
+     5.4,
      "herz",
-     3.0
+     6
     ]
    ],
-   "start": 57.543
+   "start": 52.539
   }
  ],
  "dialog": [
   {
    "szene": "hook",
-   "start": 3.7,
-   "ende": 6.168,
+   "start": 3.9,
+   "ende": 5.466,
    "wer": "ich",
-   "text": "Okay … das ist nicht normal.",
-   "datei": "ich_4f02aea0ac.mp3"
+   "text": "Was zur Hölle …?!",
+   "datei": "ich_d7cef012e6.mp3",
+   "laut": true
   },
   {
-   "szene": "essen",
+   "szene": "vorher",
    "start": 1.9,
-   "ende": 4.57,
+   "ende": 3.946,
    "wer": "L",
-   "text": "Gibst du mir mal das Salz, Pickel-Prinz?",
-   "datei": "L_2678b32809.mp3"
+   "text": "Gib mal Salz, Pickel-Prinz.",
+   "datei": "L_7adc34c8e8.mp3"
   },
   {
-   "szene": "essen",
-   "start": 4.72,
-   "ende": 6.958,
+   "szene": "vorher",
+   "start": 4.096,
+   "ende": 6.334,
    "wer": "ich",
    "text": "Hol's dir selbst, Mini-Gremlin.",
    "datei": "ich_5d7a12cb52.mp3"
   },
   {
-   "szene": "essen",
-   "start": 7.108,
-   "ende": 9.028,
+   "szene": "vorher",
+   "start": 6.484,
+   "ende": 10.023,
    "wer": "M",
-   "text": "Handys weg beim Essen!",
-   "datei": "M_4aa0460d4a.mp3"
+   "text": "Unbekannte im Umspannwerk? Das klingt nicht gut.",
+   "datei": "M_3a1c6652b2.mp3"
   },
   {
    "szene": "aus",
-   "start": 3.2,
-   "ende": 4.884,
-   "wer": "M",
-   "text": "Was war das denn?",
-   "datei": "M_2a328e4c22.mp3"
-  },
-  {
-   "szene": "aus",
-   "start": 5.034,
-   "ende": 6.888,
+   "start": 2.3,
+   "ende": 3.6,
    "wer": "L",
-   "text": "Mamaaa! Ich seh nichts!",
-   "datei": "L_45bab898b6.mp3"
+   "text": "MAMA!",
+   "datei": "L_ccd1948b81.mp3",
+   "laut": true
   },
   {
    "szene": "aus",
-   "start": 7.038,
-   "ende": 9.977,
+   "start": 4.4,
+   "ende": 6.816,
    "wer": "ich",
-   "text": "Ruhig. Ist bestimmt nur die Sicherung.",
-   "datei": "ich_102aec4ed1.mp3"
+   "text": "Bleibt ruhig. Ich hab Licht.",
+   "datei": "ich_a846714649.mp3"
   },
   {
    "szene": "fenster",
-   "start": 2.6,
-   "ende": 5.225,
+   "start": 1.0,
+   "ende": 3.285,
    "wer": "ich",
-   "text": "Nein … die ganze Stadt ist dunkel.",
-   "datei": "ich_324ce1d4d4.mp3"
+   "text": "Die ganze Stadt ist schwarz …",
+   "datei": "ich_aa1eb61866.mp3"
   },
   {
    "szene": "fenster",
-   "start": 7.3,
-   "ende": 9.298,
+   "start": 4.0,
+   "ende": 6.046,
    "wer": "ich",
-   "text": "Das war das Umspannwerk.",
-   "datei": "ich_834d756ff5.mp3"
-  },
-  {
-   "szene": "fenster",
-   "start": 9.448,
-   "ende": 11.237,
-   "wer": "M",
-   "text": "Geh weg vom Fenster!",
-   "datei": "M_c9a8aad085.mp3"
+   "text": "Und das Umspannwerk brennt.",
+   "datei": "ich_0569e7c8d1.mp3"
   },
   {
    "szene": "klopfen",
-   "start": 0.8,
-   "ende": 3.373,
-   "wer": "M",
-   "text": "Ich hab Kerzen. Bleibt zusammen.",
-   "datei": "M_0617773792.mp3"
-  },
-  {
-   "szene": "klopfen",
-   "start": 5.6,
-   "ende": 7.454,
+   "start": 3.1,
+   "ende": 4.858,
    "wer": "L",
-   "text": "Wer klopft denn jetzt?!",
-   "datei": "L_bef698c3fd.mp3"
+   "text": "Wer hämmert denn da?!",
+   "datei": "L_df3bcf317a.mp3"
   },
   {
-   "szene": "nachbar",
-   "start": 1.8,
-   "ende": 4.614,
+   "szene": "krause",
+   "start": 1.5,
+   "ende": 5.514,
    "wer": "N",
-   "text": "Habt ihr Wasser? Bei mir kommt nichts mehr.",
-   "datei": "N_4d85e52aff.mp3"
+   "text": "Im Keller ist jemand! Der macht sich an den Sicherungen zu schaffen!",
+   "datei": "N_7efc406c67.mp3"
   },
   {
-   "szene": "nachbar",
-   "start": 4.764,
-   "ende": 7.53,
+   "szene": "krause",
+   "start": 5.664,
+   "ende": 7.038,
    "wer": "ich",
-   "text": "Der Strom ist doch erst zehn Minuten weg …",
-   "datei": "ich_ab16d75f37.mp3"
-  },
-  {
-   "szene": "nachbar",
-   "start": 7.68,
-   "ende": 10.383,
-   "wer": "N",
-   "text": "Unten im Keller … da ist jemand.",
-   "datei": "N_4a220541f3.mp3"
+   "text": "Ich seh nach.",
+   "datei": "ich_85c05e1a94.mp3"
   },
   {
    "szene": "keller",
-   "start": 3.0,
-   "ende": 5.155,
+   "start": 3.4,
+   "ende": 5.555,
    "wer": "ich",
-   "text": "Hallo? Ist da wer?",
-   "datei": "ich_e61324dce5.mp3"
+   "text": "Hey! Was machst du da?!",
+   "datei": "ich_39fd088d4b.mp3",
+   "laut": true
   }
  ],
- "dauer": 66.543
+ "dauer": 64.539
 }

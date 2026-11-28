@@ -3,12 +3,16 @@
 html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#000;font-family:'DejaVu Sans',Arial,sans-serif}
 canvas{position:absolute;left:0;top:0;z-index:0}
 .ov{position:absolute;pointer-events:none;z-index:10}
-#teil{left:60px;top:300px;color:#fff;font:bold 30px 'DejaVu Sans',sans-serif;letter-spacing:3px;text-shadow:0 2px 8px #000}
-#uhr{right:60px;top:300px;color:#fff;font:bold 34px 'DejaVu Sans',sans-serif;text-shadow:0 2px 8px #000}
+#pov{left:50px;width:980px;top:220px;text-align:center;background:rgba(10,12,18,.38);border-radius:28px;padding:16px 10px 20px;box-sizing:border-box}
+#pov .badge{display:inline-block;background:#f8f1e5;color:#c0392b;font:bold 34px 'Liberation Serif',serif;letter-spacing:3px;padding:6px 24px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,.35);margin-bottom:14px}
+#pov .zeile{color:#fff;font:62px/1.12 'Liberation Serif',serif;text-shadow:0 3px 10px rgba(0,0,0,.85),0 0 3px #000}
+#pov .zeile em{font-style:normal}
+#teil{display:none;left:60px;top:300px;color:#fff;font:bold 30px 'DejaVu Sans',sans-serif;letter-spacing:3px;text-shadow:0 2px 8px #000}
+#uhr{right:60px;top:170px;color:#fff;font:bold 34px 'DejaVu Sans',sans-serif;text-shadow:0 2px 8px #000}
 #sub{left:80px;width:920px;top:1300px;opacity:0;text-align:center}
 #wer{font-size:28px;font-weight:bold;letter-spacing:2px;margin-bottom:6px;-webkit-text-stroke:5px #000;paint-order:stroke fill}
 #txt{font-size:58px;line-height:1.18;color:#fff;font-weight:900;-webkit-text-stroke:9px #000;paint-order:stroke fill;text-shadow:0 4px 0 #000}
-#nachricht{left:60px;width:960px;top:360px;opacity:0;border-radius:26px;padding:22px 30px;box-sizing:border-box;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+#nachricht{left:60px;width:960px;top:500px;opacity:0;border-radius:26px;padding:22px 30px;box-sizing:border-box;box-shadow:0 8px 24px rgba(0,0,0,.45)}
 #nachricht.info{background:#fff}#nachricht.info b{color:#555}#nachricht.info span{color:#111}
 #nachricht.warn{background:#d62828}#nachricht.warn b{color:#ffe3e3}#nachricht.warn span{color:#fff}
 #nachricht.chat{background:#fffbea}#nachricht.chat b{color:#555}#nachricht.chat span{color:#111}
@@ -17,7 +21,7 @@ canvas{position:absolute;left:0;top:0;z-index:0}
 #nachricht.warn b i{background:#fff}
 #nachricht span{display:block;font-size:48px;font-weight:bold;line-height:1.2}
 #mitte{left:60px;width:960px;top:600px;text-align:center;color:#fff;font-size:74px;font-weight:900;opacity:0;-webkit-text-stroke:10px #000;paint-order:stroke fill;line-height:1.15}
-#titel{left:0;width:1080px;top:370px;text-align:center;color:#ffd166;font-size:52px;font-weight:900;letter-spacing:6px;-webkit-text-stroke:8px #000;paint-order:stroke fill;opacity:0}
+#titel{left:0;width:1080px;top:130px;text-align:center;color:#ffd166;font-size:52px;font-weight:900;letter-spacing:6px;-webkit-text-stroke:8px #000;paint-order:stroke fill;opacity:0}
 #redner{left:0;top:0;min-width:96px;padding:0 18px;height:96px;border-radius:48px;border:7px solid #fff;background:rgba(6,10,18,.82);opacity:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 #redner b{font:900 44px 'DejaVu Sans',sans-serif;-webkit-text-stroke:3px #000;paint-order:stroke fill;white-space:nowrap}
 #redner i{position:absolute;left:calc(50% - 17px);top:92px;width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-top:24px solid #fff}
@@ -31,7 +35,7 @@ canvas{position:absolute;left:0;top:0;z-index:0}
 #ende .like.an{background:#ff2a55;border-color:#ff2a55}#ende .folgen.an{background:#80ed99;border-color:#80ed99;color:#0b132b}#ende .folgen.an svg{fill:#0b132b}
 </style></head><body>
 <script type="importmap">{"imports":{"three":"/three/build/three.module.js"}}</script>
-<div id="teil" class="ov"></div><div id="uhr" class="ov"></div><div id="rec" class="ov"></div>
+<div id="pov" class="ov"><div class="badge"></div><div class="zeile"></div></div><div id="teil" class="ov"></div><div id="uhr" class="ov"></div><div id="rec" class="ov"></div>
 <div id="titel" class="ov"></div>
 <div id="mitte" class="ov"></div>
 <div id="redner" class="ov"><b>1</b><i></i></div>
