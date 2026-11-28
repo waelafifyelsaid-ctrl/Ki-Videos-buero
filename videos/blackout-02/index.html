@@ -1,0 +1,44 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><title>Serie</title>
+<style>
+html,body{margin:0;width:1080px;height:1920px;overflow:hidden;background:#000;font-family:'DejaVu Sans',Arial,sans-serif}
+canvas{position:absolute;left:0;top:0;z-index:0}
+.ov{position:absolute;pointer-events:none;z-index:10}
+#teil{left:60px;top:300px;color:#fff;font:bold 30px 'DejaVu Sans',sans-serif;letter-spacing:3px;text-shadow:0 2px 8px #000}
+#uhr{right:60px;top:300px;color:#fff;font:bold 34px 'DejaVu Sans',sans-serif;text-shadow:0 2px 8px #000}
+#sub{left:80px;width:920px;top:1300px;opacity:0;text-align:center}
+#wer{font-size:28px;font-weight:bold;letter-spacing:2px;margin-bottom:6px;-webkit-text-stroke:5px #000;paint-order:stroke fill}
+#txt{font-size:58px;line-height:1.18;color:#fff;font-weight:900;-webkit-text-stroke:9px #000;paint-order:stroke fill;text-shadow:0 4px 0 #000}
+#nachricht{left:60px;width:960px;top:360px;opacity:0;border-radius:26px;padding:22px 30px;box-sizing:border-box;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+#nachricht.info{background:#fff}#nachricht.info b{color:#555}#nachricht.info span{color:#111}
+#nachricht.warn{background:#d62828}#nachricht.warn b{color:#ffe3e3}#nachricht.warn span{color:#fff}
+#nachricht.chat{background:#fffbea}#nachricht.chat b{color:#555}#nachricht.chat span{color:#111}
+#nachricht b{display:block;font-size:30px;font-weight:bold;margin-bottom:6px}
+#nachricht b i{display:inline-block;width:22px;height:22px;border-radius:6px;background:#e63946;margin-right:12px;vertical-align:-3px}
+#nachricht.warn b i{background:#fff}
+#nachricht span{display:block;font-size:48px;font-weight:bold;line-height:1.2}
+#mitte{left:60px;width:960px;top:600px;text-align:center;color:#fff;font-size:74px;font-weight:900;opacity:0;-webkit-text-stroke:10px #000;paint-order:stroke fill;line-height:1.15}
+#titel{left:0;width:1080px;top:370px;text-align:center;color:#ffd166;font-size:52px;font-weight:900;letter-spacing:6px;-webkit-text-stroke:8px #000;paint-order:stroke fill;opacity:0}
+#redner{left:0;top:0;min-width:96px;padding:0 18px;height:96px;border-radius:48px;border:7px solid #fff;background:rgba(6,10,18,.82);opacity:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+#redner b{font:900 44px 'DejaVu Sans',sans-serif;-webkit-text-stroke:3px #000;paint-order:stroke fill;white-space:nowrap}
+#redner i{position:absolute;left:calc(50% - 17px);top:92px;width:0;height:0;border-left:17px solid transparent;border-right:17px solid transparent;border-top:24px solid #fff}
+#ende{left:0;top:0;width:1080px;height:1920px;background:rgba(3,5,10,.9);opacity:0;text-align:center}
+#ende h1{position:absolute;top:820px;width:100%;margin:0;color:#ffd166;font-size:120px}
+#ende h2{position:absolute;top:970px;width:100%;margin:0;color:#fff;font-size:70px}
+#ende p{position:absolute;top:1100px;width:100%;margin:0;color:#80ed99;font-size:52px;font-weight:bold}
+#ende .like,#ende .folgen{position:absolute;top:1250px;width:360px;height:130px;border-radius:65px;background:rgba(255,255,255,.12);border:5px solid #fff;display:flex;align-items:center;justify-content:center;gap:18px;color:#fff;font:bold 56px 'DejaVu Sans',sans-serif;opacity:0}
+#ende .like{left:130px}#ende .folgen{left:590px}
+#ende svg{width:70px;height:70px;fill:#fff}
+#ende .like.an{background:#ff2a55;border-color:#ff2a55}#ende .folgen.an{background:#80ed99;border-color:#80ed99;color:#0b132b}#ende .folgen.an svg{fill:#0b132b}
+</style></head><body>
+<script type="importmap">{"imports":{"three":"/three/build/three.module.js"}}</script>
+<div id="teil" class="ov"></div><div id="uhr" class="ov"></div><div id="rec" class="ov"></div>
+<div id="titel" class="ov"></div>
+<div id="mitte" class="ov"></div>
+<div id="redner" class="ov"><b>1</b><i></i></div>
+<div id="nachricht" class="ov info"><b><i></i><em></em></b><span></span></div>
+<div id="sub" class="ov"><div id="wer"></div><div id="txt"></div></div>
+<div id="ende" class="ov"><h1></h1><h2></h2><p></p>
+<div class="like"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 5 6.4 5c2 0 3.4 1.1 4.1 2.3h3C14.2 6.1 15.6 5 17.6 5 21 5 23.1 8.4 21.6 11.8 19.5 16.4 12 21 12 21z"/></svg><span>LIKE</span></div>
+<div class="folgen"><svg viewBox="0 0 24 24"><path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z"/></svg><span>FOLGEN</span></div></div>
+<script type="module" src="/tools/serie/engine.js"></script>
+</body></html>
